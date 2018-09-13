@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
   # matching debug
   #cuts += "*(sqrt(pow(xWC-23.75,2)+pow(yWC-0.2,2)) < 11.93)" # wc track in flange
-  #cuts += "*(sqrt(pow(trackXFront-23.75,2)+pow(trackYFront-0.2,2)) < 11.93)" # TPC track in flange
+  cuts += "*(trackXFront > -50. && trackXFront < -10. && trackYFront > 390. && trackYFront < 430.)" # TPC track in flange
   #cuts += "*(trackMatchLowestZ < 2.)" # matching
   #cuts += "*(fabs(trackMatchDeltaY) < 5.)" # matching
   #cuts += "*((!isMC && (trackMatchDeltaX < 6. && trackMatchDeltaX > -4.)) || (isMC && (fabs(trackMatchDeltaX) < 5.)))" # matching
@@ -34,6 +34,7 @@ if __name__ == "__main__":
   fileConfigs = [
     {
       'fn': "PiAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10.root",
+      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
       'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
       'title': "MCC10, 2 GeV SCE",
       'caption': "MCC10, 2 GeV SCE",
@@ -344,7 +345,7 @@ if __name__ == "__main__":
       'name': "trackXFront",
       'xtitle': "X of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [50,0,50],
+      'binning': [100,-50,0],
       'var': "trackXFront",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
@@ -354,7 +355,7 @@ if __name__ == "__main__":
       'name': "trackYFront",
       'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [50,-50,50],
+      'binning': [100,340,500],
       'var': "trackYFront",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
@@ -1066,6 +1067,16 @@ if __name__ == "__main__":
 #      #'normalize': True,
 #      #'logz': True,
 #    },
+    {
+      'name': "trackYFrontVtrackXFront",
+      'xtitle': "X of TPC Track Projected to Z=0 [cm]",
+      'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
+      'binning': [30,-60,0,30,300,500],
+      'var': "trackYFront:trackXFront",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logz': False,
+    },
   ]
 
   plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)

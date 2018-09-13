@@ -20,6 +20,7 @@ if __name__ == "__main__":
   fileConfigs = [
     {
       'fn': "PiAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10.root",
+      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
       'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
       'title': "MCC10, 2 GeV SCE",
       'caption': "MCC10, 2 GeV SCE",
@@ -234,7 +235,7 @@ if __name__ == "__main__":
       'name': "trueStartYVtrueStartX",
       'xtitle': "True Start X [cm]",
       'ytitle': "True Start Y [cm]",
-      'binning': [100,-1000,1000,100,-2000,200],
+      'binning': [100,-50,50,100,400,500],
       'var': "trueStartY:trueStartX",
       'cuts': weightStr,
       #'normalize': True,
@@ -242,9 +243,9 @@ if __name__ == "__main__":
     },
     {
       'name': "trueYFrontTPCVtrueXFrontTPC",
-      'xtitle': "True Start X Projected to Z=0 [cm]",
-      'ytitle': "True Start Y Projected to Z=0 [cm]",
-      'binning': [100,-1000,1000,100,-2000,200],
+      'xtitle': "X of True Particle Projected to Z=0 [cm]",
+      'ytitle': "Y of True Particle Projected to Z=0 [cm]",
+      'binning': [30,-60,0,30,300,500],
       'var': "trueYFrontTPC:trueXFrontTPC",
       'cuts': weightStr,
       #'normalize': True,
