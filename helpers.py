@@ -3334,7 +3334,8 @@ TRUECATEGORYFEWERCONFIGS = [
    {
      'title': "Primary Electron",
      'cuts':"trueCategory==11",
-     'color': root.kMagenta-4,
+     #'color': root.kMagenta-4,
+     'color': root.kBlack,
    },
    {
      'title': "Primary Proton",

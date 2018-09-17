@@ -19,13 +19,67 @@ if __name__ == "__main__":
   #NMAX=100
   fileConfigs = [
     {
-      'fn': "PiAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10.root",
       #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
+      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
+      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
       'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
       'title': "MCC10, 2 GeV SCE",
       'caption': "MCC10, 2 GeV SCE",
       'color': root.kBlack,
       'isData': False,
+    },
+  ]
+
+  mcPartCases = [
+    {
+      'title': "Cosmic Non-Primaries",
+      'cuts': "(!mcPartIsBeam)*(!mcPartProcess)",
+      'color': root.kBlue-7,
+    },
+    {
+      'title': "Cosmic Primaries",
+      'cuts': "(!mcPartIsBeam)*mcPartProcess",
+      'color': root.kGreen+3,
+    },
+    {
+      'title': "Beam Non-Primaries",
+      'cuts': "mcPartIsBeam*(!mcPartProcess)",
+      'color': root.kOrange-3,
+    },
+    {
+      'title': "Beam Primaries",
+      'cuts': "mcPartIsBeam*mcPartProcess",
+      'color': root.kAzure+10,
+    },
+  ]
+  for i in range(len(mcPartCases)):
+    mcPartCases[i]['color'] = TRUECATEGORYFEWERCONFIGS[i]['color']
+
+  mcPartSpeciesCases = [
+    #{
+    #  'title': "Cosmic #mu^{#pm}",
+    #  'cuts': "(!mcPartIsBeam)*(abs(mcPartPrimaryPDG) == 13)",
+    #  'color': root.kRed-4,
+    #},
+    {
+      'title': "Beam #mu^{#pm}",
+      'cuts': "mcPartIsBeam*(abs(mcPartPrimaryPDG) == 13)",
+     'color': root.kBlue-7,
+    },
+    {
+      'title': "Beam #pmp",
+      'cuts': "mcPartIsBeam*(abs(mcPartPrimaryPDG) == 2212)",
+     'color': root.kGreen+3,
+    },
+    {
+      'title': "Beam e^{#pm}",
+      'cuts': "mcPartIsBeam*(abs(mcPartPrimaryPDG) == 11)",
+     'color': root.kOrange-3,
+    },
+    {
+      'title': "Beam #pm#pi",
+      'cuts': "mcPartIsBeam*(abs(mcPartPrimaryPDG) == 211)",
+     'color': root.kAzure+10,
     },
   ]
 
@@ -198,7 +252,91 @@ if __name__ == "__main__":
     #},
   ]
 
-  plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="TruthInfo_",nMax=NMAX)
+  #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="TruthInfo_",nMax=NMAX)
+
+  histConfigs = [
+    {
+      'name': "mcPartStartMom",
+      'xtitle': "MCParticle Start Momentum [MeV/c]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,4],
+      'var': "mcPartStartMom",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "mcPartStartMom_logx",
+      'xtitle': "MCParticle Start Momentum [MeV/c]",
+      'ytitle': "Events / bin",
+      'binning': getLogBins(100,0.01,100),
+      'var': "mcPartStartMom",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+      'logx': True,
+    },
+    {
+      'name': "mcPartStartX",
+      'xtitle': "MCParticle Start X [cm]",
+      'ytitle': "Events / bin",
+      'binning': [200,-500,500],
+      'var': "mcPartStartX",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "mcPartStartY",
+      'xtitle': "MCParticle Start Y [cm]",
+      'ytitle': "Events / bin",
+      'binning': [200,-100,1500],
+      'var': "mcPartStartY",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "mcPartStartZ",
+      'xtitle': "MCParticle Start Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [200,-300,1000],
+      'var': "mcPartStartZ",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "mcPartXFrontTPC",
+      'xtitle': "X of MCParticle Projected to Z=0 [cm]",
+      'ytitle': "Events / bin",
+      'binning': [100,-1000,1000],
+      'var': "mcPartXFrontTPC",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "mcPartYFrontTPC",
+      'xtitle': "Y of MCParticle Projected to Z=0 [cm]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,1500],
+      'var': "mcPartYFrontTPC",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+  ]
+
+  DataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
+                outPrefix="TruthInfo_",nMax=NMAX,
+                catConfigs=mcPartCases
+             )
+
+  DataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
+                outPrefix="TruthInfo_Species_",nMax=NMAX,
+                catConfigs=mcPartSpeciesCases
+             )
 
   histConfigs = [
     {
