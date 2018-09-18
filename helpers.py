@@ -1244,9 +1244,13 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
   canvas.SaveAs(outfileprefix+".png")
   canvas.SaveAs(outfileprefix+".pdf")
 
-def plotHist2DSimple(hist,xtitle,ytitle,canvas,outfileprefix,captionArgs=[""],profileX=False,profileY=False,xlims=None,ylims=None):
+def plotHist2DSimple(hist,xtitle,ytitle,canvas,outfileprefix,captionArgs=[""],profileX=False,profileY=False,xlims=None,ylims=None,rebin=None):
   setupCOLZFrame(canvas)
+  hist = hist.Clone(uuid.uuid1().hex)
   hist.UseCurrentStyle()
+  if rebin:
+    assert(len(rebin)==2)
+    hist.Rebin2D(*rebin)
   if xtitle is None:
     xtitle = hist.GetXaxis().GetTitle()
   if ytitle is None:
