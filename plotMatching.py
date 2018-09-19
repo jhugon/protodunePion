@@ -458,6 +458,26 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': True,
     },
+    {
+      'name': "trackStartTheta",
+      'xtitle': "TPC Track Start #theta [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [180,0,180],
+      'var': "trackStartTheta*180/pi",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
+    {
+      'name': "trackStartPhi",
+      'xtitle': "TPC Track Start #phi [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [180,0,180],
+      'var': "trackStartPhi*180/pi",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': True,
+    },
   ]
 
   plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching_",nMax=NMAX)

@@ -56,6 +56,15 @@ if __name__ == "__main__":
       'var': "mcPartStartPhi*180/pi",
       'cut': "1",
     },
+    {
+      'name': "mcPartIsBeamPrimary",
+      'xtitle': "MCParticle is Beam + is Primary",
+      'ytitle': "Particles / bin",
+      'binning': [4,0,4],
+      'var': "mcPartIsBeam+mcPartIsPrimary",
+      #'cut': "mcPartIsBeam*mcPartIsPrimary",
+      'cut': "1",
+    },
   ]
   histConfigs = []
   for cutConfig in cutConfigs:
