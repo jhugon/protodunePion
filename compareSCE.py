@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
   # matching debug
   #cuts += "*(sqrt(pow(xWC-23.75,2)+pow(yWC-0.2,2)) < 11.93)" # wc track in flange
-  #cuts += "*(trackXFront > -50. && trackXFront < -10. && trackYFront > 390. && trackYFront < 430.)" # TPC track in flange
+  #cuts += "*(trackXFront > -50. && trackXFront < -10. && trackYFrontTPC > 390. && trackYFrontTPC < 430.)" # TPC track in flange
   #cuts += "*(trackMatchLowestZ < 2.)" # matching
   #cuts += "*(fabs(trackMatchDeltaY) < 5.)" # matching
   #cuts += "*((!isMC && (trackMatchDeltaX < 6. && trackMatchDeltaX > -4.)) || (isMC && (fabs(trackMatchDeltaX) < 5.)))" # matching
@@ -35,12 +35,12 @@ if __name__ == "__main__":
 
   fileConfigs = [
     {
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_mcc10_10evts.root",
+      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_mcc10_100evts.root",
       'title': "SCE Off",
       'caption': caption,
     },
     {
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
+      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
       'title': "SCE On",
       'caption': caption,
     },
@@ -53,7 +53,7 @@ if __name__ == "__main__":
       'name': "trackMatchDeltaX",
       'xtitle': "TPC / WC Track #Delta x at TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [40,-10,10],
+      'binning': [40,-50,50],
       #'var': "trackMatchDeltaX[iBestMatch]",
       #'cuts': "(iBestMatch >= 0)*"+weightStr,
       'var': "trackMatchDeltaX",
@@ -79,7 +79,7 @@ if __name__ == "__main__":
       'name': "trackMatchDeltaY",
       'xtitle': "TPC / WC Track #Delta y at TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [40,-10,10],
+      'binning': [40,-50,50],
       #'var': "trackMatchDeltaY[iBestMatch]",
       #'cuts': "(iBestMatch >= 0)*"+weightStr,
       'var': "trackMatchDeltaY",
@@ -106,7 +106,7 @@ if __name__ == "__main__":
       'xtitle': "TPC / WC Track #Delta #alpha [deg]",
       'ytitle': "TPC Tracks / bin",
       #'binning': [90,0,180],
-      'binning': [40,0,20],
+      'binning': [30,0,30],
       #'var': "trackMatchDeltaAngle[iBestMatch]*180/pi",
       #'cuts': "(iBestMatch >= 0)*"+weightStr,
       'var': "trackMatchDeltaAngle*180/pi",
@@ -130,44 +130,44 @@ if __name__ == "__main__":
       'caption': caption,
     },
     {
-      'name': "trackXFront",
+      'name': "trackXFrontTPC",
       'xtitle': "X of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [100,-50,0],
-      'var': "trackXFront",
+      'binning': [50,-100,100],
+      'var': "trackXFrontTPC",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
       'logy': logy,
       'caption': caption,
     },
     {
-      'name': "trackYFront",
+      'name': "trackYFrontTPC",
       'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [100,340,500],
-      'var': "trackYFront",
+      'binning': [50,340,500],
+      'var': "trackYFrontTPC",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
       'logy': logy,
       'caption': caption,
     },
     {
-      'name': "trackXFront_beamMatched",
+      'name': "trackXFrontTPC_beamMatched",
       'xtitle': "X of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [100,-50,0],
-      'var': "trackXFront",
+      'binning': [50,-100,100],
+      'var': "trackXFrontTPC",
       'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
       #'normalize': True,
       'logy': logy,
       'caption': "Truth Beam Matched, "+caption,
     },
     {
-      'name': "trackYFront_beamMatched",
+      'name': "trackYFrontTPC_beamMatched",
       'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [100,340,500],
-      'var': "trackYFront",
+      'binning': [50,340,500],
+      'var': "trackYFrontTPC",
       'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
       #'normalize': True,
       'logy': logy,

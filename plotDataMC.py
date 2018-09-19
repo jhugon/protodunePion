@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
   # matching debug
   #cuts += "*(sqrt(pow(xWC-23.75,2)+pow(yWC-0.2,2)) < 11.93)" # wc track in flange
-  #cuts += "*(trackXFront > -50. && trackXFront < -10. && trackYFront > 390. && trackYFront < 430.)" # TPC track in flange
+  #cuts += "*(trackXFrontTPC > -50. && trackXFrontTPC < -10. && trackYFrontTPC > 390. && trackYFrontTPC < 430.)" # TPC track in flange
   #cuts += "*(trackMatchLowestZ < 2.)" # matching
   #cuts += "*(fabs(trackMatchDeltaY) < 5.)" # matching
   #cuts += "*((!isMC && (trackMatchDeltaX < 6. && trackMatchDeltaX > -4.)) || (isMC && (fabs(trackMatchDeltaX) < 5.)))" # matching
@@ -34,6 +34,7 @@ if __name__ == "__main__":
   fileConfigs = [
     {
       #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
+      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
       'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
       'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
       'title': "MCC10, 2 GeV SCE",
@@ -342,21 +343,21 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
-      'name': "trackXFront",
+      'name': "trackXFrontTPC",
       'xtitle': "X of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
       'binning': [100,-50,0],
-      'var': "trackXFront",
+      'var': "trackXFrontTPC",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
       'logy': logy,
     },
     {
-      'name': "trackYFront",
+      'name': "trackYFrontTPC",
       'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
       'binning': [100,340,500],
-      'var': "trackYFront",
+      'var': "trackYFrontTPC",
       'cuts': weightStrTrackMatch,
       #'normalize': True,
       'logy': logy,
@@ -1038,11 +1039,11 @@ if __name__ == "__main__":
 #      #'logz': True,
 #    },
 #    {
-#      'name': "trackYFrontVtrackXFront",
+#      'name': "trackYFrontTPCVtrackXFrontTPC",
 #      'xtitle': "X of TPC Track Projection to TPC Front [cm]",
 #      'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
 #      'binning': [40,0,40,40,-20,20],
-#      'var': "trackYFront:trackXFront",
+#      'var': "trackYFrontTPC:trackXFrontTPC",
 #      'cuts': weightStr,
 #      #'normalize': True,
 #      #'logz': True,
@@ -1078,41 +1079,41 @@ if __name__ == "__main__":
 #      #'logz': True,
 #    },
     {
-      'name': "trackYFrontVtrackXFront",
+      'name': "trackYFrontTPCVtrackXFrontTPC",
       'xtitle': "X of TPC Track Projected to Z=0 [cm]",
       'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
       'binning': [30,-60,0,30,300,500],
-      'var': "trackYFront:trackXFront",
+      'var': "trackYFrontTPC:trackXFrontTPC",
       'cuts': weightStr,
       #'normalize': True,
       'logz': False,
     },
     {
-      'name': "trackYFrontVtrackXFront_beamMatched",
+      'name': "trackYFrontTPCVtrackXFrontTPC_beamMatched",
       'xtitle': "X of TPC Track Projected to Z=0 [cm]",
       'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
       'binning': [30,-60,0,30,300,500],
-      'var': "trackYFront:trackXFront",
+      'var': "trackYFrontTPC:trackXFrontTPC",
       'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
       #'normalize': True,
       'logz': False,
     },
     {
-      'name': "trackYFrontVtrackXFront_wide",
+      'name': "trackYFrontTPCVtrackXFrontTPC_wide",
       'xtitle': "X of TPC Track Projected to Z=0 [cm]",
       'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
       'binning': [100,-400,400,100,0,700],
-      'var': "trackYFront:trackXFront",
+      'var': "trackYFrontTPC:trackXFrontTPC",
       'cuts': weightStr,
       #'normalize': True,
       'logz': False,
     },
     {
-      'name': "trackYFrontVtrackXFront_wide_beamMatched",
+      'name': "trackYFrontTPCVtrackXFrontTPC_wide_beamMatched",
       'xtitle': "X of TPC Track Projected to Z=0 [cm]",
       'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
       'binning': [100,-400,400,100,0,700],
-      'var': "trackYFront:trackXFront",
+      'var': "trackYFrontTPC:trackXFrontTPC",
       'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
       #'normalize': True,
       'logz': False,
