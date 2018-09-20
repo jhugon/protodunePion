@@ -3,460 +3,94 @@
 import ROOT as root
 from helpers import *
 root.gROOT.SetBatch(True)
+import copy
 
 if __name__ == "__main__":
 
-  c = root.TCanvas()
-  #f = root.TFile("piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root")
-  #f = root.TFile("piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_mcc10_10evts.root")
-  f = root.TFile("piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root")
-  #f = root.TFile("piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_mcc10_100evts.root")
-  f.cd("PiAbsSelector")
-  f.ls()
-  rebinWide=[20,20]
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamline"),None,None,c,"Matching_deltaXYTPCBeamline_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamline"),None,None,c,"Matching_deltaXYTPCBeamline",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimaries"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimaries_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimaries"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimaries",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFlange"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFlange_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFlange"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFlange",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFlange"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFlange_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFlange"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFlange",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFirst25cm_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFirst25cm",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFirst25cm_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFirst25cm",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFlangeInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFlangeInFirst25cm_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyInFlangeInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyInFlangeInFirst25cm",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-  plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFlangeInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFlangeInFirst25cm_wide",captionArgs=["MCC10, 2GeV SCE"],rebin=rebinWide)
-  #plotHist2DSimple(f.Get("PiAbsSelector/deltaXYTPCBeamlineOnlyBeamPrimariesInFlangeInFirst25cm"),None,None,c,"Matching_deltaXYTPCBeamlineOnlyBeamPrimariesInFlangeInFirst25cm",captionArgs=["MCC10, 2GeV SCE"],xlims=[-50,50],ylims=[-50,50],rebin=[5,5])
-
-  hists = [
-    f.Get("PiAbsSelector/deltaAngleTPCBeamline"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyBeamPrimaries"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyInFlange"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyBeamPrimariesInFlange"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyInFirst25cm"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyBeamPrimariesInFirst25cm"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyInFlangeInFirst25cm"),
-    f.Get("PiAbsSelector/deltaAngleTPCBeamlineOnlyBeamPrimariesInFlangeInFirst25cm"),
-  ]
-  labels =[
-    "All",
-    "Only Beam Primaries",
-    "Only in Flange",
-    "Only Beam Primaries in Flange",
-    "Only Track Z < 25 cm",
-    "Only Beam Primaries & Track Z < 25 cm",
-    "Only in Flange",
-    "Only Beam Primaries in Flange",
-  ]
-  c.SetLogy()
-  plotHistsSimple(hists,labels,None,None,c,"Matching_deltaAngleTPCBeamline",rebin=5,logy=True)
-  c.SetLogy(False)
-  #plotHistsSimple(hists,labels,None,None,c,"Matching_deltaAngleTPCBeamline",normalize=True)
-
-  ###########################################################################
-
-  cuts = ""
-
-  #cuts += "*( iBestMatch >= 0 && nMatchedTracks == 1)" # matching in analyzer
-
-  # matching debug
-  #cuts += "*(sqrt(pow(xWC-23.75,2)+pow(yWC-0.2,2)) < 11.93)" # wc track in flange
-  #cuts += "*(trackXFrontTPC > -50. && trackXFrontTPC < -10. && trackYFrontTPC > 390. && trackYFrontTPC < 430.)" # TPC track in flange
-  #cuts += "*(trackMatchLowestZ < 2.)" # matching
-  #cuts += "*(fabs(trackMatchDeltaY) < 5.)" # matching
-  #cuts += "*((!isMC && (trackMatchDeltaX < 6. && trackMatchDeltaX > -4.)) || (isMC && (fabs(trackMatchDeltaX) < 5.)))" # matching
-  #cuts += "*(trackMatchDeltaAngle*180/pi < 10.)" # matching
-  ###
-  ###
-  secTrkCuts = "*(trackStartDistToPrimTrkEnd < 2.)"
-  #weightStr = "pzWeight"+cuts
-  weightStr = "1"+cuts
-
-  weightStrTrackMatch = "1"+cuts#+"*(trackMatchLowestZ < 2.)"
-
-  #nData = 224281.0
-  logy = False
-
-  NMAX=10000000000
-  #NMAX=100
-  fileConfigs = [
+  cutConfigs = [
     {
-      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
-      'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
-      'title': "MCC10, 2 GeV SCE",
-      'caption': "MCC10, 2 GeV SCE",
-      'color': root.kBlack,
-      'isData': False,
-    },
-  ]
-
-
-  histConfigs = [
-    {
-      'name': "trackYFrontTPCVtrackXFrontTPC",
-      'xtitle': "X of TPC Track Projected to Z=0 [cm]",
-      'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
-      'binning': [30,-90,30,30,360,480],
-      'var': "trackYFrontTPC:trackXFrontTPC",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
+      'name': "mcPartStartMom",
+      'xtitle': "MCParticle Start Momentum [MeV/c]",
+      'ytitle': "Particles / bin",
+      'binning': [100,0,10000],
+      #'binning': [100,0,100000],
+      'var': "mcPartStartMom",
+      'cut': "mcPartStartMom > 1000 && mcPartStartMom < 3000",
+      #'cut': "mcPartStartMom > 500 && mcPartStartMom < 10000",
+      #'cut': "1",
     },
     {
-      'name': "trackYFrontTPCVtrackXFrontTPC_beamMatched",
-      'xtitle': "X of TPC Track Projected to Z=0 [cm]",
-      'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
-      'binning': [30,-90,30,30,360,480],
-      'var': "trackYFrontTPC:trackXFrontTPC",
-      'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
-      #'normalize': True,
-      'logz': False,
+      'name': "mcPartXFrontTPC",
+      'xtitle': "X of MCParticle Projected to Z=0 [cm]",
+      'ytitle': "Particles / bin",
+      #'binning': [100,-75,20],
+      'binning': [200,-400,400],
+      'var': "mcPartXFrontTPC",
+      'cut': "mcPartXFrontTPC > -40 && mcPartXFrontTPC < 15",
+      #'cut': "1",
     },
     {
-      'name': "trackYFrontTPCVtrackXFrontTPC_wide",
-      'xtitle': "X of TPC Track Projected to Z=0 [cm]",
-      'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
-      'binning': [100,-400,400,100,0,700],
-      'var': "trackYFrontTPC:trackXFrontTPC",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
+      'name': "mcPartYFrontTPC",
+      'xtitle': "Y of MCParticle Projected to Z=0 [cm]",
+      'ytitle': "Particles / bin",
+      #'binning': [100,375,475],
+      'binning': [200,0,800],
+      'var': "mcPartYFrontTPC",
+      'cut': "mcPartYFrontTPC > 400 && mcPartYFrontTPC < 445",
+      #'cut': "1",
     },
     {
-      'name': "trackYFrontTPCVtrackXFrontTPC_wide_beamMatched",
-      'xtitle': "X of TPC Track Projected to Z=0 [cm]",
-      'ytitle': "Y of TPC Track Projected to Z=0 [cm]",
-      'binning': [100,-400,400,100,0,700],
-      'var': "trackYFrontTPC:trackXFrontTPC",
-      'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
-      #'normalize': True,
-      'logz': False,
+      'name': "mcPartStartTheta",
+      'xtitle': "#theta of MCParticle [deg]",
+      'ytitle': "Particles / bin",
+      'binning': [180,0,180],
+      'var': "mcPartStartTheta*180/pi",
+      #'cut': "mcPartStartTheta < 50*180/pi",
+      'cut': "1",
     },
     {
-      'name': "trackStartZVtrackStartX",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Z [cm]",
-      'binning': [60,-400,400,60,-10,700],
-      'var': "trackStartZ:trackStartX",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
+      'name': "mcPartStartPhi",
+      'xtitle': "#phi of MCParticle [deg]",
+      'ytitle': "Particles / bin",
+      'binning': [180,-180,180],
+      'var': "mcPartStartPhi*180/pi",
+      'cut': "1",
     },
     {
-      'name': "trackStartYVtrackStartX",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [60,-400,400,60,0,600],
-      'var': "trackStartY:trackStartX",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartYVtrackStartZ",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [60,-10,700,60,0,600],
-      'var': "trackStartY:trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartZVtrackStartX_front",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Z [cm]",
-      'binning': [30,-400,400,30,-10,30],
-      'var': "trackStartZ:trackStartX",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartYVtrackStartX_zLt20cm",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [30,-400,400,30,0,600],
-      'var': "trackStartY:trackStartX",
-      'cuts': weightStr+"*(trackStartZ < 20.)",
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartYVtrackStartX_zLt2cm",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [30,-400,400,30,0,600],
-      'var': "trackStartY:trackStartX",
-      'cuts': weightStr+"*(trackStartZ < 2.)",
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartYVtrackStartZ_front",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [30,-10,30,30,0,600],
-      'var': "trackStartY:trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartZVtrackStartX_front_beamMatched",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "TPC Track Start Z [cm]",
-      'binning': [30,-400,400,30,-10,30],
-      'var': "trackStartZ:trackStartX",
-      'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
-      #'cuts': weightStr+"*(trackTrueIsBeam)",
-      #'normalize': True,
-      'logz': False,
-    },
-    {
-      'name': "trackStartYVtrackStartZ_front_beamMatched",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "TPC Track Start Y [cm]",
-      'binning': [30,-10,30,30,0,600],
-      'var': "trackStartY:trackStartZ",
-      'cuts': weightStr+"*(trackTrueIsBeam && trackTrueMotherID==0)",
-      #'cuts': weightStr+"*(trackTrueIsBeam)",
-      #'normalize': True,
-      'logz': False,
-    },
-  ]
-
-  plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching_",nMax=NMAX)
-
-
-  ############################################################
-  #################### Compare selectons #####################
-  ############################################################
-  fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
-  caption = "MCC10, 2 GeV SCE"
-
-  fileConfigs = [
-    {
-      'fn': fn,
-      'title': "No Cuts",
-      'caption': caption,
-      'cuts': "",
-    },
-    {
-      'fn': fn,
-      'title': "Is Beam",
-      'cuts': "*(trackTrueIsBeam)",
-    },
-    {
-      'fn': fn,
-      'title': "Is Beam & Primary",
-      'cuts': "*(trackTrueIsBeam && trackTrueMotherID==0)",
-    },
-  ]
-  for i in range(len(fileConfigs)):
-    fileConfigs[i]['color'] = COLORLIST[i]
-
-  histConfigs = [
-    {
-      'name': "trackMatchDeltaX",
-      'xtitle': "TPC / WC Track #Delta x at TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [40,-100,100],
-      #'var': "trackMatchDeltaX[iBestMatch]",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaX",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchDeltaX_wide",
-      'xtitle': "TPC / WC Track #Delta x at TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [50,-500,500],
-      #'var': "trackMatchDeltaX[iBestMatch]",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaX",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchDeltaY",
-      'xtitle': "TPC / WC Track #Delta y at TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [40,-100,100],
-      #'var': "trackMatchDeltaY[iBestMatch]",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaY",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchDeltaY_wide",
-      'xtitle': "TPC / WC Track #Delta y at TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [50,-500,500],
-      #'var': "trackMatchDeltaY[iBestMatch]",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaY",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchDeltaAngle",
-      'xtitle': "TPC / WC Track #Delta #alpha [deg]",
-      'ytitle': "TPC Tracks / bin",
-      #'binning': [90,0,180],
-      'binning': [30,0,30],
-      #'var': "trackMatchDeltaAngle[iBestMatch]*180/pi",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaAngle*180/pi",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchDeltaAngle_wide",
-      'xtitle': "TPC / WC Track #Delta #alpha [deg]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [90,0,180],
-      #'binning': [20,0,20],
-      #'var': "trackMatchDeltaAngle[iBestMatch]*180/pi",
-      #'cuts': "(iBestMatch >= 0)*"+weightStr,
-      'var': "trackMatchDeltaAngle*180/pi",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
+      'name': "mcPartIsBeamPrimary",
+      'xtitle': "MCParticle is Beam + is Primary",
+      'ytitle': "Particles / bin",
+      'binning': [4,0,4],
+      'var': "mcPartIsBeam+mcPartIsPrimary",
+      #'cut': "mcPartIsBeam*mcPartIsPrimary",
+      'cut': "1",
     },
     {
       'name': "trackXFrontTPC",
       'xtitle': "X of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [50,-100,100],
+      #'binning': [100,-400,400],
+      'binning': [50,-100,50],
       'var': "trackXFrontTPC",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
+      'cut': "trackXFrontTPC > -50 && trackXFrontTPC < 0"
     },
     {
       'name': "trackYFrontTPC",
       'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
       'ytitle': "TPC Tracks / bin",
-      'binning': [50,340,500],
+      #'binning': [100,0,700],
+      'binning': [50,300,600],
       'var': "trackYFrontTPC",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackMatchLowestZ",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [50,-5,20],
-      'var': "trackMatchLowestZ",
-      'cuts': weightStrTrackMatch,
-      #'normalize': True,
-      'logy': logy,
-    },
-#    {
-#      'name': "nTOFs",
-#      'xtitle': "Number of TOF Objects",
-#      'ytitle': "Events / bin",
-#      'binning': [11,0,10],
-#      'var': "nTOFs",
-#      'cuts': weightStr,
-#      #'normalize': True,
-#      'logy': logy,
-#    },
-#    {
-#      'name': "TOFs",
-#      'xtitle': "TOF [ns]",
-#      'ytitle': "TOFs / bin",
-#      'binning': [100,0,100],
-#      'var': "TOFs",
-#      'cuts': weightStr,
-#      #'normalize': True,
-#      'logy': logy,
-#    },
-#    {
-#      'name': "firstTOF",
-#      'xtitle': "TOF [ns]",
-#      'ytitle': "Events / bin",
-#      'binning': [100,0,100],
-#      'var': "firstTOF",
-#      'cuts': weightStr,
-#      #'normalize': True,
-#      'logy': logy,
-#    },
-    {
-      'name': "trackStartX",
-      'xtitle': "TPC Track Start X [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,-400,400],
-      'var': "trackStartX",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "trackStartY",
-      'xtitle': "TPC Track Start Y [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,-5,650],
-      'var': "trackStartY",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
+      'cut': "trackYFrontTPC > 400 && trackYFrontTPC < 470"
     },
     {
       'name': "trackStartZ",
       'xtitle': "TPC Track Start Z [cm]",
       'ytitle': "Tracks / bin",
-      'binning': [200,-5,25],
+      #'binning': [400,-5,800],
+      'binning': [100,-5,25],
       'var': "trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': False,
-    },
-    {
-      'name': "trackStartZ_Logy",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,-5,25],
-      'var': "trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': True,
-    },
-    {
-      'name': "trackStartZ_wide",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,-25,725],
-      'var': "trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': False,
-    },
-    {
-      'name': "trackStartZ_wide_Logy",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,-25,725],
-      'var': "trackStartZ",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': True,
+      'cut': "trackStartZ<50",
     },
     {
       'name': "trackStartTheta",
@@ -464,20 +98,72 @@ if __name__ == "__main__":
       'ytitle': "Tracks / bin",
       'binning': [180,0,180],
       'var': "trackStartTheta*180/pi",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': True,
+      'cut': "1",
     },
     {
       'name': "trackStartPhi",
       'xtitle': "TPC Track Start #phi [deg]",
       'ytitle': "Tracks / bin",
-      'binning': [180,0,180],
+      'binning': [180,-180,180],
       'var': "trackStartPhi*180/pi",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': True,
+      'cut': "1",
+    },
+    {
+      'name': "trackLength",
+      'xtitle': "TPC Track Length [cm]",
+      'ytitle': "Tracks / bin",
+      'binning': [200,0,800],
+      'var': "trackLength",
+      'cut': "1",
+    },
+  ]
+  histConfigs = []
+  for cutConfig in cutConfigs:
+    config = copy.deepcopy(cutConfig)
+    del config["cut"]
+    config["cuts"] = "1"
+    histConfigs.append(config)
+
+  c = root.TCanvas()
+  NMAX=10000000000
+  #NMAX=100
+  nData = 224281.0
+  fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root"
+  caption = "MCC10, 2 GeV SCE"
+  fileConfigsMC = [
+    {
+      'fn': fn,
+      'title': "Beam Primaries Correctly Matched",
+      'cuts': "*(!mcPartIsBeam)*(!mcPartIsPrimary)*(mcPartTrackID==trackTrueID)",
+      'color': root.kBlue-7,
+    },
+    {
+      'fn': fn,
+      'title': "Cosmic Primaries Correctly Matched",
+      'cuts': "*(!mcPartIsBeam)*mcPartIsPrimary*(mcPartTrackID==trackTrueID)",
+      'color': root.kGreen+3,
+    },
+    {
+      'fn': fn,
+      'title': "Beam Non-Primaries Incorrectly Matched",
+      'cuts': "*mcPartIsBeam*(!mcPartIsPrimary)*(mcPartTrackID!=trackTrueID)",
+      'color': root.kOrange-3,
+    },
+    {
+      'fn': fn,
+      'title': "Beam Primaries Incorrectly Matched",
+      'cuts': "*mcPartIsBeam*mcPartIsPrimary*(mcPartTrackID!=trackTrueID)",
+      'color': root.kAzure+10,
     },
   ]
 
-  plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching_",nMax=NMAX)
+  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1Hist",nMax=NMAX)
+  DataMCStack([],fileConfigsMC,histConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="Hist",nMax=NMAX)
+  for cutConfig in cutConfigs:
+    cutConfig['logy'] = True
+  logHistConfigs = []
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  DataMCStack([],fileConfigsMC,histConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_logyHist",nMax=NMAX)
+
