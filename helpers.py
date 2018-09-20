@@ -163,7 +163,7 @@ class DataMCStack:
         dataHist.Draw("esame")
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [fileConfig['title'] for fileConfig in fileConfigMCs]
       legOptions = ["lep"]*len(fileConfigDatas)+["F"]*len(fileConfigMCs)
-      leg = drawNormalLegend(dataHists+mcHists,labels,legOptions)
+      leg = drawNormalLegend(dataHists+mcHists,labels,legOptions,wide=True)
       drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + histConfig['name'] + outSuffix
@@ -1033,7 +1033,7 @@ class NMinusOnePlot(DataMCStack):
       labels += [fileConfig['title'] for fileConfig in fileConfigMCs]
       legOptions += ["F"]*len(fileConfigMCs)
       labelHists += mcHists
-      leg = drawNormalLegend(labelHists,labels,legOptions)
+      leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
       drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + cutConfig['name'] + outSuffix

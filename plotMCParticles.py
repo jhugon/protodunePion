@@ -66,13 +66,6 @@ if __name__ == "__main__":
       'cut': "1",
     },
   ]
-  histConfigs = []
-  for cutConfig in cutConfigs:
-    config = copy.deepcopy(cutConfig)
-    del config["cut"]
-    config["cuts"] = "1"
-    histConfigs.append(config)
-
   c = root.TCanvas()
   NMAX=10000000000
   #NMAX=100
@@ -105,6 +98,17 @@ if __name__ == "__main__":
       'color': root.kAzure+10,
     },
   ]
+
+  for cutConfig in cutConfigs:
+    cutConfig["caption"] = "N-1 Cut, "+caption
+
+  histConfigs = []
+  for cutConfig in cutConfigs:
+    config = copy.deepcopy(cutConfig)
+    config["caption"] = caption
+    del config["cut"]
+    config["cuts"] = "1"
+    histConfigs.append(config)
 
   NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="MCPart_",outSuffix="_NM1Hist",nMax=NMAX)
   DataMCStack([],fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="MCPart_",outSuffix="Hist",nMax=NMAX)
