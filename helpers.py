@@ -929,6 +929,9 @@ class NMinusOnePlot(DataMCStack):
   def __init__(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1"):
     """
     Similar usage to DataMCStack, just cut instead of cuts
+
+      cutSpans: list of len 2 lists of areas to mark as cut. 
+                Use none to have a span go to the edge of the axis
     """
     for fileConfig in fileConfigDatas:
       self.loadTree(fileConfig,treename)
@@ -980,10 +983,14 @@ class NMinusOnePlot(DataMCStack):
       hlineYs = []
       vlines = []
       hlines = []
+      cutSpans = cutStringParser(cutConfig['cut'])
+      vspans = []
       if "drawvlines" in cutConfig and type(cutConfig["drawvlines"]) == list:
         vlineXs = cutConfig["drawvlines"]
       if "drawhlines" in cutConfig and type(cutConfig["drawhlines"]) == list:
         hlineYs = cutConfig["drawhlines"]
+      if "cutSpans" in cutConfig and type(cutConfig["cutSpans"]) == list:
+        cutSpans = cutConfig["cutSpans"]
       printIntegral = False
       if "printIntegral" in cutConfig and cutConfig["printIntegral"]:
         printIntegral = True
@@ -1023,6 +1030,8 @@ class NMinusOnePlot(DataMCStack):
         hlines.append(drawHline(axisHist,hlineY))
       for vlineX in vlineXs:
         vlines.append(drawVline(axisHist,vlineX))
+      for cutSpan in cutSpans:
+        vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
       #mcSumHist.Draw("histsame")
       mcStack.Draw("histsame")
       for dataHist in dataHists:
@@ -3027,7 +3036,6 @@ def Hist3D(*args,**kargs):
     raise Exception("Hist: Innapropriate arguments, requires either nBins, low, high or a list of bin edges:",args)
   return hist
 
-
 def drawVline(axisHist,x):
   axis = axisHist.GetYaxis()
   nBins = axis.GetNbins()
@@ -3054,12 +3062,16 @@ def drawHline(axisHist,y):
 
 def drawVSpan(axisHist,xMin,xMax):
   axis = axisHist.GetYaxis()
+  if xMin is None:
+    xMin = axisHist.GetXaxis().GetBinLowEdge(1)
+  if xMax is None:
+    xMax = axisHist.GetXaxis().GetBinUpEdge(axisHist.GetXaxis().GetNbins())
   nBins = axis.GetNbins()
   yLow = axis.GetBinLowEdge(1)
   yHigh = axis.GetBinUpEdge(nBins)
   result = root.TBox(xMin,yLow,xMax,yHigh)
   result.SetLineWidth(0)
-  result.SetFillColor(root.kGray+1)
+  result.SetFillColor(root.kGray)
   result.Draw("same")
   return result
 
@@ -3070,10 +3082,96 @@ def drawHSpan(axisHist,yMin,yMax):
   xHigh = axis.GetBinUpEdge(nBins)
   result = root.TBox(xLow,yMin,xHigh,yMax)
   result.SetLineWidth(0)
-  result.SetFillColor(root.kGray+1)
+  result.SetFillColor(root.kGray)
   result.Draw("same")
   return result
 
+def cutStringParser(cutString):
+  """
+  returns a list of len 2 tuples of cut spans.
+  If one end is not cut on, then will be None.
+
+  Example strings that can be parsed are:
+    "x < 6"
+    "x < 6 && x >= 3"
+    "x < 6e7 && x >= 3e2"
+    "x < 6e7 && x >= 3e2"
+  """
+
+  def compareFunc(x,y):
+    for i in x:
+      for j in y:
+        try:
+          return float(i) < float(j)
+        except TypeError:
+          pass
+
+  result = []
+  if cutString.strip(' ') == "1":
+    return result
+  cutElements = cutString.split("&&")
+  cutVals = []
+  for cutElement in cutElements:
+    nGt = 0
+    nLt = 0
+    nGeq = 0
+    nLeq = 0
+    nLeq = cutElement.count("<=")
+    nGeq = cutElement.count(">=")
+    nLt = cutElement.count("<") - nLt
+    nGt = cutElement.count(">") - nGeq
+    if nGt + nLt + nGeq + nLeq == 0:
+      continue
+    elif nGt + nLt + nGeq + nLeq == 1:
+      cutVal = cutElementParser(cutElement)
+      if cutVal:
+        cutVals.append(list(reversed(cutVal)))
+    else:
+      print "Warning: cutStringParser: '{}' has more than one comparison operator, can't parse".format(cutElement)
+  cutVals.sort(compareFunc)
+  #'cut': "mcPartYFrontTPC > 400 && mcPartYFrontTPC < 445",
+  # [[400.0, None], [None, 445.0]]
+  if len(cutVals) == 2 and cutVals[0][1] is None and cutVals[1][0] is None:
+    result = [(cutVals[0][0],cutVals[1][1])]
+  else:
+    result = cutVals
+  return result
+
+def cutElementParser(cutElement):
+  """
+  Used to parse a string like "value < 124124"
+
+  returns two element list "result" where
+    result[0] <= result[1]
+    and the one that is the varialble is None
+  """
+  for comparison in ["<=",">=","<",">"]:
+    cutAtoms = cutElement.split(comparison)
+    if len(cutAtoms) > 2:
+      print "Warning: cutElementParser: too many '{}' for '{}'".format(comparison,cutElement)
+      return None
+    if len(cutAtoms) > 1:
+      cutAtoms = [i.strip(' ') for i in cutAtoms]
+      valLeft = None
+      valRight = None
+      try:
+        valLeft = float(cutAtoms[0])
+      except ValueError:
+        pass
+      try:
+        valRight = float(cutAtoms[1])
+      except ValueError:
+        pass
+      if (valLeft is None) and (valRight is None):
+        print "Warning: cutElementParser: couldn't find float on either side of '{}' for '{}'".format(comparison,cutElement)
+        return None
+      if not ((valLeft is None) or (valRight is None)):
+        print "Warning: cutElementParser: found float on both sides of '{}' for '{}'".format(comparison,cutElement)
+        return None
+      result = [valLeft,valRight]
+      if '>' in comparison:
+        result = [valRight,valLeft]
+      return result
 
 def drawGraphs(canvas,graphs,xTitle,yTitle,yStartZero=True,xlims=None,ylims=None,freeTopSpace=0.,drawOptions="PEZ",reverseDrawOrder=False):
   xMin = 1e15
