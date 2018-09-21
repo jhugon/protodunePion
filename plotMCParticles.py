@@ -9,35 +9,65 @@ if __name__ == "__main__":
 
   cutConfigs = [
     {
-      'name': "mcPartStartMom",
-      'xtitle': "MCParticle Start Momentum [MeV/c]",
-      'ytitle': "Particles / bin",
-      'binning': [100,0,10000],
-      #'binning': [100,0,100000],
-      'var': "mcPartStartMom",
+      'histConfigs':
+        [
+          {
+            'name': "mcPartStartMom",
+            'xtitle': "MCParticle Start Momentum [MeV/c]",
+            'ytitle': "Particles / bin",
+            'binning': [100,0,10000],
+            'var': "mcPartStartMom",
+          },
+          {
+            'name': "mcPartStartMom_wide",
+            'xtitle': "MCParticle Start Momentum [MeV/c]",
+            'ytitle': "Particles / bin",
+            'binning': [200,0,100000],
+            'var': "mcPartStartMom",
+          },
+       ],
       #'cut': "mcPartStartMom > 1000 && mcPartStartMom < 3000",
       'cut': "mcPartStartMom > 500 && mcPartStartMom < 10000",
-      #'cut': "1",
     },
     {
-      'name': "mcPartXFrontTPC",
-      'xtitle': "X of MCParticle Projected to Z=0 [cm]",
-      'ytitle': "Particles / bin",
-      #'binning': [100,-75,20],
-      'binning': [200,-400,400],
-      'var': "mcPartXFrontTPC",
+      'histConfigs':
+        [
+          {
+            'name': "mcPartXFrontTPC",
+            'xtitle': "X of MCParticle Projected to Z=0 [cm]",
+            'ytitle': "Particles / bin",
+            'binning': [100,-75,20],
+            'var': "mcPartXFrontTPC",
+          },
+          {
+            'name': "mcPartXFrontTPC_wide",
+            'xtitle': "X of MCParticle Projected to Z=0 [cm]",
+            'ytitle': "Particles / bin",
+            'binning': [200,-400,400],
+            'var': "mcPartXFrontTPC",
+          },
+       ],
       'cut': "mcPartXFrontTPC > -40 && mcPartXFrontTPC < 15",
-      #'cut': "1",
     },
     {
-      'name': "mcPartYFrontTPC",
-      'xtitle': "Y of MCParticle Projected to Z=0 [cm]",
-      'ytitle': "Particles / bin",
-      #'binning': [100,375,475],
-      'binning': [200,0,800],
-      'var': "mcPartYFrontTPC",
+      'histConfigs':
+        [
+          {
+            'name': "mcPartYFrontTPC",
+            'xtitle': "Y of MCParticle Projected to Z=0 [cm]",
+            'ytitle': "Particles / bin",
+            'binning': [100,375,475],
+            'var': "mcPartYFrontTPC",
+          },
+          {
+            'name': "mcPartYFrontTPC_wide",
+            'xtitle': "Y of MCParticle Projected to Z=0 [cm]",
+            'ytitle': "Particles / bin",
+            'binning': [200,0,800],
+            'var': "mcPartYFrontTPC",
+          },
+       ],
       'cut': "mcPartYFrontTPC > 400 && mcPartYFrontTPC < 445",
-      #'cut': "1",
     },
     {
       'name': "mcPartStartTheta",
@@ -100,20 +130,35 @@ if __name__ == "__main__":
   ]
 
   for cutConfig in cutConfigs:
-    cutConfig["caption"] = "N-1 Cut, "+caption
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        histConfig["caption"] = "N-1 Cut, "+caption
+    else: 
+      cutConfig["caption"] = "N-1 Cut, "+caption
 
   histConfigs = []
   for cutConfig in cutConfigs:
-    config = copy.deepcopy(cutConfig)
-    config["caption"] = caption
-    del config["cut"]
-    config["cuts"] = "1"
-    histConfigs.append(config)
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        config = copy.deepcopy(histConfig)
+        config["caption"] = caption
+        config["cuts"] = "1"
+        histConfigs.append(config)
+    else: 
+      config = copy.deepcopy(cutConfig)
+      config["caption"] = caption
+      del config["cut"]
+      config["cuts"] = "1"
+      histConfigs.append(config)
 
   NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="MCPart_",outSuffix="_NM1Hist",nMax=NMAX)
   DataMCStack([],fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="MCPart_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
-    cutConfig['logy'] = True
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        histConfig['logy'] = True
+    else: 
+      cutConfig['logy'] = True
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True

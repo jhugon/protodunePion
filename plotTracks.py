@@ -9,30 +9,63 @@ if __name__ == "__main__":
 
   cutConfigs = [
     {
-      'name': "trackXFrontTPC",
-      'xtitle': "X of TPC Track Projection to TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [100,-400,400],
-      #'binning': [50,-100,50],
-      'var': "trackXFrontTPC",
+      'histConfigs':
+        [
+          {
+            'name': "trackXFrontTPC",
+            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [50,-100,50],
+            'var': "trackXFrontTPC",
+          },
+          {
+            'name': "trackXFrontTPC_wide",
+            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [100,-400,400],
+            'var': "trackXFrontTPC",
+          },
+       ],
       'cut': "trackXFrontTPC > -50 && trackXFrontTPC < 0"
     },
     {
-      'name': "trackYFrontTPC",
-      'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
-      'ytitle': "TPC Tracks / bin",
-      'binning': [100,0,700],
-      #'binning': [50,300,600],
-      'var': "trackYFrontTPC",
+      'histConfigs':
+        [
+          {
+            'name': "trackYFrontTPC",
+            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [50,300,600],
+            'var': "trackYFrontTPC",
+          },
+          {
+            'name': "trackYFrontTPC_wide",
+            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [100,0,700],
+            'var': "trackYFrontTPC",
+          },
+       ],
       'cut': "trackYFrontTPC > 400 && trackYFrontTPC < 470"
     },
     {
-      'name': "trackStartZ",
-      'xtitle': "TPC Track Start Z [cm]",
-      'ytitle': "Tracks / bin",
-      #'binning': [400,-5,800],
-      'binning': [100,-5,60],
-      'var': "trackStartZ",
+      'histConfigs':
+        [
+          {
+            'name': "trackStartZ",
+            'xtitle': "TPC Track Start Z [cm]",
+            'ytitle': "Tracks / bin",
+            'binning': [100,-5,60],
+            'var': "trackStartZ",
+          },
+          {
+            'name': "trackStartZ_wide",
+            'xtitle': "TPC Track Start Z [cm]",
+            'ytitle': "Tracks / bin",
+            'binning': [400,-10,705],
+            'var': "trackStartZ",
+          },
+       ],
       'cut': "trackStartZ<50",
     },
     {
@@ -93,21 +126,36 @@ if __name__ == "__main__":
   ]
 
   for cutConfig in cutConfigs:
-    cutConfig["caption"] = "N-1 Cut, "+caption
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        histConfig["caption"] = "N-1 Cut, "+caption
+    else: 
+      cutConfig["caption"] = "N-1 Cut, "+caption
 
   histConfigs = []
   for cutConfig in cutConfigs:
-    config = copy.deepcopy(cutConfig)
-    del config["cut"]
-    config["cuts"] = "1"
-    config["caption"] = caption
-    histConfigs.append(config)
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        config = copy.deepcopy(histConfig)
+        config["caption"] = caption
+        config["cuts"] = "1"
+        histConfigs.append(config)
+    else: 
+      config = copy.deepcopy(cutConfig)
+      config["caption"] = caption
+      del config["cut"]
+      config["cuts"] = "1"
+      histConfigs.append(config)
 
 
   NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX)
   DataMCStack([],fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
-    cutConfig['logy'] = True
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        histConfig['logy'] = True
+    else: 
+      cutConfig['logy'] = True
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True

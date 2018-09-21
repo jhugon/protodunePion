@@ -930,8 +930,13 @@ class NMinusOnePlot(DataMCStack):
     """
     Similar usage to DataMCStack, just cut instead of cuts
 
-      cutSpans: list of len 2 lists of areas to mark as cut. 
+    cutSpans: list of len 2 lists of areas to mark as cut. 
                 Use none to have a span go to the edge of the axis
+
+    Optionally, for multiple plots for a single cut, you can just put
+        the 'cut' and 'histConfigs', which is a list of DataMCStack-like hist configs
+        in each entry of the cutConfigs argument
+
     """
     for fileConfig in fileConfigDatas:
       self.loadTree(fileConfig,treename)
@@ -946,110 +951,113 @@ class NMinusOnePlot(DataMCStack):
         cuts.append(cutConfigs[jCut]['cut'])
       cutStr = "("+") && (".join(cuts) + ")"
       cutStr = "("+cutStr +")*"+weight
-      hists = []
-      binning = cutConfig['binning']
-      var = cutConfig['var']
-      #if var.count(":") != 0:
-      #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
-      xtitle = ""
-      ytitle = "Events/bin"
-      if "xtitle" in cutConfig: xtitle = cutConfig['xtitle']
-      if "ytitle" in cutConfig: ytitle = cutConfig['ytitle']
-      xlim = []
-      ylim = []
-      if "xlim" in cutConfig: xlim = cutConfig['xlim']
-      if "ylim" in cutConfig: ylim = cutConfig['ylim']
-      logy = False
-      logx = False
-      if "logy" in cutConfig: logy = cutConfig['logy']
-      if "logx" in cutConfig: logx = cutConfig['logx']
-      caption = ""
-      captionleft1 = ""
-      captionleft2 = ""
-      captionleft3 = ""
-      captionright1 = ""
-      captionright2 = ""
-      captionright3 = ""
-      preliminaryString = ""
-      if "caption" in cutConfig: caption = cutConfig['caption']
-      if "captionleft1" in cutConfig: captionleft1 = cutConfig['captionleft1']
-      if "captionleft2" in cutConfig: captionleft2 = cutConfig['captionleft2']
-      if "captionleft3" in cutConfig: captionleft3 = cutConfig['captionleft3']
-      if "captionright1" in cutConfig: captionright1 = cutConfig['captionright1']
-      if "captionright2" in cutConfig: captionright2 = cutConfig['captionright2']
-      if "captionright3" in cutConfig: captionright3 = cutConfig['captionright3']
-      if "preliminaryString" in cutConfig: preliminaryString = cutConfig['preliminaryString']
-      vlineXs = []
-      hlineYs = []
-      vlines = []
-      hlines = []
-      cutSpans = cutStringParser(cutConfig['cut'])
-      vspans = []
-      if "drawvlines" in cutConfig and type(cutConfig["drawvlines"]) == list:
-        vlineXs = cutConfig["drawvlines"]
-      if "drawhlines" in cutConfig and type(cutConfig["drawhlines"]) == list:
-        hlineYs = cutConfig["drawhlines"]
-      if "cutSpans" in cutConfig and type(cutConfig["cutSpans"]) == list:
-        cutSpans = cutConfig["cutSpans"]
-      printIntegral = False
-      if "printIntegral" in cutConfig and cutConfig["printIntegral"]:
-        printIntegral = True
-      # now on to the real work
-      dataHists = []
-      for fileConfig in fileConfigDatas:
-        hist = self.loadHist(cutConfig,fileConfig,binning,var,cutStr,nMax,False)
-        dataHists.append(hist)
-        if printIntegral:
-          print("{} {} Integral: {}".format(outPrefix+cutConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
-      mcHists = []
-      for fileConfig in fileConfigMCs:
-        hist = self.loadHist(cutConfig,fileConfig,binning,var,cutStr,nMax,False)
-        mcHists.append(hist)
-        if printIntegral:
-          print("{} {} Integral: {}".format(outPrefix+cutConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
-      mcSumHist = None
-      mcStack = root.THStack()
-      if len(mcHists) > 0 :
-        mcSumHist = mcHists[0].Clone(mcHists[0].GetName()+"_sumHist")
-        mcSumHist.SetFillColor(root.kBlue)
-        #mcSumHist.SetFillStyle(3254)
-        mcSumHist.SetFillStyle(1)
-        mcSumHist.SetMarkerSize(0)
-        mcSumHist.Reset()
-        for mcHist in reversed(mcHists):
-          mcSumHist.Add(mcHist)
-          mcStack.Add(mcHist)
-      if printIntegral and not (mcStack is None):
-        print("{} {} Integral: {}".format(outPrefix+cutConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
-      canvas.SetLogy(logy)
-      canvas.SetLogx(logx)
-      axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
-      setHistTitles(axisHist,xtitle,ytitle)
-      axisHist.Draw()
-      for hlineY in hlineYs:
-        hlines.append(drawHline(axisHist,hlineY))
-      for vlineX in vlineXs:
-        vlines.append(drawVline(axisHist,vlineX))
-      for cutSpan in cutSpans:
-        vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
-      #mcSumHist.Draw("histsame")
-      mcStack.Draw("histsame")
-      for dataHist in dataHists:
-        dataHist.Draw("esame")
-      labels = [fileConfig['title'] for fileConfig in fileConfigDatas]
-      legOptions = ["lep"]*len(fileConfigDatas)
-      labelHists = dataHists
-      labels += [fileConfig['title'] for fileConfig in fileConfigMCs]
-      legOptions += ["F"]*len(fileConfigMCs)
-      labelHists += mcHists
-      leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
-      drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
-      canvas.RedrawAxis()
-      saveNameBase = outPrefix + cutConfig['name'] + outSuffix
-      canvas.SaveAs(saveNameBase+".png")
-      canvas.SaveAs(saveNameBase+".pdf")
-      canvas.SetLogy(False)
-      canvas.SetLogx(False)
+      histConfigs = [cutConfig]
+      if "histConfigs" in cutConfig: histConfigs = cutConfig["histConfigs"]
+      for histConfig in histConfigs:
+        hists = []
+        binning = histConfig['binning']
+        var = histConfig['var']
+        #if var.count(":") != 0:
+        #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
+        xtitle = ""
+        ytitle = "Events/bin"
+        if "xtitle" in histConfig: xtitle = histConfig['xtitle']
+        if "ytitle" in histConfig: ytitle = histConfig['ytitle']
+        xlim = []
+        ylim = []
+        if "xlim" in histConfig: xlim = histConfig['xlim']
+        if "ylim" in histConfig: ylim = histConfig['ylim']
+        logy = False
+        logx = False
+        if "logy" in histConfig: logy = histConfig['logy']
+        if "logx" in histConfig: logx = histConfig['logx']
+        caption = ""
+        captionleft1 = ""
+        captionleft2 = ""
+        captionleft3 = ""
+        captionright1 = ""
+        captionright2 = ""
+        captionright3 = ""
+        preliminaryString = ""
+        if "caption" in histConfig: caption = histConfig['caption']
+        if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
+        if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
+        if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
+        if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
+        if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
+        if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
+        if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
+        vlineXs = []
+        hlineYs = []
+        vlines = []
+        hlines = []
+        cutSpans = cutStringParser(cutConfig['cut'])
+        vspans = []
+        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+          vlineXs = histConfig["drawvlines"]
+        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+          hlineYs = histConfig["drawhlines"]
+        if "cutSpans" in histConfig and type(histConfig["cutSpans"]) == list:
+          cutSpans = histConfig["cutSpans"]
+        printIntegral = False
+        if "printIntegral" in histConfig and histConfig["printIntegral"]:
+          printIntegral = True
+        # now on to the real work
+        dataHists = []
+        for fileConfig in fileConfigDatas:
+          hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          dataHists.append(hist)
+          if printIntegral:
+            print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        mcHists = []
+        for fileConfig in fileConfigMCs:
+          hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          mcHists.append(hist)
+          if printIntegral:
+            print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        mcSumHist = None
+        mcStack = root.THStack()
+        if len(mcHists) > 0 :
+          mcSumHist = mcHists[0].Clone(mcHists[0].GetName()+"_sumHist")
+          mcSumHist.SetFillColor(root.kBlue)
+          #mcSumHist.SetFillStyle(3254)
+          mcSumHist.SetFillStyle(1)
+          mcSumHist.SetMarkerSize(0)
+          mcSumHist.Reset()
+          for mcHist in reversed(mcHists):
+            mcSumHist.Add(mcHist)
+            mcStack.Add(mcHist)
+        if printIntegral and not (mcStack is None):
+          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+        axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
+        setHistTitles(axisHist,xtitle,ytitle)
+        axisHist.Draw()
+        for hlineY in hlineYs:
+          hlines.append(drawHline(axisHist,hlineY))
+        for vlineX in vlineXs:
+          vlines.append(drawVline(axisHist,vlineX))
+        for cutSpan in cutSpans:
+          vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
+        #mcSumHist.Draw("histsame")
+        mcStack.Draw("histsame")
+        for dataHist in dataHists:
+          dataHist.Draw("esame")
+        labels = [fileConfig['title'] for fileConfig in fileConfigDatas]
+        legOptions = ["lep"]*len(fileConfigDatas)
+        labelHists = dataHists
+        labels += [fileConfig['title'] for fileConfig in fileConfigMCs]
+        legOptions += ["F"]*len(fileConfigMCs)
+        labelHists += mcHists
+        leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
+        drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+        canvas.RedrawAxis()
+        saveNameBase = outPrefix + histConfig['name'] + outSuffix
+        canvas.SaveAs(saveNameBase+".png")
+        canvas.SaveAs(saveNameBase+".pdf")
+        canvas.SetLogy(False)
+        canvas.SetLogx(False)
 
 class DataMCCategoryStack(DataMCStack):
   def __init__(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
