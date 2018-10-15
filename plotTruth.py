@@ -18,13 +18,21 @@ if __name__ == "__main__":
   NMAX=10000000000
   #NMAX=100
   fileConfigs = [
+    #{
+    #  #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
+    #  #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
+    #  'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
+    #  'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
+    #  'title': "MCC10, 2 GeV SCE",
+    #  'caption': "MCC10, 2 GeV SCE",
+    #  'color': root.kBlack,
+    #  'isData': False,
+    #},
     {
-      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
-      #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
-      'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
-      'title': "MCC10, 2 GeV SCE",
-      'caption': "MCC10, 2 GeV SCE",
+      'fn': "piAbsSelector_mcc11_protoDUNE_reco_100evts.root",
+      'name': "protodune_mcc11",
+      'title': "MCC11",
+      'caption': "MCC11",
       'color': root.kBlack,
       'isData': False,
     },
@@ -331,7 +339,7 @@ if __name__ == "__main__":
       'xtitle': "MCParticle Start Time [ns]",
       'ytitle': "Particles / bin",
       'binning': [200,-5e3,5e3],
-      'var': "mcPartStartZ",
+      'var': "mcPartStartT",
       'cuts': weightStr,
       #'normalize': True,
       'logy': True,

@@ -27,7 +27,8 @@ if __name__ == "__main__":
           },
        ],
       #'cut': "mcPartStartMom > 1000 && mcPartStartMom < 3000",
-      'cut': "mcPartStartMom > 500 && mcPartStartMom < 10000",
+      #'cut': "mcPartStartMom > 500 && mcPartStartMom < 10000",
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -47,7 +48,8 @@ if __name__ == "__main__":
             'var': "mcPartXFrontTPC",
           },
        ],
-      'cut': "mcPartXFrontTPC > -40 && mcPartXFrontTPC < 15",
+      #'cut': "mcPartXFrontTPC > -40 && mcPartXFrontTPC < 15",
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -67,7 +69,8 @@ if __name__ == "__main__":
             'var': "mcPartYFrontTPC",
           },
        ],
-      'cut': "mcPartYFrontTPC > 400 && mcPartYFrontTPC < 445",
+      #'cut': "mcPartYFrontTPC > 400 && mcPartYFrontTPC < 445",
+      'cut': "1",
     },
     {
       'name': "mcPartStartTheta",
@@ -95,6 +98,26 @@ if __name__ == "__main__":
       #'cut': "mcPartIsBeam*mcPartIsPrimary",
       'cut': "1",
     },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "mcPartStartT",
+            'xtitle': "MCParticle Start Time [ns]",
+            'ytitle': "Particles / bin",
+            'binning': [1000,-5e3,5e3],
+            'var': "mcPartStartT",
+          },
+          {
+            'name': "mcPartStartT_zoom",
+            'xtitle': "MCParticle Start Time [ns]",
+            'ytitle': "Particles / bin",
+            'binning': [1000,-5e1,5e1],
+            'var': "mcPartStartT",
+          },
+       ],
+      'cut': "mcPartStartT==0.",
+    },
   ]
   c = root.TCanvas()
   NMAX=10000000000
@@ -102,6 +125,8 @@ if __name__ == "__main__":
   nData = 224281.0
   fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   caption = "MCC10, 2 GeV SCE"
+  fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
+  caption = "MCC11"
   fileConfigsMC = [
     {
       'fn': fn,

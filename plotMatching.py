@@ -139,8 +139,10 @@ if __name__ == "__main__":
   c = root.TCanvas()
   NMAX=10000000000
   #NMAX=100
-  fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root"
-  caption = "MCC10, 2 GeV SCE"
+  #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root"
+  #caption = "MCC10, 2 GeV SCE"
+  fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
+  caption = "MCC11"
   fileConfigsMC = [
     {
       'fn': fn,
