@@ -12,78 +12,58 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
-            'name': "trackXFrontTPC",
-            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "TPC Tracks / bin",
+            'name': "beamTrackXFrontTPC",
+            'xtitle': "X of Beam Track Projection to TPC Front [cm]",
+            'ytitle': "Beam Tracks / bin",
             'binning': [50,-100,50],
-            'var': "trackXFrontTPC",
+            'var': "beamTrackXFrontTPC",
           },
           {
-            'name': "trackXFrontTPC_wide",
-            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "TPC Tracks / bin",
+            'name': "beamTrackXFrontTPC_wide",
+            'xtitle': "X of Beam Track Projection to TPC Front [cm]",
+            'ytitle': "Beam Tracks / bin",
             'binning': [100,-400,400],
-            'var': "trackXFrontTPC",
+            'var': "beamTrackXFrontTPC",
           },
        ],
-      'cut': "trackXFrontTPC > -40 && trackXFrontTPC < 20",
+      'cut': "beamTrackXFrontTPC > -40 && beamTrackXFrontTPC < 20",
     },
     {
       'histConfigs':
         [
           {
-            'name': "trackYFrontTPC",
-            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "TPC Tracks / bin",
+            'name': "beamTrackYFrontTPC",
+            'xtitle': "Y of Beam Track Projection to TPC Front [cm]",
+            'ytitle': "Beam Tracks / bin",
             'binning': [50,300,600],
-            'var': "trackYFrontTPC",
+            'var': "beamTrackYFrontTPC",
           },
           {
-            'name': "trackYFrontTPC_wide",
-            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "TPC Tracks / bin",
+            'name': "beamTrackYFrontTPC_wide",
+            'xtitle': "Y of Beam Track Projection to TPC Front [cm]",
+            'ytitle': "Beam Tracks / bin",
             'binning': [100,0,700],
-            'var': "trackYFrontTPC",
+            'var': "beamTrackYFrontTPC",
           },
        ],
-      'cut': "trackYFrontTPC > 400 && trackYFrontTPC < 470"
+      'cut': "beamTrackYFrontTPC > 400 && beamTrackYFrontTPC < 470"
     },
     {
       'histConfigs':
         [
           {
-            'name': "trackStartZ",
-            'xtitle': "TPC Track Start Z [cm]",
-            'ytitle': "Tracks / bin",
-            'binning': [100,-5,60],
-            'var': "trackStartZ",
-          },
-          {
-            'name': "trackStartZ_wide",
-            'xtitle': "TPC Track Start Z [cm]",
-            'ytitle': "Tracks / bin",
-            'binning': [400,-10,705],
-            'var': "trackStartZ",
-          },
-       ],
-      'cut': "trackStartZ<50",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "trackStartTheta",
-            'xtitle': "TPC Track Start #theta [deg]",
+            'name': "beamTrackTheta",
+            'xtitle': "Beam Track #theta [deg]",
             'ytitle': "Tracks / bin",
             'binning': [50,0,50],
-            'var': "trackStartTheta*180/pi",
+            'var': "beamTrackTheta*180/pi",
           },
           {
-            'name': "trackStartTheta_wide",
-            'xtitle': "TPC Track Start #theta [deg]",
+            'name': "beamTrackTheta_wide",
+            'xtitle': "Beam Track #theta [deg]",
             'ytitle': "Tracks / bin",
             'binning': [180,0,180],
-            'var': "trackStartTheta*180/pi",
+            'var': "beamTrackTheta*180/pi",
           },
        ],
       'cut': "1",
@@ -92,37 +72,37 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
-            'name': "trackStartPhi",
-            'xtitle': "TPC Track Start #phi [deg]",
+            'name': "beamTrackPhi",
+            'xtitle': "Beam Track #phi [deg]",
             'ytitle': "Tracks / bin",
             'binning': [60,-160,-100],
-            'var': "trackStartPhi*180/pi",
+            'var': "beamTrackPhi*180/pi",
           },
           {
-            'name': "trackStartPhi_wide",
-            'xtitle': "TPC Track Start #phi [deg]",
+            'name': "beamTrackPhi_wide",
+            'xtitle': "Beam Track #phi [deg]",
             'ytitle': "Tracks / bin",
             'binning': [180,-180,180],
-            'var': "trackStartPhi*180/pi",
+            'var': "beamTrackPhi*180/pi",
             'printIntegral': True,
           },
        ],
       'cut': "1",
     },
     {
-      'name': "trackLength",
-      'xtitle': "TPC Track Length [cm]",
-      'ytitle': "Tracks / bin",
-      'binning': [200,0,800],
-      'var': "trackLength",
+      'name': "nBeamTracks",
+      'xtitle': "Number of Beam Tracks",
+      'ytitle': "Events / bin",
+      'binning': [21,-0.5,20.5],
+      'var': "nBeamTracks",
       'cut': "1",
     },
     {
-      'name': "trackTrueStartT",
-      'xtitle': "Track Truth Match Start Time [ns]",
-      'ytitle': "Tracks / bin",
-      'binning': [1000,-100,100],
-      'var': "trackTrueStartT",
+      'name': "beamTrackMom",
+      'xtitle': "Beam Track Momentum [GeV/c]",
+      'ytitle': "Beam Tracks / bin",
+      'binning': [100,0,10],
+      'var': "beamTrackMom",
       'cut': "1",
     },
   ]
@@ -134,9 +114,9 @@ if __name__ == "__main__":
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
   fn = "PiAbs_mcc11.root"
   caption = "MCC11"
+  scaleFactor= 8.2
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
-  #caption = "Beam Data, MCC10 2 & 7 GeV"
-  scaleFactor= 16.33
+  #caption = "MCC10 2 & 7 GeV 3m SCE"
 
   fileConfigsData = [
     #{
@@ -163,23 +143,30 @@ if __name__ == "__main__":
   fileConfigsMC = [
     {
       'fn': fn,
-      'title': "Cosmics",
-      'cuts': "*(!trackTrueIsBeam)",
+      'title': "MC, 1 Beam Track",
+      'cuts': "*(nBeamTracks==1)",
       'color': root.kBlue-7,
       'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Beam Non-Beamline",
-      'cuts': "*trackTrueIsBeam*(!(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50))",
+      'title': "MC, 2 Beam Track",
+      'cuts': "*(nBeamTracks==2)",
       'color': root.kGreen+3,
       'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Beamline",
-      'cuts': "*trackTrueIsBeam*(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50)",
+      'title': "MC, 3 Beam Track",
+      'cuts': "*(nBeamTracks==3)",
       'color': root.kOrange-3,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': fn,
+      'title': "MC, #geq 4 Beam Track",
+      'cuts': "*(nBeamTracks>=4)",
+      'color': root.kAzure+10,
       'scaleFactor': scaleFactor,
     },
   ]
@@ -207,8 +194,8 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
+  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1Hist",nMax=NMAX)
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -218,6 +205,6 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
+  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_logyHist",nMax=NMAX)
 
