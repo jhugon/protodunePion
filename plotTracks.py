@@ -26,7 +26,7 @@ if __name__ == "__main__":
             'var': "trackXFrontTPC",
           },
        ],
-      'cut': "trackXFrontTPC > -50 && trackXFrontTPC < 0"
+      'cut': "trackXFrontTPC > -40 && trackXFrontTPC < 20",
     },
     {
       'histConfigs':
@@ -69,19 +69,44 @@ if __name__ == "__main__":
       'cut': "trackStartZ<50",
     },
     {
-      'name': "trackStartTheta",
-      'xtitle': "TPC Track Start #theta [deg]",
-      'ytitle': "Tracks / bin",
-      'binning': [180,0,180],
-      'var': "trackStartTheta*180/pi",
+      'histConfigs':
+        [
+          {
+            'name': "trackStartTheta",
+            'xtitle': "TPC Track Start #theta [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [50,0,50],
+            'var': "trackStartTheta*180/pi",
+          },
+          {
+            'name': "trackStartTheta_wide",
+            'xtitle': "TPC Track Start #theta [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [180,0,180],
+            'var': "trackStartTheta*180/pi",
+          },
+       ],
       'cut': "1",
     },
     {
-      'name': "trackStartPhi",
-      'xtitle': "TPC Track Start #phi [deg]",
-      'ytitle': "Tracks / bin",
-      'binning': [180,-180,180],
-      'var': "trackStartPhi*180/pi",
+      'histConfigs':
+        [
+          {
+            'name': "trackStartPhi",
+            'xtitle': "TPC Track Start #phi [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [60,-160,-100],
+            'var': "trackStartPhi*180/pi",
+          },
+          {
+            'name': "trackStartPhi_wide",
+            'xtitle': "TPC Track Start #phi [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [180,-180,180],
+            'var': "trackStartPhi*180/pi",
+            'printIntegral': True,
+          },
+       ],
       'cut': "1",
     },
     {
@@ -92,38 +117,70 @@ if __name__ == "__main__":
       'var': "trackLength",
       'cut': "1",
     },
+    {
+      'name': "trackTrueStartT",
+      'xtitle': "Track Truth Match Start Time [ns]",
+      'ytitle': "Tracks / bin",
+      'binning': [1000,-100,100],
+      'var': "trackTrueStartT",
+      'cut': "1",
+    },
   ]
   c = root.TCanvas()
   NMAX=10000000000
   #NMAX=100
   #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   #caption = "MCC10, 2 GeV SCE"
-  fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
+  #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
+  fn = "PiAbs_mcc11.root"
   caption = "MCC11"
+  #fn = "PiAbs_mcc10_2andGeV_3ms_sce.root"
+  #caption = "Beam Data, MCC10 2 & 7 GeV"
+  scaleFactor= 16.33
+
+  fileConfigsData = [
+    #{
+    #  'fn': "PiAbs_Run5287.root",
+    #  'title': "Data Run 5287",
+    #  'caption': "Data Run 5287",
+    #  'color': root.kBlack,
+    #},
+    #{
+    #  'fn': "PiAbs_PhysicsThrough5287.root",
+    #  'title': "Data Runs 5000-5287",
+    #  'caption': "Data Runs 5000-5287",
+    #  'color': root.kBlack,
+    #  #'cuts': "(triggerIsBeam)",
+    #},
+    {
+      'fn': "PiAbs_AllData.root",
+      'title': "Data",
+      'caption': "Data",
+      'color': root.kBlack,
+      'cuts': "*(triggerIsBeam)",
+    },
+  ]
   fileConfigsMC = [
     {
       'fn': fn,
-      'title': "Cosmic Non-Primaries",
-      'cuts': "*(!trackTrueIsBeam)*(!(trackTrueMotherID==0))",
+      'title': "Cosmics",
+      'cuts': "*(!trackTrueIsBeam)",
       'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Cosmic Primaries",
-      'cuts': "*(!trackTrueIsBeam)*(trackTrueMotherID==0)",
+      'title': "Beam Non-Beamline",
+      'cuts': "*trackTrueIsBeam*(!(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50))",
       'color': root.kGreen+3,
+      'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Beam Non-Primaries",
-      'cuts': "*trackTrueIsBeam*(!(trackTrueMotherID==0))",
+      'title': "Beamline",
+      'cuts': "*trackTrueIsBeam*(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50)",
       'color': root.kOrange-3,
-    },
-    {
-      'fn': fn,
-      'title': "Beam Primaries",
-      'cuts': "*trackTrueIsBeam*(trackTrueMotherID==0)",
-      'color': root.kAzure+10,
+      'scaleFactor': scaleFactor,
     },
   ]
 
@@ -150,8 +207,8 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX)
-  DataMCStack([],fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
+  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX)
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -161,6 +218,6 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack([],fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
+  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
 
