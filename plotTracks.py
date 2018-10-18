@@ -15,14 +15,14 @@ if __name__ == "__main__":
             'name': "trackXFrontTPC",
             'xtitle': "X of TPC Track Projection to TPC Front [cm]",
             'ytitle': "TPC Tracks / bin",
-            'binning': [50,-100,50],
+            'binning': [50,-100,100],
             'var': "trackXFrontTPC",
           },
           {
             'name': "trackXFrontTPC_wide",
             'xtitle': "X of TPC Track Projection to TPC Front [cm]",
             'ytitle': "TPC Tracks / bin",
-            'binning': [100,-400,400],
+            'binning': [150,-600,600],
             'var': "trackXFrontTPC",
           },
        ],
@@ -42,7 +42,7 @@ if __name__ == "__main__":
             'name': "trackYFrontTPC_wide",
             'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
             'ytitle': "TPC Tracks / bin",
-            'binning': [100,0,700],
+            'binning': [300,-500,1500],
             'var': "trackYFrontTPC",
           },
        ],
@@ -133,10 +133,10 @@ if __name__ == "__main__":
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
   fn = "PiAbs_mcc11.root"
-  caption = "MCC11"
+  caption = "Beam Data & MCC11"
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "Beam Data, MCC10 2 & 7 GeV"
-  scaleFactor= 16.33
+  scaleFactor= 7.95
 
   fileConfigsData = [
     #{

@@ -113,8 +113,9 @@ if __name__ == "__main__":
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
   fn = "PiAbs_mcc11.root"
-  caption = "MCC11"
-  scaleFactor= 8.2
+  name = "mcc11"
+  caption = "Beam Data & MCC11"
+  scaleFactor= 2.651
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "MCC10 2 & 7 GeV 3m SCE"
 
@@ -134,6 +135,7 @@ if __name__ == "__main__":
     #},
     {
       'fn': "PiAbs_AllData.root",
+      'name': "data",
       'title': "Data",
       'caption': "Data",
       'color': root.kBlack,
@@ -194,8 +196,8 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1Hist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="Hist",nMax=NMAX)
+  #NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1Hist",nMax=NMAX)
+  #DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -205,6 +207,112 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_logyHist",nMax=NMAX)
+  #NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  #DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_logyHist",nMax=NMAX)
 
+  histConfigs= [
+    {
+      'name': "beamTrackPhi",
+      'xtitle': "Beam or TPC Track #phi [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [120,-160,-100],
+      'var': "beamTrackPhi*180/pi",
+      'cuts': "1",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "beamTrackTheta",
+      'xtitle': "Beam or TPC Track #theta [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [100,0,50],
+      'var': "beamTrackTheta*180/pi",
+      'cuts': "1",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "beamTrackXFrontTPC",
+      'xtitle': "X of Track Projection to TPC Front [cm]",
+      'ytitle': "Beam Tracks / bin",
+      'binning': [100,-100,50],
+      'var': "beamTrackXFrontTPC",
+      'cuts': "1",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "beamTrackYFrontTPC",
+      'xtitle': "Y of Track Projection to TPC Front [cm]",
+      'ytitle': "Beam Tracks / bin",
+      'binning': [100,300,600],
+      'var': "beamTrackYFrontTPC",
+      'cuts': "1",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackStartPhi",
+      'xtitle': "Beam or TPC Track #phi [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [120,-160,-100],
+      'var': "trackStartPhi*180/pi",
+      'cuts': "trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackStartTheta",
+      'xtitle': "Beam or TPC Track #theta [deg]",
+      'ytitle': "Tracks / bin",
+      'binning': [100,0,50],
+      'var': "trackStartTheta*180/pi",
+      'cuts': "trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackXFrontTPC",
+      'xtitle': "X of Track Projection to TPC Front [cm]",
+      'ytitle': "Beam Tracks / bin",
+      'binning': [100,-100,50],
+      'var': "trackXFrontTPC",
+      'cuts': "trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackYFrontTPC",
+      'xtitle': "Y of Track Projection to TPC Front [cm]",
+      'ytitle': "Beam Tracks / bin",
+      'binning': [100,300,600],
+      'var': "trackYFrontTPC",
+      'cuts': "trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+  ]
+
+  fileConfigs = fileConfigsData + [
+    {
+      'fn': fn,
+      'name': name,
+      'title': caption,
+      'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
+    },
+  ]
+
+  hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",nMax=NMAX)
+  print hists
+  for histName in ["Phi","Theta","XFrontTPC","YFrontTPC"]:
+    names = []
+    thesehists = []
+    for hn in hists:
+      if histName in hn:
+        ns = hists[hn].keys()
+        ns.sort()
+        names += [hn+" "+i for i in ns]
+        thesehists += [hists[hn][n] for n in ns]
+    print histName, names, thesehists
+    plotHistsSimple(thesehists,names,None,"Tracks / bin",c,"BeamAndTPCTracks_"+histName)
