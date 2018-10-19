@@ -297,7 +297,8 @@ if __name__ == "__main__":
     {
       'fn': fn,
       'name': name,
-      'title': caption,
+      'title': name.upper(),
+      'caption': name.upper(),
       'color': root.kBlue-7,
       'scaleFactor': scaleFactor,
     },
@@ -316,3 +317,38 @@ if __name__ == "__main__":
         thesehists += [hists[hn][n] for n in ns]
     print histName, names, thesehists
     plotHistsSimple(thesehists,names,None,"Tracks / bin",c,"BeamAndTPCTracks_"+histName)
+
+  histConfigs= [
+    {
+      'name': "deltaXFrontTPC",
+      'xtitle': "#Delta X of Track Projection to TPC Front [cm]",
+      'ytitle': "TPC Tracks / bin",
+      'binning': [100,-25,75],
+      'var': "trackXFrontTPC - beamTrackXFrontTPC[0]",
+      'cuts': "nBeamTracks == 1 && beamTrackMom > 0. && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+    },
+    {
+      'name': "deltaYFrontTPC",
+      'xtitle': "#Delta Y of Track Projection to TPC Front [cm]",
+      'ytitle': "TPC Tracks / bin",
+      'binning': [100,-50,50],
+      'var': "trackYFrontTPC - beamTrackYFrontTPC[0]",
+      'cuts': "nBeamTracks == 1 && beamTrackMom > 0. && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+    },
+  ]
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="Hist",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="_logyHist",nMax=NMAX)
+
+  histConfigs= [
+    {
+      'name': "deltaYFrontTPCVDeltaXFrontTPC",
+      'xtitle': "#Delta X of Track Projection to TPC Front [cm]",
+      'ytitle': "#Delta Y of Track Projection to TPC Front [cm]",
+      'binning': [50,-25,75,50,-50,50],
+      'var': "trackYFrontTPC - beamTrackYFrontTPC[0]:trackXFrontTPC - beamTrackXFrontTPC[0]",
+      'cuts': "nBeamTracks == 1 && beamTrackMom > 0. && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+    },
+  ]
+  plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",nMax=NMAX)
