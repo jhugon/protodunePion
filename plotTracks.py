@@ -110,6 +110,71 @@ if __name__ == "__main__":
       'cut': "1",
     },
     {
+      'histConfigs':
+        [
+          {
+            'name': "trackStartThetaY",
+            'xtitle': "TPC Track #theta_{y} [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [180,0,180],
+            'var': "acos(sin(trackStartTheta)*sin(trackStartPhi))*180./pi",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "trackStartPhiZX",
+            'xtitle': "TPC Track #phi_{zx} [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [180,-180,180],
+            'var': "atan2(sin(trackStartTheta)*cos(trackStartPhi),cos(trackStartTheta))*180./pi",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "trackStartThetaX",
+            'xtitle': "TPC Track #theta_{x} [deg]",
+            'ytitle': "Tracks / bin",
+            'binning': [180,0,180],
+            'var': "acos(sin(trackStartTheta)*cos(trackStartPhi))*180./pi",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+              'name': "trackStartCosThetaX",
+              'xtitle': "TPC Track cos(#theta_{x})",
+              'ytitle': "Tracks / bin",
+              'binning': [100,0,1],
+              'var': "sin(trackStartTheta)*cos(trackStartPhi)",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+              'name': "trackStartPhiZY",
+              'xtitle': "TPC Track #phi_{zy} [deg]",
+              'ytitle': "Tracks / bin",
+              'binning': [180,-180,180],
+              'var': "atan2(sin(trackStartTheta)*sin(trackStartPhi),cos(trackStartTheta))*180./pi",
+          },
+       ],
+      'cut': "1",
+    },
+    {
       'name': "trackLength",
       'xtitle': "TPC Track Length [cm]",
       'ytitle': "Tracks / bin",
@@ -154,8 +219,9 @@ if __name__ == "__main__":
     #},
     {
       'fn': "PiAbs_AllData.root",
-      'title': "Data",
-      'caption': "Data",
+      'name': "data",
+      'title': "ProtoDUNE-SP Data",
+      'caption': "ProtoDUNE-SP Data",
       'color': root.kBlack,
       'cuts': "*(triggerIsBeam)",
     },
@@ -163,21 +229,27 @@ if __name__ == "__main__":
   fileConfigsMC = [
     {
       'fn': fn,
-      'title': "Cosmics",
+      'name': "mcc11_cosmics",
+      'title': "MCC11 Cosmics",
+      'caption': "MCC11 Cosmics",
       'cuts': "*(!trackTrueIsBeam)",
       'color': root.kBlue-7,
       'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Beam Non-Beamline",
+      'name': "mcc11_beam_nonTrigger",
+      'title': "MCC11 Beam Non-Trigger",
+      'caption': "MCC11 Beam Non-Trigger",
       'cuts': "*trackTrueIsBeam*(!(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50))",
       'color': root.kGreen+3,
       'scaleFactor': scaleFactor,
     },
     {
       'fn': fn,
-      'title': "Beamline",
+      'name': "mcc11_beamline_trigger",
+      'title': "MCC11 Beamline Trigger",
+      'caption': "MCC11 Beamline Trigger",
       'cuts': "*trackTrueIsBeam*(trackTrueMotherID==0)*(fabs(trackTrueStartT) < 50)",
       'color': root.kOrange-3,
       'scaleFactor': scaleFactor,
@@ -221,3 +293,53 @@ if __name__ == "__main__":
   NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
   DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
 
+
+  logz = True
+  histConfigs= [
+    {
+      'name': "trackStartThetaVPhi",
+      'xtitle': "TPC Track #phi [deg]",
+      'ytitle': "TPC Track #theta [deg]",
+      'binning': [30,-180,180,30,0,180],
+      'var': "trackStartTheta*180/pi:trackStartPhi*180/pi",
+      'cuts': "1",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartThetaYVtrackStartPhiZX",
+      'xtitle': "TPC Track #phi_{zx} [deg]",
+      'ytitle': "TPC Track #theta_{y} [deg]",
+      'binning': [30,-180,180,30,0,180],
+      'var': "acos(sin(trackStartTheta)*sin(trackStartPhi))*180/pi:atan2(sin(trackStartTheta)*cos(trackStartPhi),cos(trackStartTheta))*180/pi",
+      'cuts': "1",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartThetaXVtrackStartPhiZY",
+      'xtitle': "TPC Track #phi_{zy} [deg]",
+      'ytitle': "TPC Track #theta_{x} [deg]",
+      'binning': [30,-180,180,30,0,180],
+      'var': "acos(sin(trackStartTheta)*cos(trackStartPhi))*180/pi:atan2(sin(trackStartTheta)*sin(trackStartPhi),cos(trackStartTheta))*180/pi",
+      'cuts': "1",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartThetaVtrackStartZ",
+      'xtitle': "TPC Track Start Z Position [cm]",
+      'ytitle': "TPC Track #theta [deg]",
+      'binning': [100,-50,700,30,0,180],
+      'var': "trackStartTheta*180/pi:trackStartZ",
+      'cuts': "1",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartThetaVtrackLength",
+      'xtitle': "TPC Track Length [cm]",
+      'ytitle': "TPC Track #theta [deg]",
+      'binning': [100,-50,700,30,0,180],
+      'var': "trackStartTheta*180/pi:trackLength",
+      'cuts': "1",
+      'logz': logz,
+    },
+  ]
+  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",nMax=NMAX)
