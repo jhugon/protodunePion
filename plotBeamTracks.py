@@ -145,32 +145,38 @@ if __name__ == "__main__":
   fileConfigsMC = [
     {
       'fn': fn,
-      'title': "MC, 1 Beam Track",
-      'cuts': "*(nBeamTracks==1)",
+      'title': "MCC 11",
       'color': root.kBlue-7,
       'scaleFactor': scaleFactor,
     },
-    {
-      'fn': fn,
-      'title': "MC, 2 Beam Track",
-      'cuts': "*(nBeamTracks==2)",
-      'color': root.kGreen+3,
-      'scaleFactor': scaleFactor,
-    },
-    {
-      'fn': fn,
-      'title': "MC, 3 Beam Track",
-      'cuts': "*(nBeamTracks==3)",
-      'color': root.kOrange-3,
-      'scaleFactor': scaleFactor,
-    },
-    {
-      'fn': fn,
-      'title': "MC, #geq 4 Beam Track",
-      'cuts': "*(nBeamTracks>=4)",
-      'color': root.kAzure+10,
-      'scaleFactor': scaleFactor,
-    },
+    #{
+    #  'fn': fn,
+    #  'title': "MC, 1 Beam Track",
+    #  'cuts': "*(nBeamTracks==1)",
+    #  'color': root.kBlue-7,
+    #  'scaleFactor': scaleFactor,
+    #},
+    #{
+    #  'fn': fn,
+    #  'title': "MC, 2 Beam Track",
+    #  'cuts': "*(nBeamTracks==2)",
+    #  'color': root.kGreen+3,
+    #  'scaleFactor': scaleFactor,
+    #},
+    #{
+    #  'fn': fn,
+    #  'title': "MC, 3 Beam Track",
+    #  'cuts': "*(nBeamTracks==3)",
+    #  'color': root.kOrange-3,
+    #  'scaleFactor': scaleFactor,
+    #},
+    #{
+    #  'fn': fn,
+    #  'title': "MC, #geq 4 Beam Track",
+    #  'cuts': "*(nBeamTracks>=4)",
+    #  'color': root.kAzure+10,
+    #  'scaleFactor': scaleFactor,
+    #},
   ]
 
   for cutConfig in cutConfigs:
