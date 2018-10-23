@@ -685,6 +685,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
     normToBinWidth: if True, normalize histogram to bin width (after applying
         scaleFactor)
     normalize: if True normalize histogram (after normToBinWidth)
+    normalizeYSlices: For a 2D histogram, normalize all bins for iBinX to 1.
     integral: if True, makes each bin content Nevents for X >= bin low edge.
         For 2D plots, makes each bin content Nevents for X >= and Y >= 
         their low bin edges.
@@ -837,6 +838,8 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
         hist.Scale(scaleFactor)
         if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
           normToBinWidth(hist)
+        if "normalizeYSlices" in histConfig and histConfig['normalizeYSlices']:
+            normalizeYSlices(hist)
         if "normalize" in histConfig and histConfig['normalize']:
           integral = hist.Integral()
           if integral != 0.:
@@ -2602,6 +2605,17 @@ def getIntegralHist(hist,setErrors=True,reverse=False):
           result.SetBinError(i,sumw2**0.5)
   return result
 
+def normalizeYSlices(hist):
+  assert(hist.InheritsFrom("TH2"))
+  nBinsX = hist.GetNbinsX()
+  nBinsY = hist.GetNbinsY()
+  for iBinX in range(1,nBinsX+1):
+    sliceTotal = 0.
+    for iBinY in range(0,nBinsY+2):
+      sliceTotal += hist.GetBinContent(iBinX,iBinY)
+    if sliceTotal > 0.:
+      for iBinY in range(0,nBinsY+2):
+        hist.SetBinContent(iBinX,iBinY,hist.GetBinContent(iBinX,iBinY)/sliceTotal)
 
 def hist2to1(hist):
   assert(hist.InheritsFrom("TH1"))

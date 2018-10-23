@@ -26,7 +26,8 @@ if __name__ == "__main__":
             'var': "trackXFrontTPC",
           },
        ],
-      'cut': "trackXFrontTPC > -40 && trackXFrontTPC < 20",
+      #'cut': "trackXFrontTPC > -40 && trackXFrontTPC < 20",
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -46,7 +47,8 @@ if __name__ == "__main__":
             'var': "trackYFrontTPC",
           },
        ],
-      'cut': "trackYFrontTPC > 400 && trackYFrontTPC < 470"
+      #'cut': "trackYFrontTPC > 400 && trackYFrontTPC < 470"
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -66,7 +68,8 @@ if __name__ == "__main__":
             'var': "trackStartZ",
           },
        ],
-      'cut': "trackStartZ<50",
+      #'cut': "trackStartZ<50",
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -77,6 +80,7 @@ if __name__ == "__main__":
             'ytitle': "Tracks / bin",
             'binning': [50,0,50],
             'var': "trackStartTheta*180/pi",
+            'cutSpans': [[30,None]]
           },
           {
             'name': "trackStartTheta_wide",
@@ -84,9 +88,10 @@ if __name__ == "__main__":
             'ytitle': "Tracks / bin",
             'binning': [180,0,180],
             'var': "trackStartTheta*180/pi",
+            'cutSpans': [[30,None]]
           },
        ],
-      'cut': "1",
+      'cut': "trackStartTheta < 30*pi/180",
     },
     {
       'histConfigs':
@@ -183,11 +188,46 @@ if __name__ == "__main__":
       'cut': "1",
     },
     {
-      'name': "trackTrueStartT",
-      'xtitle': "Track Truth Match Start Time [ns]",
-      'ytitle': "Tracks / bin",
-      'binning': [1000,-100,100],
-      'var': "trackTrueStartT",
+      'histConfigs':
+        [
+          {
+            'name': "trackTrueStartT",
+            'xtitle': "Track Truth Match Start Time [ns]",
+            'ytitle': "Tracks / bin",
+            'binning': [1000,-100,100],
+            'var': "trackTrueStartT",
+            'cut': "1",
+          },
+          {
+            'name': "trackTrueStartT_wide",
+            'xtitle': "Track Truth Match Start Time [#mus]",
+            'ytitle': "Tracks / bin",
+            'binning': [1000,-1000,1000],
+            'var': "trackTrueStartT/1000",
+            'cut': "1",
+          },
+       ],
+      'cut': "1",
+        
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "trackTrueKin",
+            'xtitle': "Track Truth Match Kinetic Energy [GeV]",
+            'ytitle': "Tracks / bin",
+            'binning': [100,0,20],
+            'var': "trackTrueKin/1000.",
+          },
+          {
+            'name': "trackTrueKin_wide",
+            'xtitle': "Track Truth Match Kinetic Energy [GeV]",
+            'ytitle': "Tracks / bin",
+            'binning': [200,0,100],
+            'var': "trackTrueKin/1000.",
+          },
+        ],
       'cut': "1",
     },
   ]
@@ -255,6 +295,62 @@ if __name__ == "__main__":
       'scaleFactor': scaleFactor,
     },
   ]
+  fileConfigsMCSpecies = [
+    {
+      'fn': fn,
+      'name': "mcc11_cosmics",
+      'title': "MCC11 Cosmics",
+      'caption': "MCC11 Cosmics",
+      'cuts': "*(!trackTrueIsBeam)",
+      'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': fn,
+      'name': "mcc11_beam_nonTrigger_pi",
+      'title': "MCC11 Beam Non-Trigger #pi^{#pm}",
+      'caption': "MCC11 Beam Non-Trigger #pi^{#pm}",
+      'cuts': "*trackTrueIsBeam*((trackTrueMotherID!=0) || (fabs(trackTrueStartT) >= 1e-6))*(abs(trackTruePdg)==211)",
+      'color': root.kAzure+10,
+      'scaleFactor': scaleFactor*10,
+    },
+    {
+      'fn': fn,
+      'name': "mcc11_beam_nonTrigger_mu",
+      'title': "MCC11 Beam Non-Trigger #mu^{#pm}",
+      'caption': "MCC11 Beam Non-Trigger #mu^{#pm}",
+      'cuts': "*trackTrueIsBeam*((trackTrueMotherID!=0) || (fabs(trackTrueStartT) >= 1e-6))*(abs(trackTruePdg)==13)",
+      'color': root.kRed-4,
+      'scaleFactor': scaleFactor*10,
+    },
+    {
+      'fn': fn,
+      'name': "mcc11_beam_nonTrigger_e",
+      'title': "MCC11 Beam Non-Trigger e^{#pm}",
+      'caption': "MCC11 Beam Non-Trigger e^{#pm}",
+      'cuts': "*trackTrueIsBeam*((trackTrueMotherID!=0) || (fabs(trackTrueStartT) >= 1e-6))*(abs(trackTruePdg)==11)",
+      'color': root.kGreen,
+      'scaleFactor': scaleFactor*10,
+    },
+    {
+      'fn': fn,
+      'name': "mcc11_beam_nonTrigger_p",
+      'title': "MCC11 Beam Non-Trigger p",
+      'caption': "MCC11 Beam Non-Trigger p",
+      'cuts': "*trackTrueIsBeam*((trackTrueMotherID!=0) || (fabs(trackTrueStartT) >= 1e-6))*(abs(trackTruePdg)==2212)",
+      'color': root.kYellow+1,
+      'scaleFactor': scaleFactor*10,
+    },
+    {
+      'fn': fn,
+      'name': "mcc11_beamline_trigger",
+      'title': "MCC11 Beamline Trigger",
+      'caption': "MCC11 Beamline Trigger",
+      'cuts': "*trackTrueIsBeam*(trackTrueMotherID==0) && (fabs(trackTrueStartT) < 1e-6)",
+      'color': root.kOrange-3,
+      'scaleFactor': scaleFactor,
+    },
+  ]
 
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
@@ -279,8 +375,10 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
+#  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowTheta_",outSuffix="_NM1Hist",nMax=NMAX)
+#  NMinusOnePlot(fileConfigsData,fileConfigsMCSpecies,cutConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowThetaSpecies_",outSuffix="_NM1Hist",nMax=NMAX)
+#  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowTheta_",outSuffix="Hist",nMax=NMAX)
+#  DataMCStack(fileConfigsData,fileConfigsMCSpecies,histConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowThetaSpecies_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -290,8 +388,10 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
+#  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowTheta_",outSuffix="_NM1_logyHist",nMax=NMAX)
+#  NMinusOnePlot(fileConfigsData,fileConfigsMCSpecies,cutConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowThetaSpecies_",outSuffix="_NM1_logyHist",nMax=NMAX)
+#  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowTheta_",outSuffix="_logyHist",nMax=NMAX)
+#  DataMCStack(fileConfigsData,fileConfigsMCSpecies,histConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowThetaSpecies_",outSuffix="_logyHist",nMax=NMAX)
 
   fileConfigsMC += [
     {
@@ -385,5 +485,53 @@ if __name__ == "__main__":
       'cuts': "(trackStartZ < 50)",
       'logz': logz,
     },
+    {
+      'name': "trackYFrontTPCVtrackTrueStartT_trackStartThetaLt30",
+      'xtitle': "Track True Match Start Time [ns]",
+      'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
+      'binning': [1000,-100,100,50,-200,800],
+      'var': "trackYFrontTPC:trackTrueStartT",
+      'cuts': "(trackStartTheta < 30*pi/180.)",
+      'logz': logz,
+    },
+    {
+      'name': "trackYFrontTPCVtrackTrueStartT_trackStartThetaLt30_wideT",
+      'xtitle': "Track True Match Start Time [#mus]",
+      'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
+      'binning': [1000,-1000,1000,50,-200,800],
+      'var': "trackYFrontTPC:trackTrueStartT/1000.",
+      'cuts': "(trackStartTheta < 30*pi/180.)",
+      'logz': logz,
+    },
+    {
+      'name': "trackYFrontTPCVrunNumber_trackStartThetaLt30",
+      'xtitle': "Run Number",
+      'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
+      'binning': [200,5150,5350,50,-0,1000],
+      'var': "trackYFrontTPC:runNumber",
+      'cuts': "(trackStartTheta < 30*pi/180.)",
+      'logz': False,
+      'normalizeYSlices': True,
+    },
+    {
+      'name': "trackYFrontTPCVrunNumber_trackStartThetaLt30_trackYFrontNotAroundBeam",
+      'xtitle': "Run Number",
+      'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
+      'binning': [200,5150,5350,50,-0,1000],
+      'var': "trackYFrontTPC:runNumber",
+      'cuts': "(trackStartTheta < 30*pi/180. && (trackYFrontTPC < 350 || trackYFrontTPC > 500))",
+      'logz': False,
+      'normalizeYSlices': True,
+    },
+    {
+      'name': "trackStartThetaVrunNumber",
+      'xtitle': "Run Number",
+      'ytitle': "TPC Track #theta [deg]",
+      'binning': [200,5150,5350,30,0,180],
+      'var': "trackStartTheta*180/pi:runNumber",
+      'cuts': "1",
+      'logz': False,
+      'normalizeYSlices': True,
+    },
   ]
-  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",nMax=NMAX)
+  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="TracksLowTheta_",nMax=NMAX)

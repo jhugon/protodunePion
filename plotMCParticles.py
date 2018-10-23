@@ -34,6 +34,28 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
+            'name': "mcPartStartKin",
+            'xtitle': "MCParticle Start Momentum [MeV/c]",
+            'ytitle': "Particles / bin",
+            'binning': [100,0,10000],
+            'var': "mcPartStartMom",
+          },
+          {
+            'name': "mcPartStartMom_wide",
+            'xtitle': "MCParticle Start Momentum [MeV/c]",
+            'ytitle': "Particles / bin",
+            'binning': [200,0,100000],
+            'var': "mcPartStartMom",
+          },
+       ],
+      #'cut': "mcPartStartMom > 1000 && mcPartStartMom < 3000",
+      #'cut': "mcPartStartMom > 500 && mcPartStartMom < 10000",
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
             'name': "mcPartXFrontTPC",
             'xtitle': "X of MCParticle Projected to Z=0 [cm]",
             'ytitle': "Particles / bin",
