@@ -251,7 +251,7 @@ if __name__ == "__main__":
       'name': "beamTrackYFrontTPC",
       'xtitle': "Y of Track Projection to TPC Front [cm]",
       'ytitle': "Beam Tracks / bin",
-      'binning': [100,300,600],
+      'binning': [100,350,500],
       'var': "beamTrackYFrontTPC",
       'cuts': "1",
       'normalize': True,
@@ -280,7 +280,7 @@ if __name__ == "__main__":
     {
       'name': "trackXFrontTPC",
       'xtitle': "X of Track Projection to TPC Front [cm]",
-      'ytitle': "Beam Tracks / bin",
+      'ytitle': "Tracks / bin",
       'binning': [100,-100,50],
       'var': "trackXFrontTPC",
       'cuts': "trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
@@ -290,9 +290,29 @@ if __name__ == "__main__":
     {
       'name': "trackYFrontTPC",
       'xtitle': "Y of Track Projection to TPC Front [cm]",
-      'ytitle': "Beam Tracks / bin",
-      'binning': [100,300,600],
+      'ytitle': "Tracks / bin",
+      'binning': [100,350,500],
       'var': "trackYFrontTPC",
+      'cuts': "trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackStartX",
+      'xtitle': "X Position [cm]",
+      'ytitle': "Tracks / bin",
+      'binning': [100,-100,50],
+      'var': "trackStartX",
+      'cuts': "trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+      'normalize': True,
+      'writeImage': False,
+    },
+    {
+      'name': "trackStartY",
+      'xtitle': "Y Position [cm]",
+      'ytitle': "Tracks / bin",
+      'binning': [100,350,500],
+      'var': "trackStartY",
       'cuts': "trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackStartZ<50",
       'normalize': True,
       'writeImage': False,
@@ -312,14 +332,28 @@ if __name__ == "__main__":
 
   hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",nMax=NMAX)
   print hists
-  for histName in ["Phi","Theta","XFrontTPC","YFrontTPC"]:
+  #for histName in ["Phi","Theta","XFrontTPC","YFrontTPC"]:
+  def doNames(name):
+    firstPart = "TPC"
+    thirdPart = "Data"
+    secondPart = ""
+    if "beam" in name:
+      firstPart = "Beam"
+    if "mcc11" in name:
+      thirdPart = "MCC11"
+    if "Front" in name:
+      secondPart = " at Z=0"
+    elif ("trackStartX" in name) or ("trackStartY" in name):
+      secondPart = " at Track Start"
+    return firstPart+" Track"+secondPart+" "+thirdPart
+  for histName in ["Phi","Theta","X","Y"]:
     names = []
     thesehists = []
     for hn in hists:
       if histName in hn:
         ns = hists[hn].keys()
         ns.sort()
-        names += [hn+" "+i for i in ns]
+        names += [doNames(hn+" "+i) for i in ns]
         thesehists += [hists[hn][n] for n in ns]
     print histName, names, thesehists
     plotHistsSimple(thesehists,names,None,"Tracks / bin",c,"BeamAndTPCTracks_"+histName)
@@ -356,6 +390,15 @@ if __name__ == "__main__":
       'ytitle': "#Delta Y of Track Projection to TPC Front [cm]",
       'binning': [35,-20,50,35,-20,50],
       'var': "trackYFrontTPC - beamTrackYFrontTPC[0]:trackXFrontTPC - beamTrackXFrontTPC[0]",
+      #'cuts': "nBeamTracks == 1 && beamTrackMom > 0. && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+      'cuts': "nBeamTracks == 1 && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
+    },
+    {
+      'name': "deltaYBeamTrackStartVDeltaXBeamTrackStart",
+      'xtitle': "TPC Track Start X - Beam X at TPC Front [cm]",
+      'ytitle': "TPC Track Start Y - Beam Y at TPC Front [cm]",
+      'binning': [35,-20,50,35,-20,50],
+      'var': "trackStartY - beamTrackYFrontTPC[0]:trackStartX - beamTrackXFrontTPC[0]",
       #'cuts': "nBeamTracks == 1 && beamTrackMom > 0. && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
       'cuts': "nBeamTracks == 1 && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
     },

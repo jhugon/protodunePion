@@ -52,6 +52,46 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
+            'name': "trackStartX",
+            'xtitle': "Track Start X Position [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [50,-100,100],
+            'var': "trackStartX",
+          },
+          {
+            'name': "trackStartX_wide",
+            'xtitle': "Track Start X Position [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [150,-500,500],
+            'var': "trackStartX",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "trackStartY",
+            'xtitle': "Track Start Y Position [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [50,300,600],
+            'var': "trackStartY",
+          },
+          {
+            'name': "trackStartY_wide",
+            'xtitle': "Track Start Y Position [cm]",
+            'ytitle': "TPC Tracks / bin",
+            'binning': [315,-10,620],
+            'var': "trackStartY",
+          },
+       ],
+      'cut': "1"
+    },
+    {
+      'histConfigs':
+        [
+          {
             'name': "trackStartZ",
             'xtitle': "TPC Track Start Z [cm]",
             'ytitle': "Tracks / bin",
@@ -382,6 +422,33 @@ if __name__ == "__main__":
       'ytitle': "Y of TPC Track Projection to TPC Front [cm]",
       'binning': [100,-560,560,50,-200,800],
       'var': "trackYFrontTPC:trackXFrontTPC",
+      'cuts': "(trackStartZ < 50)",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartYVtrackStartX",
+      'xtitle': "Track Start X Position [cm]",
+      'ytitle': "Track Start Y Position [cm]",
+      'binning': [100,-450,450,100,-50,650],
+      'var': "trackStartY:trackStartX",
+      'cuts': "1",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartYVtrackStartX_trackStartThetaLt30",
+      'xtitle': "Track Start X Position [cm]",
+      'ytitle': "Track Start Y Position [cm]",
+      'binning': [100,-450,450,100,-50,650],
+      'var': "trackStartY:trackStartX",
+      'cuts': "(trackStartTheta < 30*pi/180.)",
+      'logz': logz,
+    },
+    {
+      'name': "trackStartYVtrackStartX_trackStartZLt50",
+      'xtitle': "Track Start X Position [cm]",
+      'ytitle': "Track Start Y Position [cm]",
+      'binning': [100,-450,450,100,-50,650],
+      'var': "trackStartY:trackStartX",
       'cuts': "(trackStartZ < 50)",
       'logz': logz,
     },
