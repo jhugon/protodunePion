@@ -230,6 +230,14 @@ if __name__ == "__main__":
       'cuts': "*(triggerIsBeam)",
     },
     {
+      'fn': "piAbsSelector_run5174.root",
+      'name': "run5174",
+      'title': "Run 5174: 7 GeV/c",
+      'caption': "Run 5174: 7 GeV/c",
+      'color': root.kOrange-3,
+      'cuts': "*(triggerIsBeam)",
+    },
+    {
       'fn': "piAbsSelector_run5387.root",
       'name': "run5387",
       'title': "Run 5387: 1 GeV/c",
