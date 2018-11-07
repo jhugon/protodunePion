@@ -7,6 +7,7 @@ import copy
 
 m2SF=1000.
 lightTime = 155.
+momSF=1.4
 
 if __name__ == "__main__":
 
@@ -112,8 +113,9 @@ if __name__ == "__main__":
       'name': "beamMom",
       'xtitle': "Beam Momentum [GeV/c]",
       'ytitle': "Beam Momenta / bin",
-      'binning': [100,0,10],
-      'var': "beamMom",
+      'binning': [120,0,12],
+      'var': "beamMom*{}".format(momSF),
+      'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
       'cuts': "1",
     },
     {
@@ -187,36 +189,36 @@ if __name__ == "__main__":
       'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
       'ytitle': "Events / bin",
       'binning': [100,-2e5/m2SF,15e5/m2SF],
-      'var': "beamMom*beamMom*1e6*(TOF*TOF/{}-1.)*{}".format(lightTime**2,1./m2SF),
+      'var': "beamMom*beamMom*{}*1e6*(TOF*TOF/{}-1.)*{}".format(momSF**2,lightTime**2,1./m2SF),
       'cuts': "(!isMC)",
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
+      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
     },
     {
       'name': "beamlineMassSquared_zoom0",
       'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
       'ytitle': "Events / bin",
       'binning': [50,-2e5/m2SF,2e5/m2SF],
-      'var': "beamMom*beamMom*1e6*(TOF*TOF/{}-1.)*{}".format(lightTime**2,1./m2SF),
+      'var': "beamMom*beamMom*{}*1e6*(TOF*TOF/{}-1.)*{}".format(momSF**2,lightTime**2,1./m2SF),
       'cuts': "(!isMC)",
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
+      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
     },
     {
       'name': "beamlineMass",
-      'xtitle': "Beamline Mass [MeV/c^{{2}}]",
+      'xtitle': "Beamline Mass [MeV/c^{2}]",
       'ytitle': "Events / bin",
       'binning': [100,0,2000],
-      'var': "sqrt(beamMom*beamMom*1e6*(TOF*TOF/{}-1.))".format(lightTime**2),
-      'cuts': "(!isMC)"+"*(beamMom*beamMom*1e6*(TOF*TOF/{}-1.)>0.)".format(lightTime**2),
+      'var': "sqrt(beamMom*beamMom*{}*1e6*(TOF*TOF/{}-1.))".format(momSF**2,lightTime**2),
+      'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(TOF*TOF/{}-1.)>0.)".format(momSF**2,lightTime**2),
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
-      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
+      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
     },
   ]
   c = root.TCanvas()
@@ -341,7 +343,7 @@ if __name__ == "__main__":
     histConfig["ytitle"] = "Events / Bin"
   plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
 
-  functions = [root.TF1("proton","{}*sqrt({}/x/x+1.)".format(lightTime,(i*1e-3)**2),0,10) for i in [0.511,105.65,139.6,493.677,938.272046,1875.6]]
+  functions = [root.TF1("proton","{}*sqrt({}/x/x+1.)".format(lightTime,(i*1e-3)**2),0.01,15) for i in [0.511,105.65,139.6,493.677,938.272046,1875.6]]
   for i in range(len(functions)):
     functions[i].SetLineColor(COLORLIST[len(functions)-i-1])
   histConfigs= [
@@ -349,22 +351,24 @@ if __name__ == "__main__":
       'name': "TOFVMom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [100,0,8,100,0,300],
-      'var': "TOF:beamMom",
+      'binning': [150,0,12,100,0,300],
+      'var': "TOF:beamMom*{}".format(momSF),
       'cuts': "1",
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'logz': True,
     },
     {
       'name': "TOFVMom_zoom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [100,0,8,100,150,210],
-      'var': "TOF:beamMom",
+      'binning': [150,0,12,100,150,210],
+      'var': "TOF:beamMom*{}".format(momSF),
       'cuts': "1",
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'logz': True,
     },
     {
@@ -372,10 +376,11 @@ if __name__ == "__main__":
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
       'binning': [100,0,3,100,150,210],
-      'var': "TOF:beamMom",
+      'var': "TOF:beamMom*{}".format(momSF),
       'cuts': "1",
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'logz': True,
     },
   ]
