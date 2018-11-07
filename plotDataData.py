@@ -133,6 +133,14 @@ if __name__ == "__main__":
       'cuts': "1",
     },
     {
+      'name': "TOF_zoom_zoom",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [60,140,170],
+      'var': "TOF",
+      'cuts': "1",
+    },
+    {
       'name': "TOFChan",
       'xtitle': "TOF Channel",
       'ytitle': "Events / bin",
@@ -144,7 +152,8 @@ if __name__ == "__main__":
       'name': "CKov0Status",
       'xtitle': "Cherenkov 0 Status",
       'ytitle': "Events / bin",
-      'binning': [3,-1.5,1.5],
+      #'binning': [3,-1.5,1.5],
+      'binning': [2,-0.5,1.5],
       'var': "CKov0Status",
       'cuts': "1",
     },
@@ -152,7 +161,8 @@ if __name__ == "__main__":
       'name': "CKov1Status",
       'xtitle': "Cherenkov 1 Status",
       'ytitle': "Events / bin",
-      'binning': [3,-1.5,1.5],
+      #'binning': [3,-1.5,1.5],
+      'binning': [2,-0.5,1.5],
       'var': "CKov1Status",
       'cuts': "1",
     },
@@ -182,6 +192,7 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
     },
     {
       'name': "beamlineMassSquared_zoom0",
@@ -193,6 +204,7 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
     },
     {
       'name': "beamlineMass",
@@ -200,10 +212,11 @@ if __name__ == "__main__":
       'ytitle': "Events / bin",
       'binning': [100,0,2000],
       'var': "sqrt(beamMom*beamMom*1e6*(TOF*TOF/{}-1.))".format(lightTime**2),
-      'cuts': "(!isMC)",
+      'cuts': "(!isMC)"+"*(beamMom*beamMom*1e6*(TOF*TOF/{}-1.)>0.)".format(lightTime**2),
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
+      'preliminaryString': "Assuming d/c = {:.1f} ns".format(lightTime)
     },
   ]
   c = root.TCanvas()
@@ -215,28 +228,37 @@ if __name__ == "__main__":
   #fn = "PiAbs_mcc11.root"
   fn = "piAbsSelector_mcc11_protoDUNE_reco_hadd.root"
   name = "mcc11"
-  caption = "Beam Data & MCC11"
+  #caption = "ProtoDUNE-SP Internal"# & MCC11"
+  caption = ""
   scaleFactor= 2.651
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "MCC10 2 & 7 GeV 3m SCE"
 
   fileConfigsData = [
+    #{
+    #  'fn': "piAbsSelector_run5141.root",
+    #  'name': "run5141",
+    #  'title': "Run 5141: 7 GeV/c",
+    #  'caption': "Run 5141: 7 GeV/c",
+    #  'color': root.kBlack,
+    #  'cuts': "*(triggerIsBeam)",
+    #},
     {
-      'fn': "piAbsSelector_run5141.root",
-      'name': "run5141",
-      'title': "Run 5141: 7 GeV/c",
-      'caption': "Run 5141: 7 GeV/c",
-      'color': root.kBlack,
-      'cuts': "*(triggerIsBeam)",
-    },
-    {
-      'fn': "piAbsSelector_run5174.root",
-      'name': "run5174",
-      'title': "Run 5174: 7 GeV/c",
-      'caption': "Run 5174: 7 GeV/c",
+      'fn': "piAbsSelector_run5145.root",
+      'name': "run5145",
+      'title': "Run 5145: 7 GeV/c",
+      'caption': "Run 5145: 7 GeV/c",
       'color': root.kOrange-3,
       'cuts': "*(triggerIsBeam)",
     },
+    #{
+    #  'fn': "piAbsSelector_run5174.root",
+    #  'name': "run5174",
+    #  'title': "Run 5174: 7 GeV/c",
+    #  'caption': "Run 5174: 7 GeV/c",
+    #  'color': root.kOrange-3,
+    #  'cuts': "*(triggerIsBeam)",
+    #},
     {
       'fn': "piAbsSelector_run5387.root",
       'name': "run5387",
@@ -251,6 +273,22 @@ if __name__ == "__main__":
       'title': "Run 5430: 2 GeV/c",
       'caption': "Run 5430: 2 GeV/c",
       'color': root.kGreen+3,
+      'cuts': "*(triggerIsBeam)",
+    },
+  ]
+  for i, fileConfig in enumerate(fileConfigsData):
+    fileConfig['color'] = COLORLIST[i]
+  fileConfigsAllData = [
+    {
+      'fn': [
+                "piAbsSelector_run5145.root",
+                "piAbsSelector_run5387.root",
+                "piAbsSelector_run5430.root",
+            ],
+      'name': "run5145_5387_5430",
+      'title': "Runs 5145, 5387, 5430",
+      'caption': "Runs 5145, 5387, 5430",
+      'color': root.kBlack,
       'cuts': "*(triggerIsBeam)",
     },
   ]
@@ -293,10 +331,14 @@ if __name__ == "__main__":
 
   for histConfig in histConfigs:
     histConfig["caption"] = caption
+    histConfig["normalize"] = True
+    histConfig["ytitle"] = "Normalized Events / Bin"
 
   plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
   for histConfig in histConfigs:
     histConfig['logy'] = True
+    histConfig["normalize"] = False
+    histConfig["ytitle"] = "Events / Bin"
   plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
 
   functions = [root.TF1("proton","{}*sqrt({}/x/x+1.)".format(lightTime,(i*1e-3)**2),0,10) for i in [0.511,105.65,139.6,493.677,938.272046,1875.6]]
@@ -311,18 +353,33 @@ if __name__ == "__main__":
       'var': "TOF:beamMom",
       'cuts': "1",
       'funcs': functions,
+      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'logz': True,
     },
     {
       'name': "TOFVMom_zoom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [100,0,3,100,150,250],
+      'binning': [100,0,8,100,150,210],
       'var': "TOF:beamMom",
       'cuts': "1",
       'funcs': functions,
+      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'logz': True,
+    },
+    {
+      'name': "TOFVMom_zoom_zoom",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Time of Flight [ns]",
+      'binning': [100,0,3,100,150,210],
+      'var': "TOF:beamMom",
+      'cuts': "1",
+      'funcs': functions,
+      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'logz': True,
     },
   ]
-  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
+  plotOneHistOnePlot(fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
 
   histConfigs= [
     {
@@ -357,14 +414,14 @@ if __name__ == "__main__":
       'var': "TOF",
       'cuts': "CKov0Status == 0 && CKov1Status == 0",
     },
-    {
-      'title': "Invalid CKov",
-      'xtitle': "Beamline Time of Flight [ns]",
-      'ytitle': "Events / bin",
-      'binning': [100,150,250],
-      'var': "TOF",
-      'cuts': "CKov0Status == -1 && CKov1Status == -1",
-    },
+    #{
+    #  'title': "Invalid CKov",
+    #  'xtitle': "Beamline Time of Flight [ns]",
+    #  'ytitle': "Events / bin",
+    #  'binning': [100,150,250],
+    #  'var': "TOF",
+    #  'cuts': "CKov0Status == -1 && CKov1Status == -1",
+    #},
   ]
   for i, histConfig in enumerate(histConfigs):
     histConfig['color'] = COLORLIST[i]
