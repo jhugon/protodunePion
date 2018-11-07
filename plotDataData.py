@@ -6,9 +6,10 @@ root.gROOT.SetBatch(True)
 import copy
 
 m2SF=1000.
-tofSF=1.
-lightTime = 155.*tofSF
-momSF=1.4
+tofOffset=61.4
+tofDistance = 28.0
+lightTime = tofDistance/2.99e8*1e9
+momSF=1.0
 
 if __name__ == "__main__":
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":
       'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
       'ytitle': "Events / bin",
       'binning': [100,-2e5/m2SF,15e5/m2SF],
-      'var': "beamMom*beamMom*{}*1e6*(TOF*TOF*{}/{}-1.)*{}".format(momSF**2,tofSF**2,lightTime**2,1./m2SF),
+      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
       'cuts': "(!isMC)",
       #'normalize': True,
       'logy': False,
@@ -202,7 +203,7 @@ if __name__ == "__main__":
       'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
       'ytitle': "Events / bin",
       'binning': [50,-2e5/m2SF,2e5/m2SF],
-      'var': "beamMom*beamMom*{}*1e6*(TOF*TOF*{}/{}-1.)*{}".format(momSF**2,tofSF**2,lightTime**2,1./m2SF),
+      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
       'cuts': "(!isMC)",
       #'normalize': True,
       'logy': False,
@@ -214,8 +215,8 @@ if __name__ == "__main__":
       'xtitle': "Beamline Mass [MeV/c^{2}]",
       'ytitle': "Events / bin",
       'binning': [100,0,2000],
-      'var': "sqrt(beamMom*beamMom*{}*1e6*(TOF*TOF*{}/{}-1.))".format(momSF**2,tofSF**2,lightTime**2),
-      'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(TOF*TOF*{}/{}-1.)>0.)".format(momSF**2,tofSF**2,lightTime**2),
+      'var': "sqrt(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.))".format(momSF**2,tofOffset,lightTime**2),
+      'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)>0.)".format(momSF**2,tofOffset,lightTime**2),
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
@@ -284,13 +285,16 @@ if __name__ == "__main__":
   fileConfigsAllData = [
     {
       'fn': [
-                "piAbsSelector_run5145.root",
+                #"piAbsSelector_run5145.root",
                 "piAbsSelector_run5387.root",
                 "piAbsSelector_run5430.root",
             ],
-      'name': "run5145_5387_5430",
-      'title': "Runs 5145, 5387, 5430",
-      'caption': "Runs 5145, 5387, 5430",
+      #'name': "run5145_5387_5430",
+      #'title': "Runs 5145, 5387, 5430",
+      #'caption': "Runs 5145, 5387, 5430",
+      'name': "run5387_5430",
+      'title': "Runs 5387, 5430",
+      'caption': "Runs 5387, 5430",
       'color': root.kBlack,
       'cuts': "*(triggerIsBeam)",
     },
@@ -352,39 +356,39 @@ if __name__ == "__main__":
       'name': "TOFVMom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [150,0,12,100,0,300*tofSF],
-      'var': "TOF*{}:beamMom*{}".format(tofSF,momSF),
+      'binning': [150,0,12,100,0,300-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
     },
     {
       'name': "TOFVMom_zoom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [150,0,12,100,150*tofSF,210*tofSF],
-      'var': "TOF*{}:beamMom*{}".format(tofSF,momSF),
+      'binning': [150,0,12,100,150-tofOffset,210-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
     },
     {
       'name': "TOFVMom_zoom_zoom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
-      'binning': [100,0,3,100,150*tofSF,210*tofSF],
-      'var': "TOF*{}:beamMom*{}".format(tofSF,momSF),
+      'binning': [100,0,3,100,150-tofOffset,210-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
     },
   ]
