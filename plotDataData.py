@@ -6,9 +6,9 @@ root.gROOT.SetBatch(True)
 import copy
 
 m2SF=1000.
-tofSF=10
+tofSF=1.
 lightTime = 155.*tofSF
-momSF=1.
+momSF=1.4
 
 if __name__ == "__main__":
 
@@ -358,7 +358,7 @@ if __name__ == "__main__":
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
       'logz': True,
     },
     {
@@ -371,7 +371,7 @@ if __name__ == "__main__":
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
       'logz': True,
     },
     {
@@ -384,7 +384,7 @@ if __name__ == "__main__":
       'funcs': functions,
       'captionright1': "Lines Assume d/c = {:.1f} ns".format(lightTime),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
-      'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
+      #'captionright3': "TOF Scaled by {:.2f}".format(tofSF),
       'logz': True,
     },
   ]
