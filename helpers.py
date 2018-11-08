@@ -947,9 +947,11 @@ class NMinusOnePlot(DataMCStack):
       self.loadTree(fileConfig,treename)
     for fileConfig in fileConfigMCs:
       self.loadTree(fileConfig,treename)
-    nMinusCutEventCountMCSum = [""]*len(cutConfigs)
-    nMinusCutEventCountDatas = [[""]*len(cutConfigs)]*len(fileConfigDatas)
-    nMinusCutEventCountMCs = [[""]*len(cutConfigs)]*len(fileConfigMCs)
+    nMinusCutEventCounts = []
+    for i in range(len(cutConfigs)):
+      nMinusCutEventCounts.append([])
+      for j in range(len(fileConfigDatas)+1+len(fileConfigMCs)):
+        nMinusCutEventCounts[i].append("")
     for iCut in range(len(cutConfigs)):
       cutConfig = cutConfigs[iCut]
       cuts = []
@@ -961,7 +963,7 @@ class NMinusOnePlot(DataMCStack):
       cutStr = "("+cutStr +")*"+weight
       histConfigs = [cutConfig]
       if "histConfigs" in cutConfig: histConfigs = cutConfig["histConfigs"]
-      for histConfig in histConfigs:
+      for iHistConfig, histConfig in enumerate(histConfigs):
         hists = []
         binning = histConfig['binning']
         var = histConfig['var']
@@ -1015,16 +1017,16 @@ class NMinusOnePlot(DataMCStack):
         for iFile, fileConfig in enumerate(fileConfigDatas):
           hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
           dataHists.append(hist)
-          if table:
-            nMinusCutEventCountDatas[iFile][iCut] = getIntegralAll(hist)
+          if table and iHistConfig == 0:
+            nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
           if printIntegral:
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
         mcHists = []
         for iFile, fileConfig in enumerate(fileConfigMCs):
           hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
           mcHists.append(hist)
-          if table:
-            nMinusCutEventCountMCs[iFile][iCut] = getIntegralAll(hist)
+          if table and iHistConfig == 0:
+            nMinusCutEventCounts[iCut][len(fileConfigDatas)+1+iFile] = "{:.1f}".format(getIntegralAll(hist))
           if printIntegral:
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
         mcSumHist = None
@@ -1039,8 +1041,8 @@ class NMinusOnePlot(DataMCStack):
           for mcHist in reversed(mcHists):
             mcSumHist.Add(mcHist)
             mcStack.Add(mcHist)
-        if table:
-          nMinusCutEventCountMCSum[iCut] = getIntegralAll(hist)
+        if table and iHistConfig == 0:
+          nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
         if printIntegral and not (mcStack is None):
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
         canvas.SetLogy(logy)
@@ -1073,16 +1075,17 @@ class NMinusOnePlot(DataMCStack):
         canvas.SetLogy(False)
         canvas.SetLogx(False)
     if table:
-      def formatList(x,places):
-        if type(x) == list:
-            return [formatList(i,places) for i in x]
-        else:
-            return ("{:."+str(places)+"f}").format(x)
-      rows = formatList(nMinusCutEventCountDatas,0)
-      rows += [formatList(nMinusCutEventCountMCSum,1)]
-      rows += formatList(nMinusCutEventCountMCs,1)
-      print rows
-      printTable(rows)
+      #rowTitles = []
+      #for cutConfig in cutConfigs:
+      #  if 'xtitle' in cutConfig:
+      #    rowTitles.append(cutConfig['xtitle']+" "+cutConfig['cut'])
+      #  else:
+      #    for histConfig in histConfigs:
+      #      rowTitles.append(histConfig['xtitle']+" "+cutConfig['cut'])
+      
+      rowTitles = [x['cut'] for x in cutConfigs]
+      columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
+      printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
 class DataMCCategoryStack(DataMCStack):
   def __init__(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
@@ -3388,7 +3391,7 @@ def printTable(data,columnTitles=None,rowTitles=None):
   nRows = len(data)
   if nRows == 0:
     return
-  if rowTitles:
+  if rowTitles and (len(rowTitles) != nRows):
     exceptionStr = "Different number of rows ({}) and rowTitles ({})".format(nRows,len(rowTitles))
     raise Exception(exceptionStr)
   nCols = None
@@ -3427,7 +3430,7 @@ def printTable(data,columnTitles=None,rowTitles=None):
   if columnTitles:
     outStr = ""
     if rowTitles:
-      outStr += ""*rowTitleLength + 1
+      outStr += " "*(rowTitleLength + 1)
     for iCol in range(nCols):
       if iCol != 0:
         outStr += " "
@@ -3438,7 +3441,7 @@ def printTable(data,columnTitles=None,rowTitles=None):
     row = data[iRow]
     outStr = ""
     if rowTitles:
-      outStr += ("{:"+str(rowTitleLength)+"} ").format(rowTitle[iRow])
+      outStr += ("{:"+str(rowTitleLength)+"} ").format(rowTitles[iRow])
     for iCol in range(nCols):
       if iCol != 0:
         outStr += " "
