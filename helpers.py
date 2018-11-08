@@ -3355,6 +3355,177 @@ def smallMultiples(histLists,axisLabels=None,xlimits=[0.001,0.999],ylimits=[0.00
   
   canvas.SaveAs("Test.png")
 
+def printTable(data,columnTitles=None,rowTitles=None):
+  """
+  Prints out a nicely formatted table of data.
+
+  data is a list of lists
+    each element of data is a line, and each element of that is a row entry
+  """
+
+  nRows = len(data)
+  if nRows == 0:
+    return
+  if rowTitles:
+    assert(len(rowTitles) == nRows)
+  nCols = None
+  colLengths = None
+  for row in data:
+    if nCols is None:
+      nCols = len(row)
+      colLengths = [0]*nCols
+    else:
+      assert(nCols == len(row))
+    for iCol in range(nCols):
+      assert(type(row[iCol])==str)
+      colLengths[iCol] = max(len(row[iCol]),colLengths[iCol])
+  if columnTitles:
+    assert(len(columnTitles) == nCols)
+    for iCol in range(nCols):
+      assert(type(columnTitles[iCol])==str)
+      colLengths[iCol] = max(len(columnTitles[iCol]),colLengths[iCol])
+
+  rowCharLength = 0
+  for iCol in range(nCols):
+    if iCol != 0:
+      rowCharLength += 1
+    rowCharLength += colLengths[iCol]
+
+  rowTitleLength = 0
+  if rowTitles:
+    for rowTitle in rowTitles:
+      assert(type(rowTitle)==str)
+      rowTitleLength = max(len(rowTitle),rowTitleLength)
+    rowCharLength += rowTitleLength + 1
+
+  print "="*rowCharLength
+  if columnTitles:
+    outStr = ""
+    if rowTitles:
+      outStr += ""*rowTitleLength + 1
+    for iCol in range(nCols):
+      if iCol != 0:
+        outStr += " "
+      outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol])
+    print outStr
+    print "-"*rowCharLength
+  for iRow in range(len(data)):
+    row = data[iRow]
+    outStr = ""
+    if rowTitles:
+      outStr += ("{:"+str(rowTitleLength)+"} ").format(rowTitle[iRow])
+    for iCol in range(nCols):
+      if iCol != 0:
+        outStr += " "
+      outStr += ("{:"+str(colLengths[iCol])+"}").format(row[iCol])
+    print outStr
+  print "="*rowCharLength
+
+def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=True,nMax=100):
+  tree = root.TChain(treename)
+  try:
+    if type(infilename) is str:
+        tree.AddFile(infilename)
+    elif type(infilename) is list:
+        for fn in infilename:
+            tree.AddFile(fn)
+    else:
+        raise Exception("")
+  except KeyError:
+    return
+  nEvents = tree.GetEntries()
+  nEvents = min(nEvents,nMax)
+  allVals = []
+  filenames = []
+  for iEvent in range(nEvents):
+    tree.GetEntry(iEvent)
+    failedCuts = False
+    for cutVar in cuts:
+      cutOp = cuts[cutVar][0]
+      cutVal = cuts[cutVar][1]
+      if cutOp == "==" or cutOp == "=":
+        if getattr(tree,cutVar) != cutVal:
+          failedCuts = True
+          break
+      elif cutOp == "!=":
+        if getattr(tree,cutVar) == cutVal:
+          failedCuts = True
+          break
+      elif cutOp == ">":
+        if getattr(tree,cutVar) <= cutVal:
+          failedCuts = True
+          break
+      elif cutOp == "<":
+        if getattr(tree,cutVar) >= cutVal:
+          failedCuts = True
+          break
+      elif cutOp == ">=":
+        if getattr(tree,cutVar) < cutVal:
+          failedCuts = True
+          break
+      elif cutOp == "<=":
+        if getattr(tree,cutVar) > cutVal:
+          failedCuts = True
+          break
+      else:
+        raise Exception("Unknown cut op: ",cutOp)
+    if failedCuts:
+      continue
+    runNumber = tree.runNumber
+    eventNumber = tree.eventNumber
+    try:
+        filenames.append(str(tree.infilename))
+    except:
+        filenames.append("No filename")
+    vals = []
+    vals.append("{:>05}:{:>05}".format(runNumber,eventNumber))
+    for variableName in variableNames:
+      try:
+        val = getattr(tree,variableName)
+      except:
+        val = "Error"
+      finally:
+        if type(val) == root.string:
+            val = str(val)
+        if type(val) != str:
+          try:
+              val = val[0]
+          except TypeError:
+              pass
+          except IndexError:
+              val = "Empty"
+        if type(val) == float:
+          val = "{:g}".format(val)
+        else:
+          val = "{}".format(val)
+        #val = variableName + ": "+val
+        vals.append(val)
+    allVals.append(vals)
+  columnTitles = ["Event"]+variableNames
+  printTable(allVals,columnTitles=columnTitles)
+  """
+  nLines = len(allVals)
+  nPerLine = len(variableNames)
+  valLengths = []
+  for i in range(nPerLine+1):
+    maxLen = 0
+    for vals in allVals:
+      maxLen = max(maxLen,len(vals[i]))
+    valLengths.append(maxLen)
+  for iLine in range(nLines):
+    outStr = ("{:"+str(valLengths[0])+"}").format(allVals[iLine][0])
+    for i in range(1,nPerLine+1):
+      outStr += " {}: ".format(variableNames[i-1])
+      outStr += ("{:"+str(valLengths[i])+"}").format(allVals[iLine][i])
+    print outStr
+    if printFullFilename:
+        print "  ",filenames[iLine]
+    elif printFileBasename:
+        print "  ",os.path.basename(filenames[iLine])
+  """
+        
+
+
 COLORLIST=[
       root.kBlue-7,
       root.kRed-4,
