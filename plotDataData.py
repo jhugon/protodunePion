@@ -196,7 +196,8 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
     },
     {
       'name': "beamlineMassSquared_zoom0",
@@ -208,7 +209,8 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
     },
     {
       'name': "beamlineMass",
@@ -220,7 +222,8 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': False,
       'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
-      'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
     },
   ]
   c = root.TCanvas()
@@ -247,14 +250,14 @@ if __name__ == "__main__":
     #  'color': root.kBlack,
     #  'cuts': "*(triggerIsBeam)",
     #},
-    {
-      'fn': "piAbsSelector_run5145.root",
-      'name': "run5145",
-      'title': "Run 5145: 7 GeV/c",
-      'caption': "Run 5145: 7 GeV/c",
-      'color': root.kOrange-3,
-      'cuts': "*(triggerIsBeam)",
-    },
+#    {
+#      'fn': "piAbsSelector_run5145.root",
+#      'name': "run5145",
+#      'title': "Run 5145: 7 GeV/c",
+#      'caption': "Run 5145: 7 GeV/c",
+#      'color': root.kOrange-3,
+#      'cuts': "*(triggerIsBeam)",
+#    },
     #{
     #  'fn': "piAbsSelector_run5174.root",
     #  'name': "run5174",
