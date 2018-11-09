@@ -18,21 +18,27 @@ if __name__ == "__main__":
 
   cutConfigs = [
     {"name": "All","cut": "1"},
-    {"name": "Beam Trigger","cut": "triggerIsBeam == 1"},
-    {"name": "nTracks","cut": "nTracks>3"},
-    {"name": "nTracks","cut": "nTracks>80"},
+    {"name": "CTB Beam Trigger","cut": "triggerIsBeam == 1"}, # CTB beam trigger
+    {"name": "CTB BI Info Valid","cut": "BITrigger >= 0"}, # valid BI info in CTB
+    {"name": "CTB TOF Coincidence","cut": "BITrigger > 0"}, # TOF coincidence according to CTB
+    {"name": "CTB-BI Matched","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "> 0 Beam Momentum","cut": "nBeamMom > 0"},
+    {"name": "> 0 Beam Track","cut": "nBeamTracks > 0"},
+    #{"name": "CKov0 is 1","cut": "CKov0Status == 1"},
+    #{"name": "CKov1 is 1","cut": "CKov1Status == 1"},
+    #{"name": "TOF < 160 ns","cut": "TOF < 160."},
   ]
 
   fileConfigsData = [
-    {
-      'fn': "PiAbsSelector.root",
-      'name': "test",
-    },
-    {
-      'fn': "piAbsSelector_run5141.root",
-      'name': "run5141",
-      'title': "Run 5141 7 GeV/c",
-    },
+    #{
+    #  'fn': "PiAbsSelector.root",
+    #  'name': "test",
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5141.root",
+    #  'name': "run5141",
+    #  'title': "Run 5141 7 GeV/c",
+    #},
     {
       'fn': "piAbsSelector_run5145.root",
       'name': "run5145",
@@ -65,6 +71,6 @@ if __name__ == "__main__":
       'title': "Run 5777 3 GeV/c",
     },
   ]
-  #fileConfigsData = [fileConfigsData[0]]
 
   PrintCutTable(fileConfigsData,cutConfigs,"PiAbsSelector/tree",nMax=NMAX)
+  #fileConfigsData[0]['tree'].Print()
