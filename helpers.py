@@ -3380,13 +3380,33 @@ def smallMultiples(histLists,axisLabels=None,xlimits=[0.001,0.999],ylimits=[0.00
   
   canvas.SaveAs("Test.png")
 
-def printTable(data,columnTitles=None,rowTitles=None):
+def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
   """
   Prints out a nicely formatted table of data.
 
   data is a list of lists
     each element of data is a line, and each element of that is a row entry
+
+  If splitColumnTitles is True, then will split titles into multiple lines at spaces to make narrower
   """
+
+  def splitString(instr, length):
+    sstr = instr.split(" ")
+    result = []
+    for substr in sstr:
+      if len(result) == 0:
+        result.append(substr) # make new line
+        continue
+      lastLen = len(result[-1])
+      if lastLen >= length:
+        result.append(substr) # make new line
+        continue
+      substrLen = len(substr)
+      if lastLen + substrLen > length + 5:
+        result.append(substr) # make new line
+        continue
+      result[-1] += " "+substr # add text to existing line
+    return result
 
   nRows = len(data)
   if nRows == 0:
@@ -3407,11 +3427,20 @@ def printTable(data,columnTitles=None,rowTitles=None):
     for iCol in range(nCols):
       assert(type(row[iCol])==str)
       colLengths[iCol] = max(len(row[iCol]),colLengths[iCol])
+  nColumnTitleRows = 1
   if columnTitles:
     assert(len(columnTitles) == nCols)
     for iCol in range(nCols):
       assert(type(columnTitles[iCol])==str)
-      colLengths[iCol] = max(len(columnTitles[iCol]),colLengths[iCol])
+      if splitColumnTitles:
+        columnTitles[iCol] = splitString(columnTitles[iCol],colLengths[iCol])
+        for colTitleRow in columnTitles[iCol]:
+          colLengths[iCol] = max(len(colTitleRow),colLengths[iCol])
+      else:
+        colLengths[iCol] = max(len(columnTitles[iCol]),colLengths[iCol])
+    if splitColumnTitles:
+      for colTitleRow in columnTitles:
+        nColumnTitleRows = max(nColumnTitleRows,len(colTitleRow))
 
   rowCharLength = 0
   for iCol in range(nCols):
@@ -3428,14 +3457,21 @@ def printTable(data,columnTitles=None,rowTitles=None):
 
   print "="*rowCharLength
   if columnTitles:
-    outStr = ""
-    if rowTitles:
-      outStr += " "*(rowTitleLength + 1)
-    for iCol in range(nCols):
-      if iCol != 0:
-        outStr += " "
-      outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol])
-    print outStr
+    for iColumnTitleRow in range(nColumnTitleRows):
+      outStr = ""
+      if rowTitles:
+        outStr += " "*(rowTitleLength + 1)
+      for iCol in range(nCols):
+        if iCol != 0:
+          outStr += " "
+        if splitColumnTitles:
+          if len(columnTitles[iCol]) > iColumnTitleRow:
+            outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol][iColumnTitleRow])
+          else:
+            outStr += " "*colLengths[iCol]
+        else:
+          outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol])
+      print outStr
     print "-"*rowCharLength
   for iRow in range(len(data)):
     row = data[iRow]
@@ -3445,7 +3481,7 @@ def printTable(data,columnTitles=None,rowTitles=None):
     for iCol in range(nCols):
       if iCol != 0:
         outStr += " "
-      outStr += ("{:"+str(colLengths[iCol])+"}").format(row[iCol])
+      outStr += ("{:>"+str(colLengths[iCol])+"}").format(row[iCol])
     print outStr
   print "="*rowCharLength
 
