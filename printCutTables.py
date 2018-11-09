@@ -23,8 +23,18 @@ class PrintCutTable(DataMCStack):
     cutNames = self.getCutNames(cutConfigs)
     for fileConfig in fileConfigs:
       self.loadTree(fileConfig,treename)
-    counts = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
-    printTable(counts,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
+    countsCumu = self.getCountsCumulativeCut(fileConfigs,cutConfigs,nMax)
+    countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
+    countsCumuPerTop = self.getPercOfTopRow(countsCumu)
+    print "Individual Cuts"
+    printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    print "Cumulative Cuts"
+    printTable(countsCumu,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    print "Individual Cuts Percentage of Top Row"
+    printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    print "Cumulative Cuts Percentage of Top Row"
+    printTable(countsCumuPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
 
   def getCutNames(self,cutConfigs):
     cutNames = []
@@ -77,6 +87,34 @@ class PrintCutTable(DataMCStack):
         hist = self.loadHist(histConfig,fileConfig,binning,var,thisCut,nMax,False)
         counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
+
+  def getCountsCumulativeCut(self,fileConfigs,cutConfigs,nMax):
+    counts = self.getEmptyCountsList(fileConfigs,cutConfigs)
+    binning = [1,0,2]
+    var = "1"
+    histConfig = {}
+    cutString = "(1"
+    for iCut in range(len(cutConfigs)):
+      cutConfig = cutConfigs[iCut]
+      cutString += " && ("+cutConfig['cut']+")"
+      for iFile in range(len(fileConfigs)):
+        fileConfig = fileConfigs[iFile]
+        hist = self.loadHist(histConfig,fileConfig,binning,var,cutString+")",nMax,False)
+        counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
+    return counts
+
+  def getPercOfTopRow(self,counts):
+    topRow = []
+    result = []
+    for valStr in counts[0]:
+      topRow.append(float(valStr))
+    for iRow in range(len(counts)):
+      result.append([])
+      for iCol in range(len(counts[iRow])):
+        val = float(counts[iRow][iCol])
+        percStr = "{:.1f}".format(val / topRow[iCol] * 100.)
+        result[iRow].append(percStr)
+    return result
 
 if __name__ == "__main__":
 

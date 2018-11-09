@@ -3414,6 +3414,8 @@ def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
   if rowTitles and (len(rowTitles) != nRows):
     exceptionStr = "Different number of rows ({}) and rowTitles ({})".format(nRows,len(rowTitles))
     raise Exception(exceptionStr)
+  if splitColumnTitles: # keep from modifying referenced argument passed in
+    columnTitles = copy.deepcopy(columnTitles)
   nCols = None
   colLengths = None
   for row in data:
@@ -3425,13 +3427,19 @@ def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
         exceptionStr = "Row ({}) has a different number of columns from the rest ({})".format(row,nCols)
         raise Exception(exceptionStr)
     for iCol in range(nCols):
-      assert(type(row[iCol])==str)
+      if type(row[iCol])!=str:
+        exceptionStr = "Row ({}) has an element ({}) that isn't a string".format(row,row[iCol])
+        raise Exception(exceptionStr)
       colLengths[iCol] = max(len(row[iCol]),colLengths[iCol])
   nColumnTitleRows = 1
   if columnTitles:
-    assert(len(columnTitles) == nCols)
+    if len(columnTitles) != nCols:
+        exceptionStr = "Length of column titles ({}) doesn't equal number of columns ({})".format(len(columnTitles),nCols)
+        raise Exception(exceptionStr)
     for iCol in range(nCols):
-      assert(type(columnTitles[iCol])==str)
+      if type(columnTitles[iCol])!=str:
+        exceptionStr = "Column title ({}) isn't a string".format(columnTitles[iCol])
+        raise Exception(exceptionStr)
       if splitColumnTitles:
         columnTitles[iCol] = splitString(columnTitles[iCol],colLengths[iCol])
         for colTitleRow in columnTitles[iCol]:
