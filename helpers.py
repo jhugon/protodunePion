@@ -3592,6 +3592,7 @@ class PrintCutTable(DataMCStack):
     countsCumu = self.getCountsCumulativeCut(fileConfigs,cutConfigs,nMax)
     countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
     countsCumuPerTop = self.getPercOfTopRow(countsCumu)
+    countsCumuPerPrev = self.getPercOfPrevRow(countsCumu)
     print "Individual Cuts"
     printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
     print "Cumulative Cuts"
@@ -3600,6 +3601,8 @@ class PrintCutTable(DataMCStack):
     printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
     print "Cumulative Cuts Percentage of Top Row"
     printTable(countsCumuPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    print "Cumulative Cuts Percentage of Previous Row"
+    printTable(countsCumuPerPrev,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
 
   def getCutNames(self,cutConfigs):
     cutNames = []
@@ -3679,6 +3682,24 @@ class PrintCutTable(DataMCStack):
         val = float(counts[iRow][iCol])
         percStr = "{:.1f}".format(val / topRow[iCol] * 100.)
         result[iRow].append(percStr)
+    return result
+
+  def getPercOfPrevRow(self,counts):
+    result = []
+    for iRow in range(len(counts)):
+      result.append([])
+      for iCol in range(len(counts[iRow])):
+        if iRow == 0:
+          percStr = "{:.1f}".format(100.)
+          result[iRow].append(percStr)
+        else:
+          prevVal = float(counts[iRow-1][iCol])
+          if prevVal > 1e-20:
+            val = float(counts[iRow][iCol]) / prevVal
+            percStr = "{:.1f}".format(val * 100.)
+            result[iRow].append(percStr)
+          else:
+            result[iRow].append("NaN")
     return result
 
 
