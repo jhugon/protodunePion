@@ -18,10 +18,10 @@ if __name__ == "__main__":
 
   cutConfigsGoodBeamline = [
     {"name": "All","cut": "1"},
-    {"name": "CTB Beam Trigger","cut": "triggerIsBeam == 1"}, # CTB beam trigger
+    {"name": "Timing Beam Trigger","cut": "triggerIsBeam == 1"},
+    {"name": "Matched Beam Trigger to Timing Trigger","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
     {"name": "CTB BI Info Valid","cut": "BITrigger >= 0"}, # valid BI info in CTB
-    {"name": "CTB TOF Coincidence","cut": "BITrigger > 0"}, # TOF coincidence according to CTB
-    {"name": "CTB-BI Matched","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "TOF Info Valid","cut": "BITrigger > 0"}, # TOF coincidence according to CTB
     {"name": "> 0 Beam Tracks","cut": "nBeamTracks > 0"},
     {"name": "> 0 Beam Momenta","cut": "nBeamMom > 0"},
   ]
