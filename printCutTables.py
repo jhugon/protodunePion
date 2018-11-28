@@ -16,19 +16,17 @@ if __name__ == "__main__":
   NMAX=10000000000
   #NMAX=10
 
-  cutConfigs = [
+  cutConfigsGoodBeamline = [
     {"name": "All","cut": "1"},
     {"name": "CTB Beam Trigger","cut": "triggerIsBeam == 1"}, # CTB beam trigger
     {"name": "CTB BI Info Valid","cut": "BITrigger >= 0"}, # valid BI info in CTB
     {"name": "CTB TOF Coincidence","cut": "BITrigger > 0"}, # TOF coincidence according to CTB
     {"name": "CTB-BI Matched","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
     {"name": "> 0 Beam Tracks","cut": "nBeamTracks > 0"},
-    {"name": "> 0 Beam Momentums","cut": "nBeamMom > 0"},
-    #{"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
-    #{"name": "CKov0 is 1","cut": "CKov0Status == 1"},
-    #{"name": "CKov1 is 1","cut": "CKov1Status == 1"},
-    #{"name": "TOF < 160 ns","cut": "TOF < 160."},
+    {"name": "> 0 Beam Momenta","cut": "nBeamMom > 0"},
   ]
+
+  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0"}
 
   fileConfigsData = [
     #{
@@ -245,37 +243,54 @@ if __name__ == "__main__":
     result += ")"
     return result
 
-  cutConfigsPion = copy.deepcopy(cutConfigs)
-  cutConfigsPion.extend([
-    #{"name": "TOF < 160 ns","cut": "TOF < 160."},
+  print "\n\n"
+  print "Good Beamline:"
+  PrintCutTable(fileConfigsData,cutConfigsGoodBeamline,"PiAbsSelector/tree",nMax=NMAX)
+
+  print "\n\n"
+  print "Pion Selection:"
+  cutConfigsPion = [
+    {"name": "All","cut": "1"},
+    cutGoodBeamline,
     {"name": "TOF Pion","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
     {"name": "Cherenkov Pion","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
+    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
     {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
-  ])
+  ]
   PrintCutTable(fileConfigsData,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX)
 
-  cutConfigsElectron = copy.deepcopy(cutConfigs)
-  cutConfigsElectron.extend([
-    #{"name": "TOF < 160 ns","cut": "TOF < 160."},
+  print "\n\n"
+  print "Electron Selection:"
+  cutConfigsElectron = [
+    {"name": "All","cut": "1"},
+    cutGoodBeamline,
     {"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
     {"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
+    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
     {"name": "Pandora Showerlike","cut": "PFBeamPrimIsShowerlike[0]"},
-  ])
+  ]
   PrintCutTable(fileConfigsData,cutConfigsElectron,"PiAbsSelector/tree",nMax=NMAX)
 
-  cutConfigsProton = copy.deepcopy(cutConfigs)
-  cutConfigsProton.extend([
-    #{"name": "TOF > 160 ns","cut": "TOF > 160."},
+  print "\n\n"
+  print "Proton Selection:"
+  cutConfigsProton = [
+    {"name": "All","cut": "1"},
+    cutGoodBeamline,
     {"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
     {"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
+    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
     {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
-  ])
+  ]
   PrintCutTable(fileConfigsData,cutConfigsProton,"PiAbsSelector/tree",nMax=NMAX)
 
-  cutConfigsKaon = copy.deepcopy(cutConfigs)
-  cutConfigsKaon.extend([
+  print "\n\n"
+  print "Kaon Selection:"
+  cutConfigsKaon = [
+    {"name": "All","cut": "1"},
+    cutGoodBeamline,
     {"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
     {"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
+    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
     {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
-  ])
+  ]
   PrintCutTable(fileConfigsData,cutConfigsKaon,"PiAbsSelector/tree",nMax=NMAX)

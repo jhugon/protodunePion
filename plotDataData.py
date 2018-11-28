@@ -615,6 +615,16 @@ if __name__ == "__main__":
       'logz': True,
     },
     {
+      'name': "TOFVMom_zoom_uncorrected_CKov1StatusIs0",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Uncorrected Time of Flight [ns]",
+      'binning': [100,0,8,100,150,210],
+      'var': "TOF:beamMom",
+      'cuts': "(CKov1Status == 0)",
+      'logz': True,
+      'caption': "Cherenkov Electron Veto",
+    },
+    {
       'name': "TOFVMom_bothCKov_zoom",
       'xtitle': "Beamline Momentum [GeV/c]",
       'ytitle': "Time of Flight [ns]",
