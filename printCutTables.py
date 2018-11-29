@@ -82,22 +82,42 @@ if __name__ == "__main__":
     {
       'fn': "PiAbs_redoBeamEvent_run5387.root",
       'name': "run5387_redo",
-      'title': "Run 5387: 1 GeV/c Redo Beam Reco",
+      'title': "Run 5387: 1 GeV/c Nov 27",
     },
     {
       'fn': "PiAbs_redoBeamEvent_run5430.root",
       'name': "run5430_redo",
-      'title': "Run 5430: 2 GeV/c Redo Beam Reco",
+      'title': "Run 5430: 2 GeV/c Nov 27",
     },
     {
       'fn': "PiAbs_redoBeamEvent_run5826.root",
       'name': "run5826_redo",
-      'title': "Run 5826: 0.5 GeV/c Redo Beam Reco",
+      'title': "Run 5826: 0.5 GeV/c Nov 27",
     },
     {
       'fn': "PiAbs_redoBeamEvent_run5834.root",
       'name': "run5834_redo",
-      'title': "Run 5834: 0.3 GeV/c Redo Beam Reco",
+      'title': "Run 5834: 0.3 GeV/c Nov 27",
+    },
+    {
+      'fn': "PiAbs_redoBeamEvent_run5387_new.root",
+      'name': "run5387_redo_new",
+      'title': "Run 5387: 1 GeV/c Nov 28",
+    },
+    {
+      'fn': "PiAbs_redoBeamEvent_run5430_new.root",
+      'name': "run5430_redo_new",
+      'title': "Run 5430: 2 GeV/c Nov 28",
+    },
+    {
+      'fn': "PiAbs_redoBeamEvent_run5826_new.root",
+      'name': "run5826_redo_new",
+      'title': "Run 5826: 0.5 GeV/c Nov 28",
+    },
+    {
+      'fn': "PiAbs_redoBeamEvent_run5834_new.root",
+      'name': "run5834_redo_new",
+      'title': "Run 5834: 0.3 GeV/c Nov 28",
     },
   ]
 
