@@ -111,15 +111,15 @@ if __name__ == "__main__":
 #      'var': "beamTrackMom",
 #      'cuts': "1",
 #    },
-#    {
-#      'name': "beamMom",
-#      'xtitle': "Beam Momentum [GeV/c]",
-#      'ytitle': "Beam Momenta / bin",
-#      'binning': [120,0,12],
-#      'var': "beamMom*{}".format(momSF),
-#      'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
-#      'cuts': "1",
-#    },
+    {
+      'name': "beamMom",
+      'xtitle': "Beam Momentum [GeV/c]",
+      'ytitle': "Beam Momenta / bin",
+      'binning': [120,0,12],
+      'var': "beamMom*{}".format(momSF),
+      'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
+      'cuts': "1",
+    },
     {
       'name': "TOF",
       'xtitle': "Beamline Time of Flight [ns]",
@@ -165,33 +165,33 @@ if __name__ == "__main__":
       'name': "TOFChan",
       'xtitle': "TOF Channel",
       'ytitle': "Events / bin",
-      'binning': [6,-1.5,4.5],
+      'binning': [5,-1.5,3.5],
       'var': "TOFChan",
       'cuts': "1",
     },
-    {
-      'name': "CKov0Status",
-      'xtitle': "Cherenkov 0 Status",
-      'ytitle': "Events / bin",
-      #'binning': [3,-1.5,1.5],
-      'binning': [2,-0.5,1.5],
-      'var': "CKov0Status",
-      'cuts': "1",
-    },
-    {
-      'name': "CKov1Status",
-      'xtitle': "Cherenkov 1 Status",
-      'ytitle': "Events / bin",
-      #'binning': [3,-1.5,1.5],
-      'binning': [2,-0.5,1.5],
-      'var': "CKov1Status",
-      'cuts': "1",
-    },
+    #{
+    #  'name': "CKov0Status",
+    #  'xtitle': "Cherenkov 0 Status",
+    #  'ytitle': "Events / bin",
+    #  #'binning': [3,-1.5,1.5],
+    #  'binning': [2,-0.5,1.5],
+    #  'var': "CKov0Status",
+    #  'cuts': "1",
+    #},
+    #{
+    #  'name': "CKov1Status",
+    #  'xtitle': "Cherenkov 1 Status",
+    #  'ytitle': "Events / bin",
+    #  #'binning': [3,-1.5,1.5],
+    #  'binning': [2,-0.5,1.5],
+    #  'var': "CKov1Status",
+    #  'cuts': "1",
+    #},
     {
       'name': "CKov0Pressure",
       'xtitle': "Cherenkov 0 Pressure",
       'ytitle': "Events / bin",
-      'binning': [100,0.,1.2],
+      'binning': [100,0.,12.],
       'var': "CKov0Pressure",
       'cuts': "(CKov0Status > -1)",
     },
@@ -199,195 +199,195 @@ if __name__ == "__main__":
       'name': "CKov1Pressure",
       'xtitle': "Cherenkov 1 Pressure",
       'ytitle': "Events / bin",
-      'binning': [100,0.,1.2],
+      'binning': [100,0.,12.],
       'var': "CKov1Pressure",
       'cuts': "(CKov1Status > -1)",
     },
-    {
-      'name': "beamlineMassSquared",
-      'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
-      'ytitle': "Events / bin",
-      'binning': [100,-2e5/m2SF,15e5/m2SF],
-      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
-      'cuts': "(!isMC)",
-      #'normalize': True,
-      'logy': False,
-      'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    },
-    {
-      'name': "beamlineMassSquared_zoom0_onlyCKov0",
-      'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
-      'ytitle': "Events / bin",
-      'binning': [50,-2e5/m2SF,2e5/m2SF],
-      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
-      'cuts': "(CKov0Status == 1 && CKov1Status == 0)",
-      'caption': "Only Cherenkov 0 Fired",
-      #'normalize': True,
-      'logy': False,
-      'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    },
-    {
-      'name': "beamlineMassSquared_zoom0",
-      'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
-      'ytitle': "Events / bin",
-      'binning': [50,-2e5/m2SF,2e5/m2SF],
-      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
-      'cuts': "(!isMC)",
-      #'normalize': True,
-      'logy': False,
-      'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    },
-    {
-      'name': "beamlineMass",
-      'xtitle': "Beamline Mass [MeV/c^{2}]",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2000],
-      'var': "sqrt(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.))".format(momSF**2,tofOffset,lightTime**2),
-      'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)>0.)".format(momSF**2,tofOffset,lightTime**2),
-      #'normalize': True,
-      'logy': False,
-      'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
-      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    },
-    {
-      'name': "PFNBeamSlices",
-      'xtitle': "Number of Pandora Beam Slices",
-      'ytitle': "Events / bin",
-      'binning': [21,-0.5,20.5],
-      'var': "PFNBeamSlices",
-      'cuts': "1",
-    },
-    {
-      'name': "PFBeamPrimNDaughters",
-      'xtitle': "Number of Pandora Beam Secondaries",
-      'ytitle': "Events / bin",
-      'binning': [21,-0.5,20.5],
-      'var': "PFBeamPrimNDaughters[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimIsTracklike",
-      'xtitle': "Pandora Beam Primary is Tracklike",
-      'ytitle': "Events / bin",
-      'binning': [2,-0.5,1.5],
-      'var': "PFBeamPrimIsTracklike[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimStartX",
-      'xtitle': "Pandora Beam Primary Start X [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-400,400],
-      'var': "PFBeamPrimStartX[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimStartY",
-      'xtitle': "Pandora Beam Primary Start Y [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-5,650],
-      'var': "PFBeamPrimStartY[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimStartZ",
-      'xtitle': "Pandora Beam Primary Start Z [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-5,100],
-      'var': "PFBeamPrimStartZ[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimEndX",
-      'xtitle': "Pandora Beam Primary End X [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-400,400],
-      'var': "PFBeamPrimEndX[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimEndY",
-      'xtitle': "Pandora Beam Primary End Y [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-5,650],
-      'var': "PFBeamPrimEndY[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimEndZ",
-      'xtitle': "Pandora Beam Primary End Z [cm]",
-      'ytitle': "Events / bin",
-      'binning': [35,-5,700],
-      'var': "PFBeamPrimEndZ[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimTrkLen",
-      'xtitle': "Pandora Beam Primary Track Length [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,0,1000],
-      'var': "PFBeamPrimTrkLen[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimShwrLen",
-      'xtitle': "Pandora Beam Primary Shower Length [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,0,1000],
-      'var': "PFBeamPrimShwrLen[0]",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimShwrOpenAngle",
-      'xtitle': "Pandora Beam Primary Shower Open Angle [deg]",
-      'ytitle': "Events / bin",
-      'binning': [30,0,90],
-      'var': "PFBeamPrimShwrOpenAngle[0]*180./pi",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimStartTheta",
-      'xtitle': "Pandora Beam Primary Start #theta [deg]",
-      'ytitle': "Events / bin",
-      'binning': [60,0,180],
-      'var': "PFBeamPrimStartTheta[0]*180./pi",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "PFBeamPrimStartPhi",
-      'xtitle': "Pandora Beam Primary Start #phi [deg]",
-      'ytitle': "Events / bin",
-      'binning': [60,-180,180],
-      'var': "PFBeamPrimStartPhi[0]*180./pi",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "DeltaPFBeamPrimEndXBeam",
-      'xtitle': "Pandora Beam Primary Start - Beam Track X [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-200,200],
-      'var': "PFBeamPrimStartX[0] - beamTrackXFrontTPC",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
-    {
-      'name': "DeltaPFBeamPrimEndYBeam",
-      'xtitle': "Pandora Beam Primary Start - Beam Track Y [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,-200,200],
-      'var': "PFBeamPrimStartY[0] - beamTrackYFrontTPC",
-      'cuts': "(PFNBeamSlices > 0)",
-    },
+    #{
+    #  'name': "beamlineMassSquared",
+    #  'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
+    #  'ytitle': "Events / bin",
+    #  'binning': [100,-2e5/m2SF,15e5/m2SF],
+    #  'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
+    #  'cuts': "(!isMC)",
+    #  #'normalize': True,
+    #  'logy': False,
+    #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #},
+    #{
+    #  'name': "beamlineMassSquared_zoom0_onlyCKov0",
+    #  'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
+    #  'ytitle': "Events / bin",
+    #  'binning': [50,-2e5/m2SF,2e5/m2SF],
+    #  'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
+    #  'cuts': "(CKov0Status == 1 && CKov1Status == 0)",
+    #  'caption': "Only Cherenkov 0 Fired",
+    #  #'normalize': True,
+    #  'logy': False,
+    #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #},
+    #{
+    #  'name': "beamlineMassSquared_zoom0",
+    #  'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
+    #  'ytitle': "Events / bin",
+    #  'binning': [50,-2e5/m2SF,2e5/m2SF],
+    #  'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
+    #  'cuts': "(!isMC)",
+    #  #'normalize': True,
+    #  'logy': False,
+    #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #},
+    #{
+    #  'name': "beamlineMass",
+    #  'xtitle': "Beamline Mass [MeV/c^{2}]",
+    #  'ytitle': "Events / bin",
+    #  'binning': [100,0,2000],
+    #  'var': "sqrt(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.))".format(momSF**2,tofOffset,lightTime**2),
+    #  'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)>0.)".format(momSF**2,tofOffset,lightTime**2),
+    #  #'normalize': True,
+    #  'logy': False,
+    #  'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
+    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #},
+#    {
+#      'name': "PFNBeamSlices",
+#      'xtitle': "Number of Pandora Beam Slices",
+#      'ytitle': "Events / bin",
+#      'binning': [21,-0.5,20.5],
+#      'var': "PFNBeamSlices",
+#      'cuts': "1",
+#    },
+#    {
+#      'name': "PFBeamPrimNDaughters",
+#      'xtitle': "Number of Pandora Beam Secondaries",
+#      'ytitle': "Events / bin",
+#      'binning': [21,-0.5,20.5],
+#      'var': "PFBeamPrimNDaughters[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimIsTracklike",
+#      'xtitle': "Pandora Beam Primary is Tracklike",
+#      'ytitle': "Events / bin",
+#      'binning': [2,-0.5,1.5],
+#      'var': "PFBeamPrimIsTracklike[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimStartX",
+#      'xtitle': "Pandora Beam Primary Start X [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-400,400],
+#      'var': "PFBeamPrimStartX[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimStartY",
+#      'xtitle': "Pandora Beam Primary Start Y [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-5,650],
+#      'var': "PFBeamPrimStartY[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimStartZ",
+#      'xtitle': "Pandora Beam Primary Start Z [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-5,100],
+#      'var': "PFBeamPrimStartZ[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimEndX",
+#      'xtitle': "Pandora Beam Primary End X [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-400,400],
+#      'var': "PFBeamPrimEndX[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimEndY",
+#      'xtitle': "Pandora Beam Primary End Y [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-5,650],
+#      'var': "PFBeamPrimEndY[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimEndZ",
+#      'xtitle': "Pandora Beam Primary End Z [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [35,-5,700],
+#      'var': "PFBeamPrimEndZ[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimTrkLen",
+#      'xtitle': "Pandora Beam Primary Track Length [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,0,1000],
+#      'var': "PFBeamPrimTrkLen[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimShwrLen",
+#      'xtitle': "Pandora Beam Primary Shower Length [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,0,1000],
+#      'var': "PFBeamPrimShwrLen[0]",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimShwrOpenAngle",
+#      'xtitle': "Pandora Beam Primary Shower Open Angle [deg]",
+#      'ytitle': "Events / bin",
+#      'binning': [30,0,90],
+#      'var': "PFBeamPrimShwrOpenAngle[0]*180./pi",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimStartTheta",
+#      'xtitle': "Pandora Beam Primary Start #theta [deg]",
+#      'ytitle': "Events / bin",
+#      'binning': [60,0,180],
+#      'var': "PFBeamPrimStartTheta[0]*180./pi",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "PFBeamPrimStartPhi",
+#      'xtitle': "Pandora Beam Primary Start #phi [deg]",
+#      'ytitle': "Events / bin",
+#      'binning': [60,-180,180],
+#      'var': "PFBeamPrimStartPhi[0]*180./pi",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "DeltaPFBeamPrimEndXBeam",
+#      'xtitle': "Pandora Beam Primary Start - Beam Track X [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-200,200],
+#      'var': "PFBeamPrimStartX[0] - beamTrackXFrontTPC",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
+#    {
+#      'name': "DeltaPFBeamPrimEndYBeam",
+#      'xtitle': "Pandora Beam Primary Start - Beam Track Y [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,-200,200],
+#      'var': "PFBeamPrimStartY[0] - beamTrackYFrontTPC",
+#      'cuts': "(PFNBeamSlices > 0)",
+#    },
   ]
   c = root.TCanvas()
   NMAX=10000000000
-  NMAX=100
+  #NMAX=1000
   #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
@@ -566,27 +566,93 @@ if __name__ == "__main__":
     #},
   ]
 
-  for histConfig in histConfigs:
-    histConfig["caption"] = caption
-    histConfig["normalize"] = True
-    histConfig["ytitle"] = "Normalized Events / Bin"
+#  for histConfig in histConfigs:
+#    histConfig["caption"] = caption
+#    histConfig["normalize"] = True
+#    histConfig["ytitle"] = "Normalized Events / Bin"
+#
+#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
+#  for histConfig in histConfigs:
+#    histConfig['logy'] = True
+#    histConfig["normalize"] = False
+#    histConfig["ytitle"] = "Events / Bin"
+#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
 
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
-  for histConfig in histConfigs:
-    histConfig['logy'] = True
-    histConfig["normalize"] = False
-    histConfig["ytitle"] = "Events / Bin"
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
-
+  identityFunc = root.TF1("identityFunc","x",0.1,1000)
+  identityFunc.SetLineColor(root.kGray)
+  identityFunc.SetLineStyle(9)
   histConfigs= [
+    #{
+    #  'name': "PFBeamPrimStartThetaVPhi",
+    #  'ytitle': "Pandora Beam Primary Start #theta [deg]",
+    #  'xtitle': "Pandora Beam Primary Start #phi [deg]",
+    #  'binning': [60,-180,180,60,0,180],
+    #  'var': "PFBeamPrimStartTheta[0]*180./pi:PFBeamPrimStartPhi[0]*180./pi",
+    #  'cuts': "(PFNBeamSlices > 0)",
+    #  'logz': True,
+    #},
     {
-      'name': "PFBeamPrimStartThetaVPhi",
-      'ytitle': "Pandora Beam Primary Start #theta [deg]",
-      'xtitle': "Pandora Beam Primary Start #phi [deg]",
-      'binning': [60,-180,180,60,0,180],
-      'var': "PFBeamPrimStartTheta[0]*180./pi:PFBeamPrimStartPhi[0]*180./pi",
-      'cuts': "(PFNBeamSlices > 0)",
-      'logz': True,
+      'name': "TOFsByChan1V0",
+      'xtitle': "Beamline Time of Flight US A & DS A [ns]",
+      'ytitle': "Beamline Time of Flight US A & DS B [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[1]:TOFsByChan[0]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan2V0",
+      'xtitle': "Beamline Time of Flight US A & DS A [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS A [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[2]:TOFsByChan[0]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan3V0",
+      'xtitle': "Beamline Time of Flight US A & DS A [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS B [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[3]:TOFsByChan[0]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan2V1",
+      'xtitle': "Beamline Time of Flight US A & DS B [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS A [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[2]:TOFsByChan[1]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan3V1",
+      'xtitle': "Beamline Time of Flight US A & DS B [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS B [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[3]:TOFsByChan[1]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan3V2",
+      'xtitle': "Beamline Time of Flight US B & DS A [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS B [ns]",
+      'binning': [30,150,165,30,150,165],
+      'var': "TOFsByChan[3]:TOFsByChan[2]",
+      'cuts': "1",
+      'funcs': [identityFunc],
+    },
+    {
+      'name': "TOFsByChan3V2_wide",
+      'xtitle': "Beamline Time of Flight US B & DS A [ns]",
+      'ytitle': "Beamline Time of Flight US B & DS B [ns]",
+      'binning': [100,125,225,100,125,225],
+      'var': "TOFsByChan[3]:TOFsByChan[2]",
+      'cuts': "1",
+      'funcs': [identityFunc],
     },
   ]
   plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
@@ -807,14 +873,14 @@ if __name__ == "__main__":
       'logz': True,
     },
   ]
-  plotOneHistOnePlot(fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
+  #plotOneHistOnePlot(fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
 
   histConfigs= [
     {
       'title': "Channel 0",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [40,150,170],
       'var': "TOFsByChan[0]",
       'cuts': "1",
     },
@@ -822,7 +888,7 @@ if __name__ == "__main__":
       'title': "Channel 1",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [40,150,170],
       'var': "TOFsByChan[1]",
       'cuts': "1",
     },
@@ -830,7 +896,7 @@ if __name__ == "__main__":
       'title': "Channel 2",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [40,150,170],
       'var': "TOFsByChan[2]",
       'cuts': "1",
     },
@@ -838,7 +904,7 @@ if __name__ == "__main__":
       'title': "Channel 3",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [40,150,170],
       'var': "TOFsByChan[3]",
       'cuts': "1",
     },
@@ -849,6 +915,67 @@ if __name__ == "__main__":
   for histConfig in histConfigs:
     histConfig['logy'] = True
   plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_Chans_",outSuffix="_logyHist",nMax=NMAX)
+
+  histConfigs= [
+    {
+      'title': "(US A, DS B)-(US A, DS A)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[1] - TOFsByChan[0]",
+      'cuts': "TOFsByChan[1] > -9999. && TOFsByChan[0] > -9999.",
+    },
+    {
+      'title': "(US B, DS A)-(US A, DS A)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[2] - TOFsByChan[0]",
+      'cuts': "TOFsByChan[2] > -9999. && TOFsByChan[0] > -9999.",
+    },
+    {
+      'title': "(US B, DS B)-(US A, DS A)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[3] - TOFsByChan[0]",
+      'cuts': "TOFsByChan[3] > -9999. && TOFsByChan[0] > -9999.",
+    },
+    {
+      'title': "(US B, DS A)-(US A, DS B)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[2] - TOFsByChan[1]",
+      'cuts': "TOFsByChan[2] > -9999. && TOFsByChan[1] > -9999.",
+    },
+    {
+      'title': "(US B, DS B)-(US A, DS B)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[3] - TOFsByChan[1]",
+      'cuts': "TOFsByChan[3] > -9999. && TOFsByChan[1] > -9999.",
+    },
+    {
+      'title': "(US B, DS B)-(US B, DS A)",
+      'xtitle': "#Delta Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [80,-20,20],
+      'var': "TOFsByChan[3] - TOFsByChan[2]",
+      'cuts': "TOFsByChan[3] > -9999. && TOFsByChan[2] > -9999.",
+    },
+  ]
+  for i, histConfig in enumerate(histConfigs):
+    histConfig['color'] = COLORLIST[i]
+    histConfig["normalize"] = True
+    histConfig["ytitle"] = "Normalized Events / Bin"
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOFsByChanDiff_",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig["logy"] = True
+    histConfig["normalize"] = False
+    histConfig["ytitle"] = "Events / Bin"
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOFsByChanDiff_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
@@ -892,12 +1019,12 @@ if __name__ == "__main__":
     #  'cuts': "CKov0Status == -1 && CKov1Status == -1",
     #},
   ]
-  for i, histConfig in enumerate(histConfigs):
-    histConfig['color'] = COLORLIST[i]
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",nMax=NMAX)
-  for histConfig in histConfigs:
-    histConfig['logy'] = True
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
+  #for i, histConfig in enumerate(histConfigs):
+  #  histConfig['color'] = COLORLIST[i]
+  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",nMax=NMAX)
+  #for histConfig in histConfigs:
+  #  histConfig['logy'] = True
+  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
