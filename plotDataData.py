@@ -354,7 +354,7 @@ if __name__ == "__main__":
     },
     {
       'name': "PFBeamPrimStartTheta",
-      'xtitle': "Pandora Beam Primary Shower Open Angle [deg]",
+      'xtitle': "Pandora Beam Primary Start #theta [deg]",
       'ytitle': "Events / bin",
       'binning': [60,0,180],
       'var': "PFBeamPrimStartTheta[0]*180./pi",
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     },
     {
       'name': "PFBeamPrimStartPhi",
-      'xtitle': "Pandora Beam Primary Shower Open Angle [deg]",
+      'xtitle': "Pandora Beam Primary Start #phi [deg]",
       'ytitle': "Events / bin",
       'binning': [60,-180,180],
       'var': "PFBeamPrimStartPhi[0]*180./pi",
@@ -387,7 +387,7 @@ if __name__ == "__main__":
   ]
   c = root.TCanvas()
   NMAX=10000000000
-  #NMAX=100
+  NMAX=100
   #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
@@ -409,14 +409,14 @@ if __name__ == "__main__":
     #  'color': root.kBlack,
     #  'cuts': "*(triggerIsBeam)",
     #},
-    #{
-    #  'fn': "piAbsSelector_run5145.root",
-    #  'name': "run5145",
-    #  'title': "Run 5145: 7 GeV/c",
-    #  'caption': "Run 5145: 7 GeV/c",
-    #  'color': root.kOrange-3,
-    #  'cuts': "*(triggerIsBeam)",
-    #},
+    {
+      'fn': "piAbsSelector_run5145_v3.root",
+      'name': "run5145",
+      'title': "Run 5145: 7 GeV/c",
+      'caption': "Run 5145: 7 GeV/c",
+      'color': root.kOrange-3,
+      'cuts': "*(triggerIsBeam)",
+    },
 #    {
 #      'fn': "piAbsSelector_run5174.root",
 #      'name': "run5174",
@@ -474,54 +474,57 @@ if __name__ == "__main__":
 #      'cuts': "*(triggerIsBeam)",
 #    },
     {
-      'fn': "PiAbs_redoBeamEvent_run5387.root",
-      'name': "run5387_redo",
-      'title': "Run 5387: 1 GeV/c Redo Beam Reco",
-      'caption': "Run 5387: 1 GeV/c Redo Beam Reco",
+      'fn': "piAbsSelector_run5387_v3.root",
+      'name': "run5387",
+      'title': "Run 5387: 1 GeV/c",
+      'caption': "Run 5387: 1 GeV/c",
       'color': root.kBlue-7,
       'cuts': "*(triggerIsBeam)",
     },
     {
-      'fn': "PiAbs_redoBeamEvent_run5430.root",
-      'name': "run5430_redo",
-      'title': "Run 5430: 2 GeV/c Redo Beam Reco",
-      'caption': "Run 5430: 2 GeV/c Redo Beam Reco",
+      'fn': "piAbsSelector_run5432_v3.root",
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
       'color': root.kGreen+3,
       'cuts': "*(triggerIsBeam)",
     },
-    {
-      'fn': "PiAbs_redoBeamEvent_run5826.root",
-      'name': "run5826_redo",
-      'title': "Run 5826: 0.5 GeV/c Redo Beam Reco",
-      'caption': "Run 5826: 0.5 GeV/c Redo Beam Reco",
-      'color': root.kBlue-7,
-      'cuts': "*(triggerIsBeam)",
-    },
-    {
-      'fn': "PiAbs_redoBeamEvent_run5834.root",
-      'name': "run5834_redo",
-      'title': "Run 5834: 0.3 GeV/c Redo Beam Reco",
-      'caption': "Run 5834: 0.3 GeV/c Redo Beam Reco",
-      'color': root.kBlue-7,
-      'cuts': "*(triggerIsBeam)",
-    },
+    #{
+    #  'fn': "PiAbs_redoBeamEvent_run5826.root",
+    #  'name': "run5826_redo",
+    #  'title': "Run 5826: 0.5 GeV/c Redo Beam Reco",
+    #  'caption': "Run 5826: 0.5 GeV/c Redo Beam Reco",
+    #  'color': root.kBlue-7,
+    #  'cuts': "*(triggerIsBeam)",
+    #},
+    #{
+    #  'fn': "PiAbs_redoBeamEvent_run5834.root",
+    #  'name': "run5834_redo",
+    #  'title': "Run 5834: 0.3 GeV/c Redo Beam Reco",
+    #  'caption': "Run 5834: 0.3 GeV/c Redo Beam Reco",
+    #  'color': root.kBlue-7,
+    #  'cuts': "*(triggerIsBeam)",
+    #},
   ]
   for i, fileConfig in enumerate(fileConfigsData):
     fileConfig['color'] = COLORLIST[i]
   fileConfigsAllData = [
     {
       'fn': [
-                "piAbsSelector_run5145.root",
-                "piAbsSelector_run5387.root",
-                "piAbsSelector_run5430.root",
-                "piAbsSelector_run5758.root",
-                "piAbsSelector_run5777.root",
-                "piAbsSelector_run5826.root",
-                "piAbsSelector_run5834.root",
+                #"piAbsSelector_run5145.root",
+                #"piAbsSelector_run5387.root",
+                #"piAbsSelector_run5430.root",
+                #"piAbsSelector_run5758.root",
+                #"piAbsSelector_run5777.root",
+                #"piAbsSelector_run5826.root",
+                #"piAbsSelector_run5834.root",
+                "piAbsSelector_run5145_v3.root",
+                "piAbsSelector_run5387_v3.root",
+                "piAbsSelector_run5432_v3.root",
             ],
       'name': "runMany",
-      #'title': "Runs 5387, 5430",
-      #'caption': "Runs 5387, 5430",
+      'title': "Runs 5145, 5387, 5432",
+      'caption': "Runs 5145, 5387, 5432",
       'color': root.kBlack,
       'cuts': "*(triggerIsBeam)",
     },
@@ -574,6 +577,19 @@ if __name__ == "__main__":
     histConfig["normalize"] = False
     histConfig["ytitle"] = "Events / Bin"
   plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
+
+  histConfigs= [
+    {
+      'name': "PFBeamPrimStartThetaVPhi",
+      'ytitle': "Pandora Beam Primary Start #theta [deg]",
+      'xtitle': "Pandora Beam Primary Start #phi [deg]",
+      'binning': [60,-180,180,60,0,180],
+      'var': "PFBeamPrimStartTheta[0]*180./pi:PFBeamPrimStartPhi[0]*180./pi",
+      'cuts': "(PFNBeamSlices > 0)",
+      'logz': True,
+    },
+  ]
+  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
 
   functions = [root.TF1("proton","{}*sqrt({}/x/x+1.)".format(lightTime,(i*1e-3)**2),0.01,15) for i in [0.511,105.65,139.6,493.677,938.272046,1875.6]]
   for i in range(len(functions)):
@@ -734,8 +750,105 @@ if __name__ == "__main__":
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
     },
+    {
+      'name': "TOFVMom_protons_chan0",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Time of Flight [ns]",
+      'binning': [200,0.5,1.5,100,150-tofOffset,250-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
+      'cuts': "(TOFChan == 0)",
+      #'funcs': functions,
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
+      'captionright3': "TOF Channel 0",
+      'logz': True,
+    },
+    {
+      'name': "TOFVMom_protons_chan1",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Time of Flight [ns]",
+      'binning': [200,0.5,1.5,100,150-tofOffset,250-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
+      'cuts': "(TOFChan == 1)",
+      #'funcs': functions,
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
+      'captionright3': "TOF Channel 1",
+      'logz': True,
+    },
+    {
+      'name': "TOFVMom_protons_chan2",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Time of Flight [ns]",
+      'binning': [200,0.5,1.5,100,150-tofOffset,250-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
+      'cuts': "(TOFChan == 2)",
+      #'funcs': functions,
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
+      'captionright3': "TOF Channel 2",
+      'logz': True,
+    },
+    {
+      'name': "TOFVMom_protons_chan3",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Time of Flight [ns]",
+      'binning': [200,0.5,1.5,100,150-tofOffset,250-tofOffset],
+      'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
+      'cuts': "(TOFChan == 3)",
+      #'funcs': functions,
+      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
+      'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
+      'captionright3': "TOF Channel 3",
+      'logz': True,
+    },
   ]
   plotOneHistOnePlot(fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
+
+  histConfigs= [
+    {
+      'title': "Channel 0",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [100,150,250],
+      'var': "TOFsByChan[0]",
+      'cuts': "1",
+    },
+    {
+      'title': "Channel 1",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [100,150,250],
+      'var': "TOFsByChan[1]",
+      'cuts': "1",
+    },
+    {
+      'title': "Channel 2",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [100,150,250],
+      'var': "TOFsByChan[2]",
+      'cuts': "1",
+    },
+    {
+      'title': "Channel 3",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [100,150,250],
+      'var': "TOFsByChan[3]",
+      'cuts': "1",
+    },
+  ]
+  for i, histConfig in enumerate(histConfigs):
+    histConfig['color'] = COLORLIST[i]
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_Chans_",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_Chans_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
@@ -828,9 +941,9 @@ if __name__ == "__main__":
       'cuts': "CKov0Status == -1 && CKov1Status == -1",
     },
   ]
-  for i, histConfig in enumerate(histConfigs):
-    histConfig['color'] = COLORLIST[i]
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_KCovCuts_",nMax=NMAX)
-  for histConfig in histConfigs:
-    histConfig['logy'] = True
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
+  #for i, histConfig in enumerate(histConfigs):
+  #  histConfig['color'] = COLORLIST[i]
+  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_KCovCuts_",nMax=NMAX)
+  #for histConfig in histConfigs:
+  #  histConfig['logy'] = True
+  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
