@@ -4,12 +4,15 @@ import ROOT as root
 from helpers import *
 root.gROOT.SetBatch(True)
 import copy
+import sys
 
 m2SF=1000.
 tofOffset=59.6
 tofDistance = 28.6
 lightTime = tofDistance/2.99e8*1e9
 momSF=1.0
+
+cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0)"
 
 if __name__ == "__main__":
 
@@ -132,8 +135,16 @@ if __name__ == "__main__":
       'name': "TOF_zoom",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [70,150,220],
       'var': "TOF",
+      'cuts': "1",
+    },
+    {
+      'name': "TOFsByChan_zoom",
+      'xtitle': "Beamline Time of Flight [ns]",
+      'ytitle': "Events / bin",
+      'binning': [70,150,220],
+      'var': "TOFsByChan",
       'cuts': "1",
     },
     {
@@ -407,7 +418,7 @@ if __name__ == "__main__":
     #  'title': "Run 5141: 7 GeV/c",
     #  'caption': "Run 5141: 7 GeV/c",
     #  'color': root.kBlack,
-    #  'cuts': "*(triggerIsBeam)",
+    #  'cuts': "*"+cutGoodBeamline,
     #},
     {
       'fn': "piAbsSelector_run5145_v3.root",
@@ -415,7 +426,7 @@ if __name__ == "__main__":
       'title': "Run 5145: 7 GeV/c",
       'caption': "Run 5145: 7 GeV/c",
       'color': root.kOrange-3,
-      'cuts': "*(triggerIsBeam)",
+      'cuts': "*"+cutGoodBeamline,
     },
 #    {
 #      'fn': "piAbsSelector_run5174.root",
@@ -423,7 +434,7 @@ if __name__ == "__main__":
 #      'title': "Run 5174: 7 GeV/c",
 #      'caption': "Run 5174: 7 GeV/c",
 #      'color': root.kOrange-3,
-#      'cuts': "*(triggerIsBeam)",
+#      'cuts': "*"+cutGoodBeamline,
 #    },
 #    {
 #      'fn': "piAbsSelector_run5387.root",
@@ -431,7 +442,7 @@ if __name__ == "__main__":
 #      'title': "Run 5387: 1 GeV/c",
 #      'caption': "Run 5387: 1 GeV/c",
 #      'color': root.kBlue-7,
-#      'cuts': "*(triggerIsBeam)",
+#      'cuts': "*"+cutGoodBeamline,
 #    },
 #    {
 #      'fn': "piAbsSelector_run5430.root",
@@ -439,7 +450,7 @@ if __name__ == "__main__":
 #      'title': "Run 5430: 2 GeV/c",
 #      'caption': "Run 5430: 2 GeV/c",
 #      'color': root.kGreen+3,
-#      'cuts': "*(triggerIsBeam)",
+#      'cuts': "*"+cutGoodBeamline,
 #    },
 #    #{
 #    #  'fn': "piAbsSelector_run5758.root",
@@ -447,7 +458,7 @@ if __name__ == "__main__":
 #    #  'title': "Run 5758: 6 GeV/c",
 #    #  'caption': "Run 5758: 6 GeV/c",
 #    #  'color': root.kBlue-7,
-#    #  'cuts': "*(triggerIsBeam)",
+#    #  'cuts': "*"+cutGoodBeamline,
 #    #},
 #    #{
 #    #  'fn': "piAbsSelector_run5777.root",
@@ -455,7 +466,7 @@ if __name__ == "__main__":
 #    #  'title': "Run 5777: 3 GeV/c",
 #    #  'caption': "Run 5777: 3 GeV/c",
 #    #  'color': root.kBlue-7,
-#    #  'cuts': "*(triggerIsBeam)",
+#    #  'cuts': "*"+cutGoodBeamline,
 #    #},
 #    {
 #      'fn': "piAbsSelector_run5826.root",
@@ -463,7 +474,7 @@ if __name__ == "__main__":
 #      'title': "Run 5826: 0.5 GeV/c",
 #      'caption': "Run 5826: 0.5 GeV/c",
 #      'color': root.kBlue-7,
-#      'cuts': "*(triggerIsBeam)",
+#      'cuts': "*"+cutGoodBeamline,
 #    },
 #    {
 #      'fn': "piAbsSelector_run5834.root",
@@ -471,7 +482,7 @@ if __name__ == "__main__":
 #      'title': "Run 5834: 0.3 GeV/c",
 #      'caption': "Run 5834: 0.3 GeV/c",
 #      'color': root.kBlue-7,
-#      'cuts': "*(triggerIsBeam)",
+#      'cuts': "*"+cutGoodBeamline,
 #    },
     {
       'fn': "piAbsSelector_run5387_v3.root",
@@ -479,7 +490,7 @@ if __name__ == "__main__":
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c",
       'color': root.kBlue-7,
-      'cuts': "*(triggerIsBeam)",
+      'cuts': "*"+cutGoodBeamline,
     },
     {
       'fn': "piAbsSelector_run5432_v3.root",
@@ -487,7 +498,7 @@ if __name__ == "__main__":
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
       'color': root.kGreen+3,
-      'cuts': "*(triggerIsBeam)",
+      'cuts': "*"+cutGoodBeamline,
     },
     #{
     #  'fn': "PiAbs_redoBeamEvent_run5826.root",
@@ -495,7 +506,7 @@ if __name__ == "__main__":
     #  'title': "Run 5826: 0.5 GeV/c Redo Beam Reco",
     #  'caption': "Run 5826: 0.5 GeV/c Redo Beam Reco",
     #  'color': root.kBlue-7,
-    #  'cuts': "*(triggerIsBeam)",
+    #  'cuts': "*"+cutGoodBeamline,
     #},
     #{
     #  'fn': "PiAbs_redoBeamEvent_run5834.root",
@@ -503,7 +514,7 @@ if __name__ == "__main__":
     #  'title': "Run 5834: 0.3 GeV/c Redo Beam Reco",
     #  'caption': "Run 5834: 0.3 GeV/c Redo Beam Reco",
     #  'color': root.kBlue-7,
-    #  'cuts': "*(triggerIsBeam)",
+    #  'cuts': "*"+cutGoodBeamline,
     #},
   ]
   for i, fileConfig in enumerate(fileConfigsData):
@@ -526,7 +537,7 @@ if __name__ == "__main__":
       'title': "Runs 5145, 5387, 5432",
       'caption': "Runs 5145, 5387, 5432",
       'color': root.kBlack,
-      'cuts': "*(triggerIsBeam)",
+      'cuts': "*"+cutGoodBeamline,
     },
   ]
   fileConfigsMC = [
@@ -566,17 +577,18 @@ if __name__ == "__main__":
     #},
   ]
 
-#  for histConfig in histConfigs:
-#    histConfig["caption"] = caption
-#    histConfig["normalize"] = True
-#    histConfig["ytitle"] = "Normalized Events / Bin"
-#
-#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
-#  for histConfig in histConfigs:
-#    histConfig['logy'] = True
-#    histConfig["normalize"] = False
-#    histConfig["ytitle"] = "Events / Bin"
-#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig["caption"] = caption
+    histConfig["normalize"] = True
+    histConfig["ytitle"] = "Normalized Events / Bin"
+
+  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+    histConfig["normalize"] = False
+    histConfig["ytitle"] = "Events / Bin"
+  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
+  sys.exit(0)
 
   identityFunc = root.TF1("identityFunc","x",0.1,1000)
   identityFunc.SetLineColor(root.kGray)
@@ -982,7 +994,7 @@ if __name__ == "__main__":
       'title': "CKov0 & CKov1",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [70,150,220],
       'var': "TOF",
       'cuts': "CKov0Status == 1 && CKov1Status == 1",
     },
@@ -990,7 +1002,7 @@ if __name__ == "__main__":
       'title': "CKov0",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [70,150,220],
       'var': "TOF",
       'cuts': "CKov0Status == 1 && CKov1Status == 0",
     },
@@ -998,7 +1010,7 @@ if __name__ == "__main__":
       'title': "CKov 1",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [70,150,220],
       'var': "TOF",
       'cuts': "CKov0Status == 0 && CKov1Status == 1",
     },
@@ -1006,7 +1018,7 @@ if __name__ == "__main__":
       'title': "No CKov",
       'xtitle': "Beamline Time of Flight [ns]",
       'ytitle': "Events / bin",
-      'binning': [100,150,250],
+      'binning': [70,150,220],
       'var': "TOF",
       'cuts': "CKov0Status == 0 && CKov1Status == 0",
     },
@@ -1014,7 +1026,7 @@ if __name__ == "__main__":
     #  'title': "Invalid CKov",
     #  'xtitle': "Beamline Time of Flight [ns]",
     #  'ytitle': "Events / bin",
-    #  'binning': [100,150,250],
+    #  'binning': [70,150,220],
     #  'var': "TOF",
     #  'cuts': "CKov0Status == -1 && CKov1Status == -1",
     #},

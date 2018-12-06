@@ -79,21 +79,21 @@ if __name__ == "__main__":
     #  'name': "run5834",
     #  'title': "Run 5834 0.3 GeV/c",
     #},
-    {
-      'fn': "PiAbs_redoBeamEvent_run5387_new.root",
-      'name': "run5387_redo_new",
-      'title': "Run 5387: 1 GeV/c Nov 28",
-    },
+#    {
+#      'fn': "PiAbs_redoBeamEvent_run5387_new.root",
+#      'name': "run5387_redo_new",
+#      'title': "Run 5387: 1 GeV/c Nov 28",
+#    },
     {
       'fn': "piAbsSelector_run5387_v3.root",
       'name': "run5387_v3",
       'title': "Run 5387: 1 GeV/c Dec 4",
     },
-    {
-      'fn': "PiAbs_redoBeamEvent_run5430_new.root",
-      'name': "run5430_redo_new",
-      'title': "Run 5430: 2 GeV/c Nov 28",
-    },
+#    {
+#      'fn': "PiAbs_redoBeamEvent_run5430_new.root",
+#      'name': "run5430_redo_new",
+#      'title': "Run 5430: 2 GeV/c Nov 28",
+#    },
     {
       'fn': "piAbsSelector_run5432_v3.root",
       'name': "run5432_v3",
@@ -104,16 +104,16 @@ if __name__ == "__main__":
       'name': "run5145_v3",
       'title': "Run 5145: 7 GeV/c Dec 4",
     },
-    {
-      'fn': "PiAbs_redoBeamEvent_run5826_new.root",
-      'name': "run5826_redo_new",
-      'title': "Run 5826: 0.5 GeV/c Nov 28",
-    },
-    {
-      'fn': "PiAbs_redoBeamEvent_run5834_new.root",
-      'name': "run5834_redo_new",
-      'title': "Run 5834: 0.3 GeV/c Nov 28",
-    },
+#    {
+#      'fn': "PiAbs_redoBeamEvent_run5826_new.root",
+#      'name': "run5826_redo_new",
+#      'title': "Run 5826: 0.5 GeV/c Nov 28",
+#    },
+#    {
+#      'fn': "PiAbs_redoBeamEvent_run5834_new.root",
+#      'name': "run5834_redo_new",
+#      'title': "Run 5834: 0.3 GeV/c Nov 28",
+#    },
   ]
 
   #PrintCutTable(fileConfigsData,cutConfigs,"PiAbsSelector/tree",nMax=NMAX)
