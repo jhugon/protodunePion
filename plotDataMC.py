@@ -19,6 +19,7 @@ if __name__ == "__main__":
   #cuts += "*(trackMatchDeltaAngle*180/pi < 10.)" # matching
   ###
   ###
+  cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0)"
   secTrkCuts = "*(trackStartDistToPrimTrkEnd < 2.)"
   #weightStr = "pzWeight"+cuts
   weightStr = "1"+cuts
@@ -32,48 +33,38 @@ if __name__ == "__main__":
   NMAX=10000000000
   #NMAX=100
   fileConfigs = [
-    {
-      'fn': "PiAbs_Run5287.root",
-      'name': "run5287",
-      'title': "Data Run 5287",
-      'caption': "Data Run 5287",
-      'color': root.kBlack,
-      'isData': True,
-    },
-    {
-      'fn': "PiAbs_AllData.root",
-      'name': "allData",
-      'title': "Data",
-      'caption': "Data",
-      'color': root.kBlack,
-      'isData': True,
-    },
     #{
-    #  #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_5evts.root",
-    #  #'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_10evts.root",
-    #  'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
-    #  'name': "protodune_beam_p2GeV_cosmics_3ms_sce_mcc10",
-    #  'title': "MCC10, 2 GeV SCE",
-    #  'caption': "MCC10, 2 GeV SCE",
-    #  'color': root.kBlack,
-    #  'isData': False,
+    #  'fn': "piAbsSelector_run5387_v3.root",
+    #  'name': "run5387",
+    #  'title': "Run 5387: 1 GeV/c",
+    #  'caption': "Run 5387: 1 GeV/c",
+    #  'color': root.kBlue-7,
+    #  'cuts': "*"+cutGoodBeamline,
     #},
     {
-      'fn': "piAbsSelector_mcc11_protoDUNE_reco_100evts.root",
-      'name': "protodune_mcc11",
-      'title': "MCC11",
-      'caption': "MCC11",
-      'color': root.kCyan,
+      'fn': "piAbsSelector_run5432_v3.root",
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
+      'color': root.kGreen+3,
+      'cuts': "*"+cutGoodBeamline,
+    },
+    #{
+    #  'fn': "piAbsSelector_run5145_v3.root",
+    #  'name': "run5145",
+    #  'title': "Run 5145: 7 GeV/c",
+    #  'caption': "Run 5145: 7 GeV/c",
+    #  'color': root.kOrange-3,
+    #  'cuts': "*"+cutGoodBeamline,
+    #},
+    {
+      'fn': "piAbsSelector_mcc11_flf_2GeV.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC11 2 GeV FLF",
+      'caption': "MCC11 2 GeV FLF",
+      'color': root.kBlack,
       'isData': False,
     },
-    #{
-    #  'fn': "piAbsSelector_mcc11_protoDUNE_reco_100evts.root",
-    #  'name': "protodune_mcc11",
-    #  'title': "MCC11",
-    #  'caption': "MCC11",
-    #  'color': root.kCyan,
-    #  'isData': False,
-    #},
   ]
 
   histConfigs = [
@@ -906,17 +897,17 @@ if __name__ == "__main__":
   #  #if histConfigs[i]['name'] != "zWC4Hit":
   #    histConfigs.pop(i)
 
-  plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
-  #fileConfigMCs = copy.deepcopy(fileConfigs)
-  #fileConfigDatas = []
-  #for i in reversed(range(len(fileConfigMCs))):
-  #  if 'isData' in fileConfigMCs[i] and fileConfigMCs[i]['isData']:
-  #    fileConfigDatas.append(fileConfigMCs.pop(i))
-  #DataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
-  #DataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
-  #              outPrefix="DataMC_",nMax=NMAX,
-  #              catConfigs=TRUECATEGORYFEWERCONFIGS
-  #           )
+  #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
+  fileConfigMCs = copy.deepcopy(fileConfigs)
+  fileConfigDatas = []
+  for i in reversed(range(len(fileConfigMCs))):
+    if 'isData' in fileConfigMCs[i] and fileConfigMCs[i]['isData']:
+      fileConfigDatas.append(fileConfigMCs.pop(i))
+  DataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
+  DataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+                outPrefix="DataMC_",nMax=NMAX,
+                catConfigs=TRUECATEGORYFEWERCONFIGS
+             )
 
   histConfigs = [
     #{
