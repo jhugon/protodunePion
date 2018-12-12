@@ -12,6 +12,7 @@ from math import log10
 import math
 import array
 import os
+import os.path
 import sys
 import time
 import datetime
@@ -1186,7 +1187,7 @@ class DataMCCategoryStack(DataMCStack):
         dataHist = self.loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
         dataHists.append(dataHist)
         if printIntegral:
-          print("{} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],dataHist.Integral()))
+          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],dataHist.Integral()))
       catHists = []
       for catConfig in catConfigs:
         thisCuts = cuts + "*(" + catConfig["cuts"] + ")"
@@ -1201,7 +1202,7 @@ class DataMCCategoryStack(DataMCStack):
         catHist.SetLineColor(catConfig['color'])
         catHists.append(catHist)
         if printIntegral:
-          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],catConfig['title'],hist.Integral()))
+          print("{} {} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],catConfig['title'],catHist.Integral()))
       mcSumHist = None
       mcStack = root.THStack()
       if len(catHists) > 0 :
@@ -3493,7 +3494,7 @@ def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
     print outStr
   print "="*rowCharLength
 
-def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=True,nMax=100):
+def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=False,nMax=100):
   tree = root.TChain(treename)
   try:
     if type(infilename) is str:
@@ -3572,8 +3573,22 @@ def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=Fals
           val = "{}".format(val)
         #val = variableName + ": "+val
         vals.append(val)
+    if printFileBasename or printFullFilename:
+      variableName = "infilename"
+      try:
+        val = getattr(tree,variableName)
+      except:
+        val = "Error"
+      finally:
+        val = str(val)
+        if not printFullFilename:
+          val = os.path.basename(val)
+        #val = variableName + ": "+val
+        vals.append(val)
     allVals.append(vals)
   columnTitles = ["Event"]+variableNames
+  if printFileBasename or printFullFilename:
+    columnTitles.append("File")
   printTable(allVals,columnTitles=columnTitles)
 
 class PrintCutTable(DataMCStack):
@@ -3847,6 +3862,9 @@ TRUECATEGORYFEWERCONFIGS = [
      'color': root.kGray+1,
    },
 ]
+
+for iCat in range(len(TRUECATEGORYFEWERCONFIGS)):
+    TRUECATEGORYFEWERCONFIGS[iCat]['color'] = COLORLIST[iCat]
 
 
 if __name__ == "__main__":

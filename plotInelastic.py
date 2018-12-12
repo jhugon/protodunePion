@@ -67,11 +67,18 @@ if __name__ == "__main__":
             'name': "DeltaXPFBeamPrimBI",
             'xtitle': "#Delta X PF Track & BI Track at TPC Front [cm]",
             'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimXFrontTPC - xWC",
+          },
+          {
+            'name': "DeltaXPFBeamPrimBI_wide",
+            'xtitle': "#Delta X PF Track & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
             'binning': [100,-100,100],
             'var': "PFBeamPrimXFrontTPC - xWC",
           },
        ],
-      'cut': "1",
+      'cut': "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))",
     },
     {
       'histConfigs':
@@ -80,8 +87,51 @@ if __name__ == "__main__":
             'name': "DeltaYPFBeamPrimBI",
             'xtitle': "#Delta Y PF Track & BI Track at TPC Front [cm]",
             'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimYFrontTPC - yWC",
+          },
+          {
+            'name': "DeltaYPFBeamPrimBI_wide",
+            'xtitle': "#Delta Y PF Track & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
             'binning': [100,-100,100],
             'var': "PFBeamPrimYFrontTPC - yWC",
+          },
+       ],
+      'cut': "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimAngleToBeamTrk",
+            'xtitle': "Angle Between BI & Primary PF Track [Deg]",
+            'ytitle': "Events / bin",
+            'binning': [80,0,40],
+            'var': "PFBeamPrimAngleToBeamTrk*180/pi",
+            #'cutSpans': [[30.,None]],
+          },
+          {
+            'name': "PFBeamPrimAngleToBeamTrk_wide",
+            'xtitle': "Angle Between BI & Primary PF Track [Deg]",
+            'ytitle': "Events / bin",
+            'binning': [180,0,180],
+            'var': "PFBeamPrimAngleToBeamTrk*180/pi",
+            #'cutSpans': [[30.,None]],
+          },
+       ],
+      #'cut': "PFBeamPrimAngleToBeamTrk < 30.*pi/180.",
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimBeamCosmicScore",
+            'xtitle': "Pandora Beam / Cosmic BDT Score",
+            'ytitle': "Events / bin",
+            'binning': [100,-0.5,0.5],
+            'var': "PFBeamPrimBeamCosmicScore",
           },
        ],
       'cut': "1",
@@ -93,7 +143,7 @@ if __name__ == "__main__":
             'name': "PFBeamPrimStartX",
             'xtitle': "Track Start X Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [50,-100,100],
+            'binning': [150,-100,50],
             'var': "PFBeamPrimStartX",
           },
           {
@@ -113,7 +163,7 @@ if __name__ == "__main__":
             'name': "PFBeamPrimStartY",
             'xtitle': "Track Start Y Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [50,300,600],
+            'binning': [100,350,450],
             'var': "PFBeamPrimStartY",
           },
           {
@@ -144,8 +194,7 @@ if __name__ == "__main__":
             'var': "PFBeamPrimStartZ",
           },
        ],
-      #'cut': "PFBeamPrimStartZ<50",
-      'cut': "1",
+      'cut': "PFBeamPrimStartZ<50",
     },
     {
       'histConfigs':
@@ -154,14 +203,14 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndX",
             'xtitle': "Track End X Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [50,-100,100],
+            'binning': [100,-150,50],
             'var': "PFBeamPrimEndX",
           },
           {
             'name': "PFBeamPrimEndX_wide",
             'xtitle': "Track End X Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [150,-500,500],
+            'binning': [100,-500,500],
             'var': "PFBeamPrimEndX",
           },
        ],
@@ -174,14 +223,14 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndY",
             'xtitle': "Track End Y Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [50,300,600],
+            'binning': [125,250,500],
             'var': "PFBeamPrimEndY",
           },
           {
             'name': "PFBeamPrimEndY_wide",
             'xtitle': "Track End Y Position [cm]",
             'ytitle': "Events / bin",
-            'binning': [315,-10,620],
+            'binning': [63,-10,620],
             'var': "PFBeamPrimEndY",
           },
        ],
@@ -194,19 +243,18 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndZ",
             'xtitle': "TPC Track End Z [cm]",
             'ytitle': "Events / bin",
-            'binning': [200,-5,300],
+            'binning': [61,-5,300],
             'var': "PFBeamPrimEndZ",
           },
           {
             'name': "PFBeamPrimEndZ_wide",
             'xtitle': "TPC Track End Z [cm]",
             'ytitle': "Events / bin",
-            'binning': [400,-10,705],
+            'binning': [143,-10,705],
             'var': "PFBeamPrimEndZ",
           },
        ],
-      #'cut': "PFBeamPrimEndZ<50",
-      'cut': "1",
+      'cut': "PFBeamPrimEndZ<650",
     },
     {
       'histConfigs':
@@ -249,79 +297,79 @@ if __name__ == "__main__":
        ],
       'cut': "1",
     },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimStartThetaY",
-            'xtitle': "TPC Track #theta_{y} [deg]",
-            'ytitle': "Events / bin",
-            'binning': [180,0,180],
-            'var': "acos(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180./pi",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimStartPhiZX",
-            'xtitle': "TPC Track #phi_{zx} [deg]",
-            'ytitle': "Events / bin",
-            'binning': [180,-180,180],
-            'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180./pi",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimStartThetaX",
-            'xtitle': "TPC Track #theta_{x} [deg]",
-            'ytitle': "Events / bin",
-            'binning': [180,0,180],
-            'var': "acos(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180./pi",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-              'name': "trackStartCosThetaX",
-              'xtitle': "TPC Track cos(#theta_{x})",
-              'ytitle': "Events / bin",
-              'binning': [100,0,1],
-              'var': "sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi)",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-              'name': "PFBeamPrimStartPhiZY",
-              'xtitle': "TPC Track #phi_{zy} [deg]",
-              'ytitle': "Events / bin",
-              'binning': [180,-180,180],
-              'var': "atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180./pi",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'name': "PFBeamPrimTrkLen",
-      'xtitle': "TPC Track Length [cm]",
-      'ytitle': "Events / bin",
-      'binning': [200,0,800],
-      'var': "PFBeamPrimTrkLen",
-      'cut': "1",
-    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimStartThetaY",
+#            'xtitle': "TPC Track #theta_{y} [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [180,0,180],
+#            'var': "acos(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180./pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimStartPhiZX",
+#            'xtitle': "TPC Track #phi_{zx} [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [180,-180,180],
+#            'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180./pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimStartThetaX",
+#            'xtitle': "TPC Track #theta_{x} [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [180,0,180],
+#            'var': "acos(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180./pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#              'name': "trackStartCosThetaX",
+#              'xtitle': "TPC Track cos(#theta_{x})",
+#              'ytitle': "Events / bin",
+#              'binning': [100,0,1],
+#              'var': "sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi)",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#              'name': "PFBeamPrimStartPhiZY",
+#              'xtitle': "TPC Track #phi_{zy} [deg]",
+#              'ytitle': "Events / bin",
+#              'binning': [180,-180,180],
+#              'var': "atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180./pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'name': "PFBeamPrimTrkLen",
+#      'xtitle': "TPC Track Length [cm]",
+#      'ytitle': "Events / bin",
+#      'binning': [200,0,800],
+#      'var': "PFBeamPrimTrkLen",
+#      'cut': "1",
+#    },
     {
       'name': "PFBeamPrimIsTracklike",
       'xtitle': "PF Beam Primary is Track-like",
@@ -338,46 +386,46 @@ if __name__ == "__main__":
       'var': "PFNBeamSlices",
       'cut': "PFNBeamSlices == 1",
     },
-    {
-      'name': "PFBeamPrimNDaughters",
-      'xtitle': "Number of PF Secondaries",
-      'ytitle': "Events / bin",
-      'binning': [9,-0.5,8.5],
-      'var': "PFBeamPrimNDaughters",
-      'cut': "1",
-    },
-    {
-      'name': "kinBI",
-      'xtitle': "Beamline Kinetic Energy (assume #pi^{+}) [MeV]",
-      'ytitle': "Events / bin",
-      'binning': [100,0,10],
-      'var': "kinWC/1000.",
-      'cut': "1",
-    },
-    {
-      'name': "pBI",
-      'xtitle': "Beamline Momentum [GeV/c]",
-      'ytitle': "Events / bin",
-      'binning': [100,0,10],
-      'var': "pWC/1000.",
-      'cut': "1",
-    },
-    {
-      'name': "PFBeamPrimKinInteract",
-      'xtitle': "PF Track Interaction KE [GeV]",
-      'ytitle': "Events / bin",
-      'binning': [100,0,10],
-      'var': "PFBeamPrimKinInteract/1000.",
-      'cut': "1",
-    },
-    {
-      'name': "trueSecondToEndKin",
-      'xtitle': "True Particle Interaction KE [GeV]",
-      'ytitle': "Events / bin",
-      'binning': [100,0,10],
-      'var': "trueSecondToEndKin/1000.",
-      'cut': "1",
-    },
+#    {
+#      'name': "PFBeamPrimNDaughters",
+#      'xtitle': "Number of PF Secondaries",
+#      'ytitle': "Events / bin",
+#      'binning': [9,-0.5,8.5],
+#      'var': "PFBeamPrimNDaughters",
+#      'cut': "1",
+#    },
+#    {
+#      'name': "kinBI",
+#      'xtitle': "Beamline Kinetic Energy (assume #pi^{+}) [MeV]",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,10],
+#      'var': "kinWC/1000.",
+#      'cut': "1",
+#    },
+#    {
+#      'name': "pBI",
+#      'xtitle': "Beamline Momentum [GeV/c]",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,10],
+#      'var': "pWC/1000.",
+#      'cut': "1",
+#    },
+#    {
+#      'name': "PFBeamPrimKinInteract",
+#      'xtitle': "PF Track Interaction KE [GeV]",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,10],
+#      'var': "PFBeamPrimKinInteract/1000.",
+#      'cut': "1",
+#    },
+#    {
+#      'name': "trueSecondToEndKin",
+#      'xtitle': "True Particle Interaction KE [GeV]",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,10],
+#      'var': "trueSecondToEndKin/1000.",
+#      'cut': "1",
+#    },
   ]
   c = root.TCanvas()
   NMAX=10000000000
@@ -388,9 +436,9 @@ if __name__ == "__main__":
   #fn = "PiAbs_mcc11.root"
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "Beam Data, MCC10 2 & 7 GeV"
-  mcfn = "piAbsSelector_mcc11_flf_2GeV.root"
+  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.5.root"
   caption = "2 GeV/c Beam Data & MCC11 FLF"
-  scaleFactor = 14.47
+  scaleFactor = 0.6430260047281324
 
   fileConfigsData = [
     #{
@@ -408,22 +456,58 @@ if __name__ == "__main__":
     #  'cuts': "*"+cutGoodBeamline,
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
-#    {
-#      'fn': "piAbsSelector_run5432_v3.root",
-#      'name': "run5432",
-#      'title': "Run 5432: 2 GeV/c",
-#      'caption': "Run 5432: 2 GeV/c",
-#      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline,
-#    },
+    {
+      'fn': "piAbsSelector_run5432_v4.5.root",
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline,
+    },
   ]
   fileConfigsMC = [
+    #{
+    #  'fn': mcfn,
+    #  'name': "mcc11",
+    #  'title': "MCC11",
+    #  'caption': "MCC11",
+    #  'cuts': "*(abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)",
+    #  'color': root.kBlue-7,
+    #  'scaleFactor': scaleFactor,
+    #},
     {
       'fn': mcfn,
-      'name': "mcc11",
-      'title': "MCC11",
-      'caption': "MCC11",
-      'cuts': "",
+      'name': "mcc11_piInel",
+      'title': "MCC11 #pi Inelastic",
+      'caption': "MCC11 #pi Inelastic",
+      'cuts': "*(trueCategory>=1 && trueCategory <=4)",
       'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': mcfn,
+      'name': "mcc11_piDecay",
+      'title': "MCC11 #pi Decay",
+      'caption': "MCC11 #pi Decay",
+      'cuts': "*(trueCategory==9 || trueCategory ==10)",
+      'color': root.kRed-4,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': mcfn,
+      'name': "mcc11_piOutsideTPC",
+      'title': "MCC11 #pi Interacted Outside TPC",
+      'caption': "MCC11 #pi Interacted Outside TPC",
+      'cuts': "*(trueCategory==6 || trueCategory ==7 || trueCategory==8)",
+      'color': root.kGreen+3,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': mcfn,
+      'name': "mcc11_mu",
+      'title': "MCC11 Primary Muon",
+      'caption': "MCC11 Primary Muon",
+      'cuts': "*(trueCategory==13)",
+      'color': root.kAzure+10,
       'scaleFactor': scaleFactor,
     },
   ]
@@ -449,6 +533,10 @@ if __name__ == "__main__":
       del config["cut"]
       config["cuts"] = "1"
       histConfigs.append(config)
+  try:
+    histConfigs[0]["printIntegral"] = True
+  except IndexError:
+    pass
 
 
   NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)

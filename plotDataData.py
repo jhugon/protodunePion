@@ -214,19 +214,19 @@ if __name__ == "__main__":
       'var': "CKov1Pressure",
       'cuts': "(CKov1Status > -1)",
     },
-    #{
-    #  'name': "beamlineMassSquared",
-    #  'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
-    #  'ytitle': "Events / bin",
-    #  'binning': [100,-2e5/m2SF,15e5/m2SF],
-    #  'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
-    #  'cuts': "(!isMC)",
-    #  #'normalize': True,
-    #  'logy': False,
-    #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
-    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    #},
+    {
+      'name': "beamlineMassSquared",
+      'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
+      'ytitle': "Events / bin",
+      'binning': [100,-2e5/m2SF,15e5/m2SF],
+      'var': "beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)*{}".format(momSF**2,tofOffset,lightTime**2,1./m2SF),
+      'cuts': "(!isMC)",
+      #'normalize': True,
+      'logy': False,
+      'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
+      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    },
     #{
     #  'name': "beamlineMassSquared_zoom0_onlyCKov0",
     #  'xtitle': "Beamline Mass Squared [{:.0f}#times (MeV/c^{{2}})^{{2}}]".format(m2SF),
@@ -254,19 +254,19 @@ if __name__ == "__main__":
     #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
     #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
     #},
-    #{
-    #  'name': "beamlineMass",
-    #  'xtitle': "Beamline Mass [MeV/c^{2}]",
-    #  'ytitle': "Events / bin",
-    #  'binning': [100,0,2000],
-    #  'var': "sqrt(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.))".format(momSF**2,tofOffset,lightTime**2),
-    #  'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)>0.)".format(momSF**2,tofOffset,lightTime**2),
-    #  #'normalize': True,
-    #  'logy': False,
-    #  'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
-    #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
-    #},
+    {
+      'name': "beamlineMass",
+      'xtitle': "Beamline Mass [MeV/c^{2}]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2000],
+      'var': "sqrt(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.))".format(momSF**2,tofOffset,lightTime**2),
+      'cuts': "(!isMC)"+"*(beamMom*beamMom*{}*1e6*(pow(TOF-{},2)/{}-1.)>0.)".format(momSF**2,tofOffset,lightTime**2),
+      #'normalize': True,
+      'logy': False,
+      'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
+      #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
+      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    },
 #    {
 #      'name': "PFNBeamSlices",
 #      'xtitle': "Number of Pandora Beam Slices",
@@ -577,18 +577,17 @@ if __name__ == "__main__":
     #},
   ]
 
-  for histConfig in histConfigs:
-    histConfig["caption"] = caption
-    histConfig["normalize"] = True
-    histConfig["ytitle"] = "Normalized Events / Bin"
-
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
-  for histConfig in histConfigs:
-    histConfig['logy'] = True
-    histConfig["normalize"] = False
-    histConfig["ytitle"] = "Events / Bin"
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
-  sys.exit(0)
+#  for histConfig in histConfigs:
+#    histConfig["caption"] = caption
+#    histConfig["normalize"] = True
+#    histConfig["ytitle"] = "Normalized Events / Bin"
+#
+#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
+#  for histConfig in histConfigs:
+#    histConfig['logy'] = True
+#    histConfig["normalize"] = False
+#    histConfig["ytitle"] = "Events / Bin"
+#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
 
   identityFunc = root.TF1("identityFunc","x",0.1,1000)
   identityFunc.SetLineColor(root.kGray)
