@@ -3790,19 +3790,29 @@ for iCat in range(len(TRUECATEGORYCONFIGS)):
     TRUECATEGORYCONFIGS[iCat]['color'] = rootColors[iCat % len(rootColors)] + rootAdds[iCat // len(rootColors)]
 
 TRUECATEGORYFEWERCONFIGS = [
+   ###{
+   ###  'title': "#pi Absorption",
+   ###  'cuts':"trueCategory==2",
+   ###  'color': root.kBlue-7,
+   ###},
+   ###{
+   ###  'title': "#pi Charge Exchange",
+   ###  'cuts':"trueCategory==3",
+   ###  'color': root.kGreen+3,
+   ###},
+   ###{
+   ###  'title': "#pi Backgrounds",
+   ###  'cuts':"trueCategory==1 || trueCategory==9 || trueCategory==10 || trueCategory==4",
+   ###  'color': root.kOrange-3,
+   ###},
    {
-     'title': "#pi Absorption",
-     'cuts':"trueCategory==2",
+     'title': "#pi Inelastic",
+     'cuts':"trueCategory>=1 && trueCategory <=4",
      'color': root.kBlue-7,
    },
    {
-     'title': "#pi Charge Exchange",
-     'cuts':"trueCategory==3",
-     'color': root.kGreen+3,
-   },
-   {
-     'title': "#pi Backgrounds",
-     'cuts':"trueCategory==1 || trueCategory==9 || trueCategory==10 || trueCategory==4",
+     'title': "#pi Decay",
+     'cuts':"trueCategory==9 || trueCategory==10",
      'color': root.kOrange-3,
    },
    {

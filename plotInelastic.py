@@ -340,10 +340,42 @@ if __name__ == "__main__":
     },
     {
       'name': "PFBeamPrimNDaughters",
-      'xtitle': "PF Beam Primary is Track-like",
+      'xtitle': "Number of PF Secondaries",
       'ytitle': "Events / bin",
       'binning': [9,-0.5,8.5],
       'var': "PFBeamPrimNDaughters",
+      'cut': "1",
+    },
+    {
+      'name': "kinBI",
+      'xtitle': "Beamline Kinetic Energy (assume #pi^{+}) [MeV]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "kinWC/1000.",
+      'cut': "1",
+    },
+    {
+      'name': "pBI",
+      'xtitle': "Beamline Momentum [GeV/c]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "pWC/1000.",
+      'cut': "1",
+    },
+    {
+      'name': "PFBeamPrimKinInteract",
+      'xtitle': "PF Track Interaction KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "PFBeamPrimKinInteract/1000.",
+      'cut': "1",
+    },
+    {
+      'name': "trueSecondToEndKin",
+      'xtitle': "True Particle Interaction KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "trueSecondToEndKin/1000.",
       'cut': "1",
     },
   ]
@@ -376,13 +408,13 @@ if __name__ == "__main__":
     #  'cuts': "*"+cutGoodBeamline,
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
-    {
-      'fn': "piAbsSelector_run5432_v3.root",
-      'name': "run5432",
-      'title': "Run 5432: 2 GeV/c",
-      'caption': "Run 5432: 2 GeV/c",
-      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline,
-    },
+#    {
+#      'fn': "piAbsSelector_run5432_v3.root",
+#      'name': "run5432",
+#      'title': "Run 5432: 2 GeV/c",
+#      'caption': "Run 5432: 2 GeV/c",
+#      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline,
+#    },
   ]
   fileConfigsMC = [
     {
