@@ -28,8 +28,16 @@ if __name__ == "__main__":
     {"name": "Exactly 1 Beam Momenta","cut": "nBeamMom == 1"},
   ]
 
-  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0"}
-  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1"}
+  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0))"}
+  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"}
+
+  fileConfigsMC = [
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.7.root",
+      'name': "mcc11_flf_2p0GeV_v4.7",
+      'title': "MCC 11 2 GeV/c FLF Dec 13",
+    },
+  ]
 
   fileConfigsData = [
     #{
@@ -87,26 +95,26 @@ if __name__ == "__main__":
 #      'name': "run5387_redo_new",
 #      'title': "Run 5387: 1 GeV/c Nov 28",
 #    },
-    {
-      'fn': "piAbsSelector_run5387_v3.root",
-      'name': "run5387_v3",
-      'title': "Run 5387: 1 GeV/c Dec 4",
-    },
+#    {
+#      'fn': "piAbsSelector_run5387_v3.root",
+#      'name': "run5387_v3",
+#      'title': "Run 5387: 1 GeV/c Dec 4",
+#    },
 #    {
 #      'fn': "PiAbs_redoBeamEvent_run5430_new.root",
 #      'name': "run5430_redo_new",
 #      'title': "Run 5430: 2 GeV/c Nov 28",
 #    },
-    {
-      'fn': "piAbsSelector_run5432_v3.root",
-      'name': "run5432_v3",
-      'title': "Run 5432: 2 GeV/c Dec 4",
-    },
-    {
-      'fn': "piAbsSelector_run5145_v3.root",
-      'name': "run5145_v3",
-      'title': "Run 5145: 7 GeV/c Dec 4",
-    },
+#    {
+#      'fn': "piAbsSelector_run5432_v3.root",
+#      'name': "run5432_v3",
+#      'title': "Run 5432: 2 GeV/c Dec 4",
+#    },
+#    {
+#      'fn': "piAbsSelector_run5145_v3.root",
+#      'name': "run5145_v3",
+#      'title': "Run 5145: 7 GeV/c Dec 4",
+#    },
 #    {
 #      'fn': "PiAbs_redoBeamEvent_run5826_new.root",
 #      'name': "run5826_redo_new",
@@ -117,6 +125,16 @@ if __name__ == "__main__":
 #      'name': "run5834_redo_new",
 #      'title': "Run 5834: 0.3 GeV/c Nov 28",
 #    },
+    {
+      'fn': "piAbsSelector_run5432_v4.7.root",
+      'name': "run5432_v4.7",
+      'title': "Run 5432: 2 GeV/c Dec 13",
+    },
+    {
+      'fn': "piAbsSelector_run5145_v4.7.root",
+      'name': "run5145_v4.7",
+      'title': "Run 5145: 7 GeV/c Dec 13",
+    },
   ]
 
   #PrintCutTable(fileConfigsData,cutConfigs,"PiAbsSelector/tree",nMax=NMAX)
@@ -238,7 +256,7 @@ if __name__ == "__main__":
   }
 
   def getCutForAllRuns(fileConfigs,cutDict,particle):
-    result = "("
+    result = "( isMC"
     for iFile, fileConfig in enumerate(fileConfigs):
       momStr = ""
       match = re.search(r" ([0-9.]+) GeV/c",fileConfig['title'])
@@ -254,16 +272,13 @@ if __name__ == "__main__":
         raise Exception("Couldn't find run number in title string: "+fileConfig['title'])
       thisCut = cutDict[momStr][particle]
       thisCut = "(runNumber == {} && {})".format(runStr,thisCut)
-      if iFile == 0:
-        result += thisCut
-      else:
-        result += " || ("+thisCut+")"
+      result += " || ("+thisCut+")"
     result += ")"
     return result
 
   print "\n\n"
   print "Good Beamline:"
-  PrintCutTable(fileConfigsData,cutConfigsGoodBeamline,"PiAbsSelector/tree",nMax=NMAX)
+  PrintCutTable(fileConfigsData,cutConfigsGoodBeamline,"PiAbsSelector/tree",nMax=NMAX,errors=True)
 
   print "\n\n"
   print "Pion Selection:"
@@ -272,10 +287,15 @@ if __name__ == "__main__":
     cutGoodBeamline,
     {"name": "Cherenkov Pion","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
     {"name": "TOF Pion","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
-    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices > 0"},
-    {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
+    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
+    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
+    {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
+    {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
+    {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
+    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"},
+    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"},
   ]
-  PrintCutTable(fileConfigsData,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX)
+  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX,errors=True)
 
 #  print "\n\n"
 #  print "Electron Selection:"

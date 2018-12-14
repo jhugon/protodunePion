@@ -436,7 +436,7 @@ if __name__ == "__main__":
   #fn = "PiAbs_mcc11.root"
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "Beam Data, MCC10 2 & 7 GeV"
-  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.5.root"
+  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.7.root"
   caption = "2 GeV/c Beam Data & MCC11 FLF"
   scaleFactor = 0.6430260047281324
 
@@ -457,7 +457,7 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
     {
-      'fn': "piAbsSelector_run5432_v4.5.root",
+      'fn': "piAbsSelector_run5432_v4.7.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -535,6 +535,7 @@ if __name__ == "__main__":
       histConfigs.append(config)
   try:
     histConfigs[0]["printIntegral"] = True
+    histConfigs[-1]["printIntegral"] = True
   except IndexError:
     pass
 

@@ -52,25 +52,25 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
     {
-      'fn': "piAbsSelector_run5432_v4.5.root",
+      'fn': "piAbsSelector_run5432_v4.7.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
       'isData': True,
       #'cuts': "*"+cutGoodBeamline,
-      #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
-      'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
     },
     {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.5.root",
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.7.root",
       'name': "mcc11_flf_2GeV",
       'title': "MCC11 2 GeV/c FLF",
       'caption': "MCC11 2 GeV/c FLF",
       'color': root.kBlue-7,
       #'cuts': "",
-      #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      'cuts': "*(truePrimaryPDG == 211)", # for protons
-      'scaleFactor': 0.3913757700205339,
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 0.3913757700205339*2.456,
       
     },
     #{
@@ -164,6 +164,7 @@ if __name__ == "__main__":
       'binning': [21,-0.5,20.5],
       'var': "PFNBeamSlices",
       'cuts': weightStr,
+      'printIntegral': True,
     },
     {
       'name': "PFBeamPrimNDaughters",
@@ -180,6 +181,7 @@ if __name__ == "__main__":
       'binning': [2,-0.5,1.5],
       'var': "PFBeamPrimIsTracklike",
       'cuts': weightStr,
+      'printIntegral': True,
     },
     {
       'name': "PFBeamPrimStartX",
@@ -348,7 +350,7 @@ if __name__ == "__main__":
       'name': "PFBeamPrimdEdxs",
       'xtitle': "Primary PF Track Hit dE/dx [MeV/cm]",
       'ytitle': "Hit / bin",
-      'binning': [100,0,30],
+      'binning': [100,0,20],
       'var': "PFBeamPrimdEdxs",
       'cuts': weightStr,
       #'normalize': True,
@@ -359,6 +361,16 @@ if __name__ == "__main__":
       'xtitle': "Primary PF Track Hit dE/dx [MeV/cm]",
       'ytitle': "Hit / bin",
       'binning': [200,0,10],
+      'var': "PFBeamPrimdEdxs",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "PFBeamPrimdEdxs_wide",
+      'xtitle': "Primary PF Track Hit dE/dx [MeV/cm]",
+      'ytitle': "Hit / bin",
+      'binning': [250,0,500],
       'var': "PFBeamPrimdEdxs",
       'cuts': weightStr,
       #'normalize': True,
@@ -441,7 +453,7 @@ if __name__ == "__main__":
   #  #if histConfigs[i]['name'] != "zWC4Hit":
   #    histConfigs.pop(i)
 
-  if False:
+  if True:
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     fileConfigMCs = copy.deepcopy(fileConfigs)
     fileConfigDatas = []

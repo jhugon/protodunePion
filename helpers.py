@@ -3593,7 +3593,7 @@ def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=Fals
 
 class PrintCutTable(DataMCStack):
 
-  def __init__(self,fileConfigs,cutConfigs,treename,nMax=sys.maxint):
+  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint):
     """
     similar to plotters, but cutConfigs is a list of dicts with key 
     'cut' as a cut string and 'name' or 'title' for the cut.
@@ -3603,17 +3603,17 @@ class PrintCutTable(DataMCStack):
     cutNames = self.getCutNames(cutConfigs)
     for fileConfig in fileConfigs:
       self.loadTree(fileConfig,treename)
-    countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
+    #countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
     countsCumu = self.getCountsCumulativeCut(fileConfigs,cutConfigs,nMax)
-    countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
-    countsCumuPerTop = self.getPercOfTopRow(countsCumu)
-    countsCumuPerPrev = self.getPercOfPrevRow(countsCumu)
-    print "Individual Cuts"
-    printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    #countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
+    countsCumuPerTop = self.getPercOfTopRow(countsCumu,errors=errors,asymerrors=asymerrors,interval=interval)
+    countsCumuPerPrev = self.getPercOfPrevRow(countsCumu,errors=errors,asymerrors=asymerrors,interval=interval)
+    #print "Individual Cuts"
+    #printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
     print "Cumulative Cuts"
     printTable(countsCumu,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
-    print "Individual Cuts Percentage of Top Row"
-    printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    #print "Individual Cuts Percentage of Top Row"
+    #printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
     print "Cumulative Cuts Percentage of Top Row"
     printTable(countsCumuPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
     print "Cumulative Cuts Percentage of Previous Row"
@@ -3686,7 +3686,7 @@ class PrintCutTable(DataMCStack):
         counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
 
-  def getPercOfTopRow(self,counts):
+  def getPercOfTopRow(self,counts,errors=False,asymerrors=False,interval=False):
     topRow = []
     result = []
     for valStr in counts[0]:
@@ -3695,23 +3695,46 @@ class PrintCutTable(DataMCStack):
       result.append([])
       for iCol in range(len(counts[iRow])):
         val = float(counts[iRow][iCol])
-        percStr = "{:.1f}".format(val / topRow[iCol] * 100.)
+        low, nom, high = getEfficiencyInterval(val,topRow[iCol])
+        if iRow == 0:
+          low = nom
+          high = nom
+        percStr = "{:5.1f}".format(nom*100.)
+        if errors:
+          percStr = "{:5.1f} +/-{:5.1f}".format(nom*100.,max(high-nom,nom-low)*100.)
+        if asymerrors:
+          percStr = "{:5.1f} +{:5.1f} -{:5.1f}".format(nom*100.,(high-nom)*100.,(nom-low)*100.)
+        if interval:
+          percStr = "{:5.1f} [{:5.1f},{:5.1f}]".format(nom*100.,low*100.,high*100.)
         result[iRow].append(percStr)
     return result
 
-  def getPercOfPrevRow(self,counts):
+  def getPercOfPrevRow(self,counts,errors=False,asymerrors=False,interval=False):
     result = []
     for iRow in range(len(counts)):
       result.append([])
       for iCol in range(len(counts[iRow])):
         if iRow == 0:
-          percStr = "{:.1f}".format(100.)
+          percStr = "{:5.1f}".format(100.)
+          if errors:
+            percStr = "{:5.1f} +/-{:5.1f}".format(100.,0.)
+          if asymerrors:
+            percStr = "{:5.1f} +{:5.1f} -{:5.1f}".format(100.,0.,0.)
+          if interval:
+            percStr = "{:5.1f} [{:5.1f},{:5.1f}]".format(100.,100.,100.)
           result[iRow].append(percStr)
         else:
           prevVal = float(counts[iRow-1][iCol])
           if prevVal > 1e-20:
-            val = float(counts[iRow][iCol]) / prevVal
-            percStr = "{:.1f}".format(val * 100.)
+            val = float(counts[iRow][iCol])
+            low, nom, high = getEfficiencyInterval(val,prevVal)
+            percStr = "{:5.1f}".format(nom * 100.)
+            if errors:
+              percStr = "{:5.1f} +/-{:5.1f}".format(nom*100.,max(high-nom,nom-low)*100.)
+            if asymerrors:
+              percStr = "{:5.1f} +{:5.1f} -{:5.1f}".format(nom*100.,(high-nom)*100.,(nom-low)*100.)
+            if interval:
+              percStr = "{:5.1f} [{:5.1f},{:5.1f}]".format(nom*100.,low*100.,high*100.)
             result[iRow].append(percStr)
           else:
             result[iRow].append("NaN")
