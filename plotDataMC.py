@@ -85,6 +85,26 @@ if __name__ == "__main__":
   ]
 
   histConfigs = [
+    #{
+    #  'name': "nGoodFEMBs_all",
+    #  'xtitle': "N Good FEMBs for all APAs",
+    #  'ytitle': "Events #times APAs / bin",
+    #  'binning': [21,-0.5,20.5],
+    #  'var': "nGoodFEMBs",
+    #  'cuts': weightStr,
+    #  #'normalize': True,
+    #  'logy': logy,
+    #},
+    #{
+    #  'name': "nGoodFEMBs_beamSide",
+    #  'xtitle': "N Good FEMBs for Beam Side",
+    #  'ytitle': "Events #times APAs / bin",
+    #  'binning': [21,-0.5,20.5],
+    #  'var': "nGoodFEMBs",
+    #  'cuts': weightStr+"*($Iteration == 0 || $Iteration == 2 || $Iteration == 4 )",
+    #  #'normalize': True,
+    #  'logy': logy,
+    #},
     {
       'name': "xWC",
       'xtitle': "X Position of BI track projection to TPC [cm]",
@@ -537,6 +557,16 @@ if __name__ == "__main__":
       'ytitle': "True Primary Start #theta [deg]",
       'binning': [90,-180,180,90,0,180],
       'var': "trueStartTheta*180/pi:trueStartPhi*180/pi",
+      'cuts': weightStr,
+      #'normalize': True,
+      #'logz': True,
+    },
+    {
+      'name': "nGoodFEMBsVAPA_wide",
+      'xtitle': "APA Number",
+      'ytitle': "N Good FEMBs",
+      'binning': [6,-0.5,5.5,21,-0.5,20.5],
+      'var': "nGoodFEMBs:Iteration$",
       'cuts': weightStr,
       #'normalize': True,
       #'logz': True,

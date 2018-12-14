@@ -43,6 +43,45 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
+            'name': "nGoodFEMBsAPA0",
+            'xtitle': "N Good FEMBs for APA 0",
+            'ytitle': "Events / bin",
+            'binning': [21,-0.5,20.5],
+            'var': "nGoodFEMBs[0]",
+          },
+       ],
+      'cut': "isMC || (nGoodFEMBs[0] == 20)",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "nGoodFEMBsAPA2",
+            'xtitle': "N Good FEMBs for APA 2",
+            'ytitle': "Events / bin",
+            'binning': [21,-0.5,20.5],
+            'var': "nGoodFEMBs[2]",
+          },
+       ],
+      'cut': "isMC || (nGoodFEMBs[2] == 20)",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "nGoodFEMBsAPA4",
+            'xtitle': "N Good FEMBs for APA 4",
+            'ytitle': "Events / bin",
+            'binning': [21,-0.5,20.5],
+            'var': "nGoodFEMBs[4]",
+          },
+       ],
+      'cut': "isMC || (nGoodFEMBs[4] == 20)",
+    },
+    {
+      'histConfigs':
+        [
+          {
             'name': "PFBeamPrimYFrontTPC",
             'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
             'ytitle': "Events / bin",

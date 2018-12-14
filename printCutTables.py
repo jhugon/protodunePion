@@ -28,14 +28,19 @@ if __name__ == "__main__":
     {"name": "Exactly 1 Beam Momenta","cut": "nBeamMom == 1"},
   ]
 
-  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0))"}
-  cutGoodBeamline = {"name":"Good Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"}
+  cutGoodBeamline = {"name":"Silver Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0))"}
+  cutGoodBeamline = {"name":"Golden Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"}
 
   fileConfigsMC = [
     {
       'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.7.root",
       'name': "mcc11_flf_2p0GeV_v4.7",
       'title': "MCC 11 2 GeV/c FLF Dec 13",
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.7.root",
+      'name': "mcc11_flf_7p0GeV_v4.7",
+      'title': "MCC 11 7 GeV/c FLF Dec 13",
     },
   ]
 
@@ -285,6 +290,8 @@ if __name__ == "__main__":
   cutConfigsPion = [
     #{"name": "All","cut": "1"},
     cutGoodBeamline,
+    {"name": "All Beam-side APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"},
+#    {"name": "All APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20 && nGoodFEMBs[1]==20 && nGoodFEMBs[3]==20 && nGoodFEMBs[5]==20))"},
     {"name": "Cherenkov Pion","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
     {"name": "TOF Pion","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
     {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
