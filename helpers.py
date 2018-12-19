@@ -28,7 +28,7 @@ try:
 except ImportError:
   pass
 
-def DataMCStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
+def dataMCStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
     """
     fileConfigDatas is a list of dictionaries configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files
@@ -362,7 +362,7 @@ def plotManyFilesOneNMinusOnePlot(self,fileConfigDatas,fileConfigMCs,cutConfigs,
                 Use none to have a span go to the edge of the axis
 
     Optionally, for multiple plots for a single cut, you can just put
-        the 'cut' and 'histConfigs', which is a list of DataMCStack-like hist configs
+        the 'cut' and 'histConfigs', which is a list of dataMCStack-like hist configs
         in each entry of the cutConfigs argument
 
     table: if true prints out a table of the number of events N-1 cut
@@ -1036,15 +1036,15 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
   else:
     return allHists, allProfilesToo
 
-def NMinusOneDataMCStack(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def dataMCStackNMinusOne(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
     """
-    Similar usage to DataMCStack, just cut instead of cuts
+    Similar usage to dataMCStack, just cut instead of cuts
 
     cutSpans: list of len 2 lists of areas to mark as cut. 
                 Use none to have a span go to the edge of the axis
 
     Optionally, for multiple plots for a single cut, you can just put
-        the 'cut' and 'histConfigs', which is a list of DataMCStack-like hist configs
+        the 'cut' and 'histConfigs', which is a list of dataMCStack-like hist configs
         in each entry of the cutConfigs argument
 
     table: if true prints out a table of the number of events N-1 cut
@@ -1194,7 +1194,7 @@ def NMinusOneDataMCStack(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,tr
       columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
-def DataMCCategoryStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
+def dataMCCategoryStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
     """
     fileConfigDatas is a list of dictionary configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files

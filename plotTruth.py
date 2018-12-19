@@ -366,12 +366,12 @@ if __name__ == "__main__":
     },
   ]
 
-  DataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
+  dataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
                 outPrefix="TruthInfo_",nMax=NMAX,
                 catConfigs=mcPartCases
              )
 
-  DataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
+  dataMCCategoryStack([],fileConfigs,histConfigs,c,"PiAbsSelector/tree",
                 outPrefix="TruthInfo_Species_",nMax=NMAX,
                 catConfigs=mcPartSpeciesCases
              )

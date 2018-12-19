@@ -320,8 +320,8 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
+  dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -331,8 +331,8 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
+  dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Tracks_",outSuffix="_logyHist",nMax=NMAX)
 
   fileConfigsMC += [
     {

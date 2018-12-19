@@ -540,15 +540,15 @@ if __name__ == "__main__":
     for i in reversed(range(len(fileConfigMCs))):
       if 'isData' in fileConfigMCs[i] and fileConfigMCs[i]['isData']:
         fileConfigDatas.append(fileConfigMCs.pop(i))
-    #DataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
+    #dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     print fileConfigDatas, fileConfigMCs
-    DataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
                   outPrefix="DataMC_",nMax=NMAX,
                   catConfigs=TRUECATEGORYFEWERCONFIGS
                )
     for histConfig in histConfigs:
       histConfig['logy'] = True
-    DataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
                   outPrefix="DataMC_",nMax=NMAX,
                   outSuffix="_logyHist",
                   catConfigs=TRUECATEGORYFEWERCONFIGS

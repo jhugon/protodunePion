@@ -203,8 +203,8 @@ if __name__ == "__main__":
       histConfigs.append(config)
 
 
-  #NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1Hist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="Hist",nMax=NMAX)
+  #dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1Hist",nMax=NMAX)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -214,8 +214,8 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  #NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_logyHist",nMax=NMAX)
+  #dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamTracks_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
@@ -379,10 +379,10 @@ if __name__ == "__main__":
       'cuts': "nBeamTracks == 1 && trackXFrontTPC > -40 && trackXFrontTPC < 20 && trackYFrontTPC > 400 && trackYFrontTPC < 470 && trackStartZ<50",
     },
   ]
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="Hist",nMax=NMAX)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="Hist",nMax=NMAX)
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="_logyHist",nMax=NMAX)
+  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="BeamAndTPCTracks_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
