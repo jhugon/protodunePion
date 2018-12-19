@@ -398,7 +398,7 @@ if __name__ == "__main__":
   ]
   c = root.TCanvas()
   NMAX=10000000000
-  #NMAX=1000
+  #NMAX=100
   #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
@@ -577,17 +577,17 @@ if __name__ == "__main__":
     #},
   ]
 
-#  for histConfig in histConfigs:
-#    histConfig["caption"] = caption
-#    histConfig["normalize"] = True
-#    histConfig["ytitle"] = "Normalized Events / Bin"
-#
-#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
-#  for histConfig in histConfigs:
-#    histConfig['logy'] = True
-#    histConfig["normalize"] = False
-#    histConfig["ytitle"] = "Events / Bin"
-#  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig["caption"] = caption
+    histConfig["normalize"] = True
+    histConfig["ytitle"] = "Normalized Events / Bin"
+
+  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="Hist",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+    histConfig["normalize"] = False
+    histConfig["ytitle"] = "Events / Bin"
+  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",outSuffix="_logyHist",nMax=NMAX)
 
   identityFunc = root.TF1("identityFunc","x",0.1,1000)
   identityFunc.SetLineColor(root.kGray)

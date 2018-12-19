@@ -66,11 +66,28 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
   does add fileConfig['cuts'] to cuts argument
   
   """
+  doProfileX = False
+  if "profileX" in histConfig and histConfig["profileX"]: doProfileX = True
+  doProfileY = False
+  if "profileY" in histConfig and histConfig["profileY"]: doProfileY = True
+  is2D = False
+  ncolon = var.count(":")
+  if ncolon > 1:
+    raise Exception("Multiple ':' not allowed in variable, only 1D/2D hists allowed",var)
+  elif ncolon == 1:
+    is2D = True
+
   hist = None
-  if len(binning) == 3:
-    hist = Hist(*binning)
+  if is2D:
+    if len(binning) == 2:
+      hist = Hist2D(binning[0],binning[1])
+    else:
+      hist = Hist2D(*binning)
   else:
-    hist = Hist(binning)
+    if len(binning) == 3:
+      hist = Hist(*binning)
+    else:
+      hist = Hist(binning)
   varAndHist = var + " >> " + hist.GetName()
   try:
     tree = fileConfig['tree']
@@ -80,8 +97,38 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
   if "cuts" in fileConfig:
     thiscuts += fileConfig['cuts']
   tree.Draw(varAndHist,thiscuts,"",nMax)
+  if "efficiencyDenomCuts" in histConfig and type(histConfig["efficiencyDenomCuts"]) == str:
+    denomHist = hist.Clone(hist.GetName()+"_denom")
+    denomHist.Reset()
+    varAndHistDenom = var + " >> " + denomHist.GetName()
+    tree.Draw(varAndHistDenom,histConfig["efficiencyDenomCuts"],"",nMax)
+    teff = root.TEfficiency(hist,denomHist)
+    hist = teff
+  else:
+    hist.Sumw2()
+    scaleFactor = 1.
+    if "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
+    hist.Scale(scaleFactor)
+    if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
+      normToBinWidth(hist)
+    if "normalize" in histConfig and histConfig['normalize']:
+      integral = hist.Integral()
+      if integral != 0.:
+        hist.Scale(1./integral)
+    if "integral" in histConfig and histConfig['integral']:
+      hist = getIntegralHist(hist)
+  if is2D:
+    if doProfileX:
+      if "profileStdDev" in histConfig and histConfig["profileStdDev"]:
+        hist = hist.ProfileX("_pfx",1,-1,'s')
+      else:
+        hist = hist.ProfileX()
+    elif doProfileY:
+      if "profileStdDev" in histConfig and histConfig["profileStdDev"]:
+        hist = hist.ProfileY("_pfy",1,-1,'s')
+      else:
+        hist = hist.ProfileY()
   hist.UseCurrentStyle()
-  hist.Sumw2()
   scaleFactor = 1.
   if not isData and "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
   hist.Scale(scaleFactor)
@@ -89,11 +136,174 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
     normToBinWidth(hist)
   if "integral" in histConfig and histConfig['integral']:
     hist = getIntegralHist(hist)
-  if not isData and "color" in fileConfig:
-    hist.SetLineColor(fileConfig['color'])
-    hist.SetMarkerColor(fileConfig['color'])
-    hist.SetFillColor(fileConfig['color'])
   return hist
+
+def drawAnnotationsForPlots(canvas,axisHist,fileConfigs,histConfigs):
+    """
+    Draws hist titles, captions, and vertical/horizontal lines
+
+    histConfigs and fileConfig can be single dicts or lists of dicts
+    """
+
+    xtitle = ""
+    ytitle = "Events / bin"
+    ztitle = ""
+    caption = ""
+    captionleft1 = ""
+    captionleft2 = ""
+    captionleft3 = ""
+    captionright1 = ""
+    captionright2 = ""
+    captionright3 = ""
+    preliminaryString = ""
+    vlineXs = set()
+    hlineYs = set()
+    vlines = []
+    hlines = []
+
+    if type(fileConfigs) is list:
+      for fileConfig in fileConfigs:
+        if "caption" in fileConfig: caption = fileConfig['caption']
+        if "captionleft1" in fileConfig: captionleft1 = fileConfig['captionleft1']
+        if "captionleft2" in fileConfig: captionleft2 = fileConfig['captionleft2']
+        if "captionleft3" in fileConfig: captionleft3 = fileConfig['captionleft3']
+        if "captionright1" in fileConfig: captionright1 = fileConfig['captionright1']
+        if "captionright2" in fileConfig: captionright2 = fileConfig['captionright2']
+        if "captionright3" in fileConfig: captionright3 = fileConfig['captionright3']
+        if "preliminaryString" in fileConfig: preliminaryString = fileConfig['preliminaryString']
+    else:
+      fileConfig = fileConfigs
+      if "caption" in fileConfig: caption = fileConfig['caption']
+      if "captionleft1" in fileConfig: captionleft1 = fileConfig['captionleft1']
+      if "captionleft2" in fileConfig: captionleft2 = fileConfig['captionleft2']
+      if "captionleft3" in fileConfig: captionleft3 = fileConfig['captionleft3']
+      if "captionright1" in fileConfig: captionright1 = fileConfig['captionright1']
+      if "captionright2" in fileConfig: captionright2 = fileConfig['captionright2']
+      if "captionright3" in fileConfig: captionright3 = fileConfig['captionright3']
+      if "preliminaryString" in fileConfig: preliminaryString = fileConfig['preliminaryString']
+
+    if type(histConfigs) is list:
+      for histConfig in histConfigs:
+        try:
+          xtitle = histConfig['xtitle']
+        except KeyError:
+          pass
+        try:
+          ytitle = histConfig['ytitle']
+        except KeyError:
+          pass
+        try:
+          ztitle = histConfig['ztitle']
+        except KeyError:
+          pass
+        if "caption" in histConfig \
+                or "captionleft1" in histConfig \
+                or "captionleft2" in histConfig \
+                or "captionleft3" in histConfig \
+                or "captionright1" in histConfig \
+                or "captionright2" in histConfig \
+                or "captionright3" in histConfig \
+                or "preliminaryString" in histConfig:
+            if "caption" in histConfig: caption = histConfig['caption']
+            if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
+            if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
+            if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
+            if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
+            if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
+            if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
+            if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
+        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+          for vline in histConfig["drawvlines"]:
+            if not vline in vlineXs:
+              vlineXs.add(vline)
+        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+          for hline in histConfig["drawhlines"]:
+            if not hline in hlineYs:
+              hlineYs.add(hline)
+    else:
+      histConfig = histConfigs
+      try:
+        xtitle = histConfig['xtitle']
+      except KeyError:
+        pass
+      try:
+        ytitle = histConfig['ytitle']
+      except KeyError:
+        pass
+      try:
+        ztitle = histConfig['ztitle']
+      except KeyError:
+        pass
+      if "caption" in histConfig \
+              or "captionleft1" in histConfig \
+              or "captionleft2" in histConfig \
+              or "captionleft3" in histConfig \
+              or "captionright1" in histConfig \
+              or "captionright2" in histConfig \
+              or "captionright3" in histConfig \
+              or "preliminaryString" in histConfig:
+          if "caption" in histConfig: caption = histConfig['caption']
+          if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
+          if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
+          if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
+          if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
+          if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
+          if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
+          if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
+      if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+        for vline in histConfig["drawvlines"]:
+          if not vline in vlineXs:
+            vlineXs.add(vline)
+      if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+        for hline in histConfig["drawhlines"]:
+          if not hline in hlineYs:
+            hlineYs.add(hline)
+
+    setHistTitles(axisHist,xtitle,ytitle,ztitle)
+    for hlineY in hlineYs:
+      hlines.append(drawHline(axisHist,hlineY))
+    for vlineX in vlineXs:
+      vlines.append(drawVline(axisHist,vlineX))
+    drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+
+def drawVHLinesForPlot(axisHist,histConfigs):
+    """
+    Draws vlines and hlines on a plot
+
+    histConfigs can be a single dict or a list of dicts
+
+    make sure to keep the returned list of lines so they don't go away
+    """
+    vlineXs = set()
+    hlineYs = set()
+    lines = []
+
+    if type(histConfigs) is list:
+      for histConfig in histConfigs:
+        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+          for vline in histConfig["drawvlines"]:
+            if not vline in vlineXs:
+              vlineXs.add(vline)
+        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+          for hline in histConfig["drawhlines"]:
+            if not hline in hlineYs:
+              hlineYs.add(hline)
+    else:
+      histConfig = histConfigs
+      if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+        for vline in histConfig["drawvlines"]:
+          if not vline in vlineXs:
+            vlineXs.add(vline)
+      if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+        for hline in histConfig["drawhlines"]:
+          if not hline in hlineYs:
+            hlineYs.add(hline)
+
+    for hlineY in hlineYs:
+      lines.append(drawHline(axisHist,hlineY))
+    for vlineX in vlineXs:
+      lines.append(drawVline(axisHist,vlineX))
+    return lines
 
 def getOrdinalStr(inInt):
   result = str(inInt)
