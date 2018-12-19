@@ -28,8 +28,7 @@ try:
 except ImportError:
   pass
 
-class DataMCStack:
-  def __init__(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
+def DataMCStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
     """
     fileConfigDatas is a list of dictionaries configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files
@@ -70,9 +69,9 @@ class DataMCStack:
     """
     #print("plotManyFilesOnePlot")
     for fileConfig in fileConfigDatas:
-      self.loadTree(fileConfig,treename)    
+      loadTree(fileConfig,treename)    
     for fileConfig in fileConfigMCs:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
 
     for histConfig in histConfigs:
       #print(" hist: {}, {}".format(histConfig["var"],histConfig["cuts"]))
@@ -125,13 +124,13 @@ class DataMCStack:
       # now on to the real work
       dataHists = []
       for fileConfig in fileConfigDatas:
-        hist = self.loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
         dataHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
       mcHists = []
       for fileConfig in fileConfigMCs:
-        hist = self.loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
         mcHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
@@ -172,55 +171,6 @@ class DataMCStack:
       canvas.SaveAs(saveNameBase+".pdf")
       canvas.SetLogy(False)
       canvas.SetLogx(False)
-
-  def loadTree(self,fileConfig,treename):
-    if len(fileConfig) == 0:
-      return
-    fileConfig['tree'] = root.TChain(treename)
-    try:
-      if type(fileConfig['fn']) is str:
-          fileConfig['tree'].AddFile(fileConfig['fn'])
-      elif type(fileConfig['fn']) is list:
-          for fn in fileConfig['fn']:
-              fileConfig['tree'].AddFile(fn)
-      else:
-          raise Exception("")
-    except KeyError:
-      return
-    if 'addFriend' in fileConfig:
-      fileConfig['tree'].AddFriend(*(fileConfig['addFriend']))
-    fileConfig['tree'].SetCacheSize(10000000);
-    fileConfig['tree'].AddBranchToCache("*");
-  
-  def loadHist(self,histConfig,fileConfig,binning,var,cuts,nMax,isData):
-    hist = None
-    if len(binning) == 3:
-      hist = Hist(*binning)
-    else:
-      hist = Hist(binning)
-    varAndHist = var + " >> " + hist.GetName()
-    try:
-      tree = fileConfig['tree']
-    except KeyError:
-      return hist
-    thiscuts = copy.deepcopy(cuts)
-    if "cuts" in fileConfig:
-      thiscuts += fileConfig['cuts']
-    tree.Draw(varAndHist,thiscuts,"",nMax)
-    hist.UseCurrentStyle()
-    hist.Sumw2()
-    scaleFactor = 1.
-    if not isData and "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
-    hist.Scale(scaleFactor)
-    if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
-      normToBinWidth(hist)
-    if "integral" in histConfig and histConfig['integral']:
-      hist = getIntegralHist(hist)
-    if not isData and "color" in fileConfig:
-      hist.SetLineColor(fileConfig['color'])
-      hist.SetMarkerColor(fileConfig['color'])
-      hist.SetFillColor(fileConfig['color'])
-    return hist
 
 def plotManyFilesOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
   """
@@ -403,6 +353,164 @@ def plotManyFilesOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
     canvas.SaveAs(saveNameBase+".pdf")
     canvas.SetLogy(False)
     canvas.SetLogx(False)
+
+def plotManyFilesOneNMinusOnePlot(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+    """
+    Similar usage to plotManyFilesOnePlot, just cut instead of cuts
+
+    cutSpans: list of len 2 lists of areas to mark as cut. 
+                Use none to have a span go to the edge of the axis
+
+    Optionally, for multiple plots for a single cut, you can just put
+        the 'cut' and 'histConfigs', which is a list of DataMCStack-like hist configs
+        in each entry of the cutConfigs argument
+
+    table: if true prints out a table of the number of events N-1 cut
+
+    """
+    for fileConfig in fileConfigDatas:
+      loadTree(fileConfig,treename)
+    for fileConfig in fileConfigMCs:
+      loadTree(fileConfig,treename)
+    nMinusCutEventCounts = []
+    for i in range(len(cutConfigs)):
+      nMinusCutEventCounts.append([])
+      for j in range(len(fileConfigDatas)+1+len(fileConfigMCs)):
+        nMinusCutEventCounts[i].append("")
+    for iCut in range(len(cutConfigs)):
+      cutConfig = cutConfigs[iCut]
+      cuts = []
+      for jCut in range(len(cutConfigs)):
+        if iCut == jCut:
+          continue
+        cuts.append(cutConfigs[jCut]['cut'])
+      cutStr = "("+") && (".join(cuts) + ")"
+      cutStr = "("+cutStr +")*"+weight
+      histConfigs = [cutConfig]
+      if "histConfigs" in cutConfig: histConfigs = cutConfig["histConfigs"]
+      for iHistConfig, histConfig in enumerate(histConfigs):
+        hists = []
+        binning = histConfig['binning']
+        var = histConfig['var']
+        #if var.count(":") != 0:
+        #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
+        xtitle = ""
+        ytitle = "Events/bin"
+        if "xtitle" in histConfig: xtitle = histConfig['xtitle']
+        if "ytitle" in histConfig: ytitle = histConfig['ytitle']
+        xlim = []
+        ylim = []
+        if "xlim" in histConfig: xlim = histConfig['xlim']
+        if "ylim" in histConfig: ylim = histConfig['ylim']
+        logy = False
+        logx = False
+        if "logy" in histConfig: logy = histConfig['logy']
+        if "logx" in histConfig: logx = histConfig['logx']
+        caption = ""
+        captionleft1 = ""
+        captionleft2 = ""
+        captionleft3 = ""
+        captionright1 = ""
+        captionright2 = ""
+        captionright3 = ""
+        preliminaryString = ""
+        if "caption" in histConfig: caption = histConfig['caption']
+        if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
+        if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
+        if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
+        if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
+        if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
+        if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
+        if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
+        vlineXs = []
+        hlineYs = []
+        vlines = []
+        hlines = []
+        cutSpans = cutStringParser(cutConfig['cut'])
+        vspans = []
+        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
+          vlineXs = histConfig["drawvlines"]
+        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
+          hlineYs = histConfig["drawhlines"]
+        if "cutSpans" in histConfig and type(histConfig["cutSpans"]) == list:
+          cutSpans = histConfig["cutSpans"]
+        printIntegral = False
+        if "printIntegral" in histConfig and histConfig["printIntegral"]:
+          printIntegral = True
+        # now on to the real work
+        dataHists = []
+        for iFile, fileConfig in enumerate(fileConfigDatas):
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          dataHists.append(hist)
+          if table and iHistConfig == 0:
+            nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
+          if printIntegral:
+            print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        mcHists = []
+        for iFile, fileConfig in enumerate(fileConfigMCs):
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          mcHists.append(hist)
+          if table and iHistConfig == 0:
+            nMinusCutEventCounts[iCut][len(fileConfigDatas)+1+iFile] = "{:.1f}".format(getIntegralAll(hist))
+          if printIntegral:
+            print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        mcSumHist = None
+        mcStack = root.THStack()
+        if len(mcHists) > 0 :
+          mcSumHist = mcHists[0].Clone(mcHists[0].GetName()+"_sumHist")
+          mcSumHist.SetFillColor(root.kBlue)
+          #mcSumHist.SetFillStyle(3254)
+          mcSumHist.SetFillStyle(1)
+          mcSumHist.SetMarkerSize(0)
+          mcSumHist.Reset()
+          for mcHist in reversed(mcHists):
+            mcSumHist.Add(mcHist)
+            mcStack.Add(mcHist)
+        if table and iHistConfig == 0:
+          nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
+        if printIntegral and not (mcStack is None):
+          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+        axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
+        setHistTitles(axisHist,xtitle,ytitle)
+        axisHist.Draw()
+        for hlineY in hlineYs:
+          hlines.append(drawHline(axisHist,hlineY))
+        for vlineX in vlineXs:
+          vlines.append(drawVline(axisHist,vlineX))
+        for cutSpan in cutSpans:
+          vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
+        #mcSumHist.Draw("histsame")
+        mcStack.Draw("histsame")
+        for dataHist in dataHists:
+          dataHist.Draw("esame")
+        labels = [fileConfig['title'] for fileConfig in fileConfigDatas]
+        legOptions = ["lep"]*len(fileConfigDatas)
+        labelHists = dataHists
+        labels += [fileConfig['title'] for fileConfig in fileConfigMCs]
+        legOptions += ["F"]*len(fileConfigMCs)
+        labelHists += mcHists
+        leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
+        drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+        canvas.RedrawAxis()
+        saveNameBase = outPrefix + histConfig['name'] + outSuffix
+        canvas.SaveAs(saveNameBase+".png")
+        canvas.SaveAs(saveNameBase+".pdf")
+        canvas.SetLogy(False)
+        canvas.SetLogx(False)
+    if table:
+      #rowTitles = []
+      #for cutConfig in cutConfigs:
+      #  if 'xtitle' in cutConfig:
+      #    rowTitles.append(cutConfig['xtitle']+" "+cutConfig['cut'])
+      #  else:
+      #    for histConfig in histConfigs:
+      #      rowTitles.append(histConfig['xtitle']+" "+cutConfig['cut'])
+      
+      rowTitles = [x['cut'] for x in cutConfigs]
+      columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
+      printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
 def plotManyHistsOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
   """
@@ -928,9 +1036,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
   else:
     return allHists, allProfilesToo
 
-class NMinusOneDataMCStack(DataMCStack):
-
-  def __init__(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def NMinusOneDataMCStack(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
     """
     Similar usage to DataMCStack, just cut instead of cuts
 
@@ -945,9 +1051,9 @@ class NMinusOneDataMCStack(DataMCStack):
 
     """
     for fileConfig in fileConfigDatas:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
     for fileConfig in fileConfigMCs:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
     nMinusCutEventCounts = []
     for i in range(len(cutConfigs)):
       nMinusCutEventCounts.append([])
@@ -1016,7 +1122,7 @@ class NMinusOneDataMCStack(DataMCStack):
         # now on to the real work
         dataHists = []
         for iFile, fileConfig in enumerate(fileConfigDatas):
-          hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
           dataHists.append(hist)
           if table and iHistConfig == 0:
             nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
@@ -1024,7 +1130,7 @@ class NMinusOneDataMCStack(DataMCStack):
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
         mcHists = []
         for iFile, fileConfig in enumerate(fileConfigMCs):
-          hist = self.loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
           mcHists.append(hist)
           if table and iHistConfig == 0:
             nMinusCutEventCounts[iCut][len(fileConfigDatas)+1+iFile] = "{:.1f}".format(getIntegralAll(hist))
@@ -1088,8 +1194,7 @@ class NMinusOneDataMCStack(DataMCStack):
       columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
-class DataMCCategoryStack(DataMCStack):
-  def __init__(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
+def DataMCCategoryStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
     """
     fileConfigDatas is a list of dictionary configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files
@@ -1133,9 +1238,9 @@ class DataMCCategoryStack(DataMCStack):
       color: Color for this category REQUIRED
     """
     for fileConfig in fileConfigDatas:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
     for fileConfig in fileConfigMCs:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
 
     for histConfig in histConfigs:
       hists = []
@@ -1184,7 +1289,7 @@ class DataMCCategoryStack(DataMCStack):
       # now on to the real work
       dataHists = []
       for fileConfig in fileConfigDatas:
-        dataHist = self.loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        dataHist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
         dataHists.append(dataHist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],dataHist.Integral()))
@@ -1193,7 +1298,7 @@ class DataMCCategoryStack(DataMCStack):
         thisCuts = cuts + "*(" + catConfig["cuts"] + ")"
         catHist = None
         for fileConfig in fileConfigMCs:
-          hist = self.loadHist(histConfig,fileConfig,binning,var,thisCuts,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,thisCuts,nMax,False)
           if catHist is None:
             catHist = hist
           else:
@@ -1335,6 +1440,71 @@ def plotHist2DSimple(hist,xtitle,ytitle,canvas,outfileprefix,captionArgs=[""],pr
   canvas.SaveAs(outfileprefix+".png")
   #c.SaveAs(outfileprefix+".pdf")
   setupCOLZFrame(canvas,True) #reset frame
+  return hist
+
+def loadTree(fileConfig,treename):
+  """
+  Loads a tree and puts it in fileConfig["tree"]
+
+  fileConfig must have a 'fn' member
+  that file must have a tree at "treename"
+
+  If fileConfig has "addFriend" in it, then will add
+    as a friend tree to the tree
+  """
+  if len(fileConfig) == 0:
+    return
+  fileConfig['tree'] = root.TChain(treename)
+  try:
+    if type(fileConfig['fn']) is str:
+        fileConfig['tree'].AddFile(fileConfig['fn'])
+    elif type(fileConfig['fn']) is list:
+        for fn in fileConfig['fn']:
+            fileConfig['tree'].AddFile(fn)
+    else:
+        raise Exception("")
+  except KeyError:
+    return
+  if 'addFriend' in fileConfig:
+    fileConfig['tree'].AddFriend(*(fileConfig['addFriend']))
+  fileConfig['tree'].SetCacheSize(10000000);
+  fileConfig['tree'].AddBranchToCache("*");
+
+def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
+  """
+  Creates a TH1 from a histConfig and fileConfig
+
+  doesn't use histConfig['cuts'], uses cuts argument instead
+  does add fileConfig['cuts'] to cuts argument
+  
+  """
+  hist = None
+  if len(binning) == 3:
+    hist = Hist(*binning)
+  else:
+    hist = Hist(binning)
+  varAndHist = var + " >> " + hist.GetName()
+  try:
+    tree = fileConfig['tree']
+  except KeyError:
+    return hist
+  thiscuts = copy.deepcopy(cuts)
+  if "cuts" in fileConfig:
+    thiscuts += fileConfig['cuts']
+  tree.Draw(varAndHist,thiscuts,"",nMax)
+  hist.UseCurrentStyle()
+  hist.Sumw2()
+  scaleFactor = 1.
+  if not isData and "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
+  hist.Scale(scaleFactor)
+  if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
+    normToBinWidth(hist)
+  if "integral" in histConfig and histConfig['integral']:
+    hist = getIntegralHist(hist)
+  if not isData and "color" in fileConfig:
+    hist.SetLineColor(fileConfig['color'])
+    hist.SetMarkerColor(fileConfig['color'])
+    hist.SetFillColor(fileConfig['color'])
   return hist
 
 def getOrdinalStr(inInt):
@@ -3591,7 +3761,7 @@ def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=Fals
     columnTitles.append("File")
   printTable(allVals,columnTitles=columnTitles)
 
-class PrintCutTable(DataMCStack):
+class PrintCutTable:
 
   def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint):
     """
@@ -3602,7 +3772,7 @@ class PrintCutTable(DataMCStack):
     fileNames = self.getFileNames(fileConfigs)
     cutNames = self.getCutNames(cutConfigs)
     for fileConfig in fileConfigs:
-      self.loadTree(fileConfig,treename)
+      loadTree(fileConfig,treename)
     #countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
     countsCumu = self.getCountsCumulativeCut(fileConfigs,cutConfigs,nMax)
     #countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
@@ -3667,7 +3837,7 @@ class PrintCutTable(DataMCStack):
       thisCut = "("+cutConfig['cut']+")"
       for iFile in range(len(fileConfigs)):
         fileConfig = fileConfigs[iFile]
-        hist = self.loadHist(histConfig,fileConfig,binning,var,thisCut,nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,thisCut,nMax,False)
         counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
 
@@ -3682,7 +3852,7 @@ class PrintCutTable(DataMCStack):
       cutString += " && ("+cutConfig['cut']+")"
       for iFile in range(len(fileConfigs)):
         fileConfig = fileConfigs[iFile]
-        hist = self.loadHist(histConfig,fileConfig,binning,var,cutString+")",nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,cutString+")",nMax,False)
         counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
 
