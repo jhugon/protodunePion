@@ -4,15 +4,23 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
   if len(hists) == 0:
     print "Warning: plotHistsSimple hists is empty for "+outfileprefix
     return
-  assert(len(labels) == len(hists) or labels is None)
+  assert((labels is None) or (len(labels) == len(hists)))
   oldhists = hists
   hists = []
-  for hist, label in zip(oldhists,labels):
-    try:
-      hists.append(hist.Clone(uuid.uuid1().hex))
-    except ReferenceError as e:
-      print("Hist for label '{}' is a null pointer".format(label))
-      raise e
+  if labels:
+    for hist, label in zip(oldhists,labels):
+      try:
+        hists.append(hist.Clone(uuid.uuid1().hex))
+      except ReferenceError as e:
+        print("Hist for label '{}' is a null pointer".format(label))
+        raise e
+  else:
+    for iHist, hist in enumerate(oldhists):
+      try:
+        hists.append(hist.Clone(uuid.uuid1().hex))
+      except ReferenceError as e:
+        print("Hist '{}' is a null pointer".format(iHist))
+        raise e
   for hist in hists:
     hist.Sumw2(True)
   if colors is None:

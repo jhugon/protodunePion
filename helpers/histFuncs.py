@@ -611,17 +611,21 @@ def normToBinWidth(hist):
     for iX in range(1,nBinsX+1):
       for iY in range(1,nBinsY+1):
         binContent = hist.GetBinContent(iX,iY)
+        binError = hist.GetBinError(iX,iY)
         binWidthX = hist.GetXaxis().GetBinWidth(iX)
         binWidthY = hist.GetYaxis().GetBinWidth(iY)
         binArea = binWidthX*binWidthY
         hist.SetBinContent(iX,iY,binContent/binArea)
+        hist.SetBinError(iX,iY,binError/binWidth)
     return hist
   else:
     xaxis = hist.GetXaxis()
     nBins = xaxis.GetNbins()
     for i in range(1,nBins+1):
       binContent = hist.GetBinContent(i)
+      binError = hist.GetBinError(i)
       binWidth = hist.GetBinWidth(i)
       hist.SetBinContent(i,binContent/binWidth)
+      hist.SetBinError(i,binError/binWidth)
     return hist
 
