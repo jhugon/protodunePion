@@ -28,6 +28,8 @@ try:
 except ImportError:
   pass
 
+from histFuncs import *
+
 def loadTree(fileConfig,treename):
   """
   Loads a tree and puts it in fileConfig["tree"]

@@ -1,6 +1,6 @@
 from misc import *
 
-def dataMCStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
+def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
     """
     fileConfigDatas is a list of dictionaries configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files
@@ -144,7 +144,7 @@ def dataMCStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,o
       canvas.SetLogy(False)
       canvas.SetLogx(False)
 
-def dataMCStackNMinusOne(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
     """
     Similar usage to dataMCStack, just cut instead of cuts
 
@@ -302,7 +302,7 @@ def dataMCStackNMinusOne(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,tr
       columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
-def dataMCCategoryStack(self,fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
+def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
     """
     fileConfigDatas is a list of dictionary configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files

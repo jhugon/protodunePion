@@ -1,6 +1,6 @@
 from misc import *
 
-def plotManyFilesOneNMinusOnePlot(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
     """
     Similar usage to plotManyFilesOnePlot, just cut instead of cuts
 
