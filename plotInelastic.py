@@ -12,6 +12,10 @@ tofDistance = 28.6
 lightTime = tofDistance/2.99e8*1e9
 momSF=1.0
 
+doNMinusOne = True
+doNoCuts = True
+doSCE = True
+
 #cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom  > 0)"
 cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom  == 1)"
 
@@ -551,6 +555,37 @@ if __name__ == "__main__":
     },
   ]
 
+  mcscecuts = "*((trueCategory == 13 || trueCategory < 11) && trueCategory != 0 )"
+  fileConfigsSCEMC = [
+    {
+      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.4.root",
+      'name': "mcc11_noSCE",
+      'title': "MCC11 No SCE",
+      'caption': "MCC11 No SCE",
+      'cuts': mcscecuts,
+      'scaleFactor': 1.,
+      'color': root.kBlue-7,
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.4.root",
+      'name': "mcc11_SCE",
+      'title': "MCC11 SCE",
+      'caption': "MCC11 SCE",
+      'cuts': mcscecuts,
+      'scaleFactor': 1.,
+      'color': root.kRed-7,
+    },
+    {
+    'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.4.root",
+      'name': "mcc11_FLF",
+      'title': "MCC11 SCE FLF",
+      'caption': "MCC11 SCE FLF",
+      'cuts': mcscecuts,
+      'scaleFactor': 1.,
+      'color': root.kGreen+3,
+    },
+  ]
+
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -579,8 +614,12 @@ if __name__ == "__main__":
     pass
 
 
-  dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
-  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="Hist",nMax=NMAX)
+  if doNMinusOne:
+    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
+  if doNoCuts:
+    dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="Hist",nMax=NMAX)
+  if doSCE:
+    plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
       for histConfig in cutConfig["histConfigs"]:
@@ -590,5 +629,9 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logyHist",nMax=NMAX)
+  if doNMinusOne:
+    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  if doNoCuts:
+    dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logyHist",nMax=NMAX)
+  if doSCE:
+    plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1_logyHist",nMax=NMAX)

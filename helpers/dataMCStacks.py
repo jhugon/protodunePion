@@ -1,4 +1,5 @@
 from misc import *
+from tables import printTable
 
 def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
     """

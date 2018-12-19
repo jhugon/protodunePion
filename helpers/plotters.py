@@ -1,4 +1,5 @@
 from misc import *
+from tables import printTable
 
 def plotManyHistsOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
   """
@@ -468,7 +469,7 @@ def plotManyFilesOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
     canvas.SetLogy(False)
     canvas.SetLogx(False)
 
-def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def plotManyFilesOneNMinusOnePlot(fileConfigs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,table=False):
     """
     Similar usage to plotManyFilesOnePlot, just cut instead of cuts
 
@@ -482,14 +483,12 @@ def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canva
     table: if true prints out a table of the number of events N-1 cut
 
     """
-    for fileConfig in fileConfigDatas:
-      loadTree(fileConfig,treename)
-    for fileConfig in fileConfigMCs:
+    for fileConfig in fileConfigs:
       loadTree(fileConfig,treename)
     nMinusCutEventCounts = []
     for i in range(len(cutConfigs)):
       nMinusCutEventCounts.append([])
-      for j in range(len(fileConfigDatas)+1+len(fileConfigMCs)):
+      for j in range(len(fileConfigs)):
         nMinusCutEventCounts[i].append("")
     for iCut in range(len(cutConfigs)):
       cutConfig = cutConfigs[iCut]
@@ -499,7 +498,7 @@ def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canva
           continue
         cuts.append(cutConfigs[jCut]['cut'])
       cutStr = "("+") && (".join(cuts) + ")"
-      cutStr = "("+cutStr +")*"+weight
+      cutStr = "("+cutStr +")"
       histConfigs = [cutConfig]
       if "histConfigs" in cutConfig: histConfigs = cutConfig["histConfigs"]
       for iHistConfig, histConfig in enumerate(histConfigs):
@@ -508,10 +507,6 @@ def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canva
         var = histConfig['var']
         #if var.count(":") != 0:
         #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
-        xtitle = ""
-        ytitle = "Events/bin"
-        if "xtitle" in histConfig: xtitle = histConfig['xtitle']
-        if "ytitle" in histConfig: ytitle = histConfig['ytitle']
         xlim = []
         ylim = []
         if "xlim" in histConfig: xlim = histConfig['xlim']
@@ -520,93 +515,40 @@ def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canva
         logx = False
         if "logy" in histConfig: logy = histConfig['logy']
         if "logx" in histConfig: logx = histConfig['logx']
-        caption = ""
-        captionleft1 = ""
-        captionleft2 = ""
-        captionleft3 = ""
-        captionright1 = ""
-        captionright2 = ""
-        captionright3 = ""
-        preliminaryString = ""
-        if "caption" in histConfig: caption = histConfig['caption']
-        if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
-        if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
-        if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
-        if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
-        if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
-        if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
-        if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
-        vlineXs = []
-        hlineYs = []
-        vlines = []
-        hlines = []
         cutSpans = cutStringParser(cutConfig['cut'])
         vspans = []
-        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
-          vlineXs = histConfig["drawvlines"]
-        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
-          hlineYs = histConfig["drawhlines"]
         if "cutSpans" in histConfig and type(histConfig["cutSpans"]) == list:
           cutSpans = histConfig["cutSpans"]
         printIntegral = False
         if "printIntegral" in histConfig and histConfig["printIntegral"]:
           printIntegral = True
         # now on to the real work
-        dataHists = []
-        for iFile, fileConfig in enumerate(fileConfigDatas):
+        hists = []
+        for iFile, fileConfig in enumerate(fileConfigs):
           hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
-          dataHists.append(hist)
+          if 'color' in fileConfig:
+            hist.SetLineColor(fileConfig['color'])
+            hist.SetMarkerColor(fileConfig['color'])
+          hists.append(hist)
           if table and iHistConfig == 0:
-            nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
+            nMinusCutEventCounts[iCut][iFile] = "{:.1f}".format(getIntegralAll(hist))
           if printIntegral:
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
-        mcHists = []
-        for iFile, fileConfig in enumerate(fileConfigMCs):
-          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
-          mcHists.append(hist)
-          if table and iHistConfig == 0:
-            nMinusCutEventCounts[iCut][len(fileConfigDatas)+1+iFile] = "{:.1f}".format(getIntegralAll(hist))
-          if printIntegral:
-            print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
-        mcSumHist = None
-        mcStack = root.THStack()
-        if len(mcHists) > 0 :
-          mcSumHist = mcHists[0].Clone(mcHists[0].GetName()+"_sumHist")
-          mcSumHist.SetFillColor(root.kBlue)
-          #mcSumHist.SetFillStyle(3254)
-          mcSumHist.SetFillStyle(1)
-          mcSumHist.SetMarkerSize(0)
-          mcSumHist.Reset()
-          for mcHist in reversed(mcHists):
-            mcSumHist.Add(mcHist)
-            mcStack.Add(mcHist)
-        if table and iHistConfig == 0:
-          nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
-        if printIntegral and not (mcStack is None):
-          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
-        axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
-        setHistTitles(axisHist,xtitle,ytitle)
+        axisHist = makeStdAxisHist(hists,logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
         axisHist.Draw()
-        for hlineY in hlineYs:
-          hlines.append(drawHline(axisHist,hlineY))
-        for vlineX in vlineXs:
-          vlines.append(drawVline(axisHist,vlineX))
+        lines = drawVHLinesForPlot(axisHist,histConfig)
         for cutSpan in cutSpans:
           vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
-        #mcSumHist.Draw("histsame")
-        mcStack.Draw("histsame")
-        for dataHist in dataHists:
-          dataHist.Draw("esame")
-        labels = [fileConfig['title'] for fileConfig in fileConfigDatas]
-        legOptions = ["lep"]*len(fileConfigDatas)
-        labelHists = dataHists
-        labels += [fileConfig['title'] for fileConfig in fileConfigMCs]
-        legOptions += ["F"]*len(fileConfigMCs)
-        labelHists += mcHists
-        leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
-        drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+        for h in reversed(hists):
+          if "efficiencyDenomCuts" in histConfig and type(histConfig["efficiencyDenomCuts"]) == str:
+            h.Draw("PZ0same")
+          else:
+            h.Draw("histsame")
+        labels = [fileConfig['title'] for fileConfig in fileConfigs]
+        leg = drawNormalLegend(hists,labels,wide=True)
+        drawAnnotationsForPlots(canvas,axisHist,fileConfigs,histConfig)
         canvas.RedrawAxis()
         saveNameBase = outPrefix + histConfig['name'] + outSuffix
         canvas.SaveAs(saveNameBase+".png")
@@ -614,15 +556,7 @@ def plotManyFilesOneNMinusOnePlot(fileConfigDatas,fileConfigMCs,cutConfigs,canva
         canvas.SetLogy(False)
         canvas.SetLogx(False)
     if table:
-      #rowTitles = []
-      #for cutConfig in cutConfigs:
-      #  if 'xtitle' in cutConfig:
-      #    rowTitles.append(cutConfig['xtitle']+" "+cutConfig['cut'])
-      #  else:
-      #    for histConfig in histConfigs:
-      #      rowTitles.append(histConfig['xtitle']+" "+cutConfig['cut'])
-      
       rowTitles = [x['cut'] for x in cutConfigs]
-      columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
+      columnTitles = [x['name'] for x in fileConfigs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
 
