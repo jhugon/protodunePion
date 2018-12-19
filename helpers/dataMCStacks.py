@@ -55,10 +55,6 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       #if var.count(":") != 0:
       #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
       cuts = histConfig['cuts']
-      xtitle = ""
-      ytitle = "Events/bin"
-      if "xtitle" in histConfig: xtitle = histConfig['xtitle']
-      if "ytitle" in histConfig: ytitle = histConfig['ytitle']
       xlim = []
       ylim = []
       if "xlim" in histConfig: xlim = histConfig['xlim']
@@ -67,30 +63,6 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       logx = False
       if "logy" in histConfig: logy = histConfig['logy']
       if "logx" in histConfig: logx = histConfig['logx']
-      caption = ""
-      captionleft1 = ""
-      captionleft2 = ""
-      captionleft3 = ""
-      captionright1 = ""
-      captionright2 = ""
-      captionright3 = ""
-      preliminaryString = ""
-      if "caption" in histConfig: caption = histConfig['caption']
-      if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
-      if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
-      if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
-      if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
-      if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
-      if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
-      if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
-      vlineXs = []
-      hlineYs = []
-      vlines = []
-      hlines = []
-      if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
-        vlineXs = histConfig["drawvlines"]
-      if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
-        hlineYs = histConfig["drawhlines"]
       printIntegral = False
       if "printIntegral" in histConfig and histConfig["printIntegral"]:
         printIntegral = True
@@ -128,12 +100,8 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
-      setHistTitles(axisHist,xtitle,ytitle)
       axisHist.Draw()
-      for hlineY in hlineYs:
-        hlines.append(drawHline(axisHist,hlineY))
-      for vlineX in vlineXs:
-        vlines.append(drawVline(axisHist,vlineX))
+      lines = drawVHLinesForPlot(axisHist,histConfig)
       #mcSumHist.Draw("histsame")
       mcStack.Draw("histsame")
       for dataHist in dataHists:
@@ -141,7 +109,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [fileConfig['title'] for fileConfig in fileConfigMCs]
       legOptions = ["lep"]*len(fileConfigDatas)+["F"]*len(fileConfigMCs)
       leg = drawNormalLegend(dataHists+mcHists,labels,legOptions,wide=True)
-      drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+      drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + histConfig['name'] + outSuffix
       canvas.SaveAs(saveNameBase+".png")
@@ -189,10 +157,6 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         var = histConfig['var']
         #if var.count(":") != 0:
         #  raise Exception("No ':' allowed in variable, only 1D hists allowed",var)
-        xtitle = ""
-        ytitle = "Events/bin"
-        if "xtitle" in histConfig: xtitle = histConfig['xtitle']
-        if "ytitle" in histConfig: ytitle = histConfig['ytitle']
         xlim = []
         ylim = []
         if "xlim" in histConfig: xlim = histConfig['xlim']
@@ -201,32 +165,8 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         logx = False
         if "logy" in histConfig: logy = histConfig['logy']
         if "logx" in histConfig: logx = histConfig['logx']
-        caption = ""
-        captionleft1 = ""
-        captionleft2 = ""
-        captionleft3 = ""
-        captionright1 = ""
-        captionright2 = ""
-        captionright3 = ""
-        preliminaryString = ""
-        if "caption" in histConfig: caption = histConfig['caption']
-        if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
-        if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
-        if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
-        if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
-        if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
-        if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
-        if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
-        vlineXs = []
-        hlineYs = []
-        vlines = []
-        hlines = []
         cutSpans = cutStringParser(cutConfig['cut'])
         vspans = []
-        if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
-          vlineXs = histConfig["drawvlines"]
-        if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
-          hlineYs = histConfig["drawhlines"]
         if "cutSpans" in histConfig and type(histConfig["cutSpans"]) == list:
           cutSpans = histConfig["cutSpans"]
         printIntegral = False
@@ -272,12 +212,8 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
         axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
-        setHistTitles(axisHist,xtitle,ytitle)
         axisHist.Draw()
-        for hlineY in hlineYs:
-          hlines.append(drawHline(axisHist,hlineY))
-        for vlineX in vlineXs:
-          vlines.append(drawVline(axisHist,vlineX))
+        lines = drawVHLinesForPlot(axisHist,histConfig)
         for cutSpan in cutSpans:
           vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
         #mcSumHist.Draw("histsame")
@@ -291,7 +227,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         legOptions += ["F"]*len(fileConfigMCs)
         labelHists += mcHists
         leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
-        drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+        drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
         canvas.RedrawAxis()
         saveNameBase = outPrefix + histConfig['name'] + outSuffix
         canvas.SaveAs(saveNameBase+".png")
@@ -299,14 +235,6 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         canvas.SetLogy(False)
         canvas.SetLogx(False)
     if table:
-      #rowTitles = []
-      #for cutConfig in cutConfigs:
-      #  if 'xtitle' in cutConfig:
-      #    rowTitles.append(cutConfig['xtitle']+" "+cutConfig['cut'])
-      #  else:
-      #    for histConfig in histConfigs:
-      #      rowTitles.append(histConfig['xtitle']+" "+cutConfig['cut'])
-      
       rowTitles = [x['cut'] for x in cutConfigs]
       columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
@@ -364,10 +292,6 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       binning = histConfig['binning']
       var = histConfig['var']
       cuts = histConfig['cuts']
-      xtitle = ""
-      ytitle = "Events/bin"
-      if "xtitle" in histConfig: xtitle = histConfig['xtitle']
-      if "ytitle" in histConfig: ytitle = histConfig['ytitle']
       xlim = []
       ylim = []
       if "xlim" in histConfig: xlim = histConfig['xlim']
@@ -376,30 +300,6 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       logx = False
       if "logy" in histConfig: logy = histConfig['logy']
       if "logx" in histConfig: logx = histConfig['logx']
-      caption = ""
-      captionleft1 = ""
-      captionleft2 = ""
-      captionleft3 = ""
-      captionright1 = ""
-      captionright2 = ""
-      captionright3 = ""
-      preliminaryString = ""
-      if "caption" in histConfig: caption = histConfig['caption']
-      if "captionleft1" in histConfig: captionleft1 = histConfig['captionleft1']
-      if "captionleft2" in histConfig: captionleft2 = histConfig['captionleft2']
-      if "captionleft3" in histConfig: captionleft3 = histConfig['captionleft3']
-      if "captionright1" in histConfig: captionright1 = histConfig['captionright1']
-      if "captionright2" in histConfig: captionright2 = histConfig['captionright2']
-      if "captionright3" in histConfig: captionright3 = histConfig['captionright3']
-      if "preliminaryString" in histConfig: preliminaryString = histConfig['preliminaryString']
-      vlineXs = []
-      hlineYs = []
-      vlines = []
-      hlines = []
-      if "drawvlines" in histConfig and type(histConfig["drawvlines"]) == list:
-        vlineXs = histConfig["drawvlines"]
-      if "drawhlines" in histConfig and type(histConfig["drawhlines"]) == list:
-        hlineYs = histConfig["drawhlines"]
       printIntegral = False
       if "printIntegral" in histConfig and histConfig["printIntegral"]:
         printIntegral = True
@@ -446,12 +346,8 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
-      setHistTitles(axisHist,xtitle,ytitle)
       axisHist.Draw()
-      for hlineY in hlineYs:
-        hlines.append(drawHline(axisHist,hlineY))
-      for vlineX in vlineXs:
-        vlines.append(drawVline(axisHist,vlineX))
+      lines = drawVHLinesForPlot(axisHist,histConfig)
       #mcSumHist.Draw("histsame")
       mcStack.Draw("histsame")
       for dataHist in dataHists:
@@ -460,7 +356,7 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [catConfig['title'] for catConfig in catConfigs]
       legOptions = ["lep"]*len(dataHists)+["F"]*len(catConfigs)
       leg = drawNormalLegend(dataHists+catHists,labels,legOptions,wide=True)
-      drawStandardCaptions(canvas,caption,captionleft1=captionleft1,captionleft2=captionleft2,captionleft3=captionleft3,captionright1=captionright1,captionright2=captionright2,captionright3=captionright3,preliminaryString=preliminaryString)
+      drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + histConfig['name'] + outSuffix
       canvas.SaveAs(saveNameBase+".png")
