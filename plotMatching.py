@@ -181,14 +181,14 @@ if __name__ == "__main__":
     config["cuts"] = "1"
     histConfigs.append(config)
 
-  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1Hist",nMax=NMAX)
+  NMinusOneDataMCStack([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1Hist",nMax=NMAX)
   DataMCStack([],fileConfigsMC,histConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     cutConfig['logy'] = True
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  NMinusOneDataMCStack([],fileConfigsMC,cutConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_NM1_logyHist",nMax=NMAX)
   DataMCStack([],fileConfigsMC,histConfigs,c,"BeamMatchingAnalyzer/tree",outPrefix="Matching_",outSuffix="_logyHist",nMax=NMAX)
 
   fileConfigs = [

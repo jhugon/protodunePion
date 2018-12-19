@@ -928,7 +928,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
   else:
     return allHists, allProfilesToo
 
-class NMinusOnePlot(DataMCStack):
+class NMinusOneDataMCStack(DataMCStack):
 
   def __init__(self,fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
     """

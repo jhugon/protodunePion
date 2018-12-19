@@ -579,7 +579,7 @@ if __name__ == "__main__":
     pass
 
 
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
+  NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
   DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="Hist",nMax=NMAX)
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:
@@ -590,5 +590,5 @@ if __name__ == "__main__":
   logHistConfigs = []
   for histConfig in histConfigs:
     histConfig['logy'] = True
-  NMinusOnePlot(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logyHist",nMax=NMAX)
+  NMinusOneDataMCStack(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logyHist",nMax=NMAX)
   DataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logyHist",nMax=NMAX)
