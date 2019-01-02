@@ -109,7 +109,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [fileConfig['title'] for fileConfig in fileConfigMCs]
       legOptions = ["lep"]*len(fileConfigDatas)+["F"]*len(fileConfigMCs)
       leg = drawNormalLegend(dataHists+mcHists,labels,legOptions,wide=True)
-      drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
+      drawAnnotationsForPlots(canvas,axisHist,fileConfigDatas+fileConfigMCs,histConfig)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + histConfig['name'] + outSuffix
       canvas.SaveAs(saveNameBase+".png")
@@ -227,7 +227,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         legOptions += ["F"]*len(fileConfigMCs)
         labelHists += mcHists
         leg = drawNormalLegend(labelHists,labels,legOptions,wide=True)
-        drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
+        drawAnnotationsForPlots(canvas,axisHist,fileConfigDatas+fileConfigMCs,histConfig)
         canvas.RedrawAxis()
         saveNameBase = outPrefix + histConfig['name'] + outSuffix
         canvas.SaveAs(saveNameBase+".png")
@@ -356,7 +356,7 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [catConfig['title'] for catConfig in catConfigs]
       legOptions = ["lep"]*len(dataHists)+["F"]*len(catConfigs)
       leg = drawNormalLegend(dataHists+catHists,labels,legOptions,wide=True)
-      drawAnnotationsForPlots(canvas,axisHist,fileConfig,histConfigs)
+      drawAnnotationsForPlots(canvas,axisHist,fileConfigDatas+catConfigs,histConfig)
       canvas.RedrawAxis()
       saveNameBase = outPrefix + histConfig['name'] + outSuffix
       canvas.SaveAs(saveNameBase+".png")
