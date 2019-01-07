@@ -2,17 +2,23 @@
 
 import ROOT as root
 from helpers import *
+from helpers.dEdxCalibration import fitSlicesLandauCore, fitSlicesLandaus
 root.gROOT.SetBatch(True)
 import copy
 import sys
 
-m2SF=1000.
-tofOffset=59.6
-tofDistance = 28.6
-lightTime = tofDistance/2.99e8*1e9
-momSF=1.0
+cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+otherCuts = "*(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"
 
-cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0)"
+deltaXTrackBICut = "*(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"
+deltaYTrackBICut = "*(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"
+primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ < 650.)"+deltaXTrackBICut+deltaYTrackBICut
+primaryTrackCutsMu = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ > 650.)"+deltaXTrackBICut+deltaYTrackBICut
+
+primaryTrackCutsData = primaryTrackCutsMu
+cutsMC = "(truePrimaryPDG == 211 || truePrimaryPDG == -13)"+primaryTrackCutsMu
+
+SLABTHICKNESS = 0.5
 
 if __name__ == "__main__":
 
@@ -35,34 +41,34 @@ if __name__ == "__main__":
 
   fileConfigsData = [
     {
-      'fn': "piAbsSelector_run5387_6_dl6.root",
+      'fn': "piAbsSelector_run5387_v4.10.root",
       'name': "run5387",
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c",
       'isData': True,
-      #'cuts': "*"+cutGoodBeamline,
-      #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
+      'cuts': "*"+cutGoodBeamline,
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
     },
     {
-      'fn': "piAbsSelector_run5432_6_dl6.root",
+      'fn': "piAbsSelector_run5432_1kevts_v4.10.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
       'isData': True,
-      #'cuts': "*"+cutGoodBeamline,
-      #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
+      'cuts': "*"+cutGoodBeamline,
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
     },
     {
-      'fn': "piAbsSelector_run5142_6_dl6.root",
-      'name': "run5142",
-      'title': "Run 5142: 7 GeV/c",
-      'caption': "Run 5142: 7 GeV/c",
+      'fn': "piAbsSelector_run5145_v4.10.root",
+      'name': "run5145",
+      'title': "Run 5145: 7 GeV/c",
+      'caption': "Run 5145: 7 GeV/c",
       'isData': True,
-      #'cuts': "*"+cutGoodBeamline,
-      #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
+      'cuts': "*"+cutGoodBeamline,
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
     },
   ]
   for i, fileConfig in enumerate(fileConfigsData):
@@ -70,7 +76,7 @@ if __name__ == "__main__":
   fileConfigsAllData = [
     {
       'fn': [
-                "piAbsSelector_run5142_6_dl6.root",
+                "piAbsSelector_run5145_v4.10.root",
                 #"piAbsSelector_run5387.root",
                 #"piAbsSelector_run5430.root",
                 #"piAbsSelector_run5758.root",
@@ -90,40 +96,29 @@ if __name__ == "__main__":
   ]
   fileConfigsMC = [
     {
-      'fn': fn,
-      'title': "MCC 11",
-      'name': name,
-      'color': root.kBlue-7,
-      'scaleFactor': scaleFactor,
+      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.10.root",
+      'name': "mcc11_3ms_2GeV",
+      'title': "MCC 11 No SCE 2 GeV/c",
+      'caption': "MCC11 No SCE 2 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
     },
-    #{
-    #  'fn': fn,
-    #  'title': "MC, 1 Beam Track",
-    #  'cuts': "*(nBeamTracks==1)",
-    #  'color': root.kBlue-7,
-    #  'scaleFactor': scaleFactor,
-    #},
-    #{
-    #  'fn': fn,
-    #  'title': "MC, 2 Beam Track",
-    #  'cuts': "*(nBeamTracks==2)",
-    #  'color': root.kGreen+3,
-    #  'scaleFactor': scaleFactor,
-    #},
-    #{
-    #  'fn': fn,
-    #  'title': "MC, 3 Beam Track",
-    #  'cuts': "*(nBeamTracks==3)",
-    #  'color': root.kOrange-3,
-    #  'scaleFactor': scaleFactor,
-    #},
-    #{
-    #  'fn': fn,
-    #  'title': "MC, #geq 4 Beam Track",
-    #  'cuts': "*(nBeamTracks>=4)",
-    #  'color': root.kAzure+10,
-    #  'scaleFactor': scaleFactor,
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.10.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC 11 FLF SCE 2 GeV/c",
+      'caption': "MCC11 FLF SCE 2 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.10.root",
+      'name': "mcc11_flf_7GeV",
+      'title': "MCC 11 FLF SCE 7 GeV/c",
+      'caption': "MCC11 FLF SCE 7 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
   ]
 
   for histConfig in histConfigs:
@@ -138,12 +133,15 @@ if __name__ == "__main__":
     histConfig["ytitle"] = "Events / Bin"
   plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",outSuffix="_logyHist",nMax=NMAX)
 
+  wireBinning = [480*3,0,480*3]
+  #wireBinning = [100,0,100]
+
   histConfigs= [
     {
       'name': "dEdxVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "dE/dx [MeV/cm]",
-      'binning': [480*3,0,480*3,100,0,20],
+      'binning': wireBinning+[150,0,30],
       'var': "zWiredEdx:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -152,7 +150,7 @@ if __name__ == "__main__":
       'name': "PitchVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "Pitch [cm]",
-      'binning': [480*3,0,480*3,100,0,5],
+      'binning': wireBinning+[100,0,5],
       'var': "zWirePitch:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -161,16 +159,22 @@ if __name__ == "__main__":
       'name': "kinVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "Reco Kinetic Energy [MeV]",
-      'binning': [480*3,0,480*3,100,-1000,3000],
+      'binning': wireBinning+[100,-1000,3000],
       'var': "zWirePartKin:Iteration$",
       'cuts': "1",
       'logz': True,
     },
+  ]
+  hists = plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+
+  #### For MC truth stuff
+
+  histConfigs= [
     {
       'name': "TrueEnergyVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True Energy Deposit from Primary [MeV]",
-      'binning': [480*3,0,480*3,100,0,20],
+      'binning': wireBinning+[100,0,20],
       'var': "zWireTrueEnergy:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -179,7 +183,7 @@ if __name__ == "__main__":
       'name': "TruedZVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True #Delta Z [cm]",
-      'binning': [480*3,0,480*3,200,-1,1],
+      'binning': wireBinning+[200,-1,1],
       'var': "zWireTruedZ:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -188,7 +192,7 @@ if __name__ == "__main__":
       'name': "TruedRVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True #Delta R [cm]",
-      'binning': [480*3,0,480*3,200,-1,1],
+      'binning': wireBinning+[200,-1,1],
       'var': "zWireTruedR:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -197,7 +201,7 @@ if __name__ == "__main__":
       'name': "TruePartKinVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True Particle Kinetic Energy [MeV]",
-      'binning': [480*3,0,480*3,100,-1000,3000],
+      'binning': wireBinning+[100,-1000,3000],
       'var': "zWireTruePartKin:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -206,10 +210,40 @@ if __name__ == "__main__":
       'name': "TrueTrajKinVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True Particle Traj Kinetic Energy [MeV]",
-      'binning': [480*3,0,480*3,100,-1000,3000],
+      'binning': wireBinning+[100,-1000,3000],
       'var': "zWireTrueTrajKin:Iteration$",
       'cuts': "1",
       'logz': True,
     },
   ]
-  plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+  #plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+
+  if True:
+    histname = "dEdxVWireNum"
+    mpvGraphs = []
+    wGraphs = []
+    labels = []
+    names = []
+    for samplename in sorted(hists[histname]):
+      hist = hists[histname][samplename]
+      mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=0.2,nJump=20,dumpFitPlots=True)
+      mpvGraphs.append(mpvGraph)
+      wGraphs.append(wGraph)
+      label = samplename
+      for fileConfig in fileConfigsData+fileConfigsMC:
+        if fileConfig['name'] == samplename:
+          label = fileConfig['title']
+      labels.append(label)
+      names.append(samplename)
+      #fitSlicesLandauCore(c,hist,samplename)
+    c.Clear()
+    for i in range(len(mpvGraphs)):
+        mpvGraphs[i].SetLineColor(COLORLIST[i])
+        mpvGraphs[i].SetMarkerColor(COLORLIST[i])
+    ax = drawGraphs(c,mpvGraphs,"Z Wire Number","Landau MPV [MeV/cm]",xlims=[0,480*3],ylims=[0,12],freeTopSpace=0.5,drawOptions=["pez"]*len(mpvGraphs),reverseDrawOrder=True)
+    leg = drawNormalLegend(mpvGraphs,labels,["lep"]*len(mpvGraphs))
+    drawStandardCaptions(c,"")
+
+    c.SaveAs("Calibrate_mpvs.png")
+    c.SaveAs("Calibrate_mpvs.pdf")
+
