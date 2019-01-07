@@ -44,4 +44,21 @@ if __name__ == "__main__":
     "PFBeamPrimStartZ": ["<",50],
     "PFBeamPrimEndZ": ["<",650],
   }
-  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000)
+  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
+
+  print "Run 5387 v4.10"
+  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","PFBeamPrimTrkLen","beamMom"]
+  cuts = {
+    "triggerIsBeam": ["=",1],
+    "BITrigger": [">",0],
+    "BITriggerMatched": [">",0],
+    "nBeamTracks": ["=",1],
+    "nBeamMom": ["=",1],
+    "CKov1Status":["=",0],
+    "TOF":["<",170.],
+    "PFNBeamSlices": ["==",1],
+    "PFBeamPrimIsTracklike": ["==",1],
+    "PFBeamPrimStartZ": ["<",50],
+    "PFBeamPrimEndZ": [">",650],
+  }
+  printEvents("piAbsSelector_run5387_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)

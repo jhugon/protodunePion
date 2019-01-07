@@ -120,7 +120,7 @@ def plotManyHistsOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
     canvas.SetLogy(False)
     canvas.SetLogx(False)
 
-def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,writeImages=True):
+def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,writeImages=True,saveHistsRootName=None):
   """
   For each histogram in each file, plot a histogram on one plot. Works with 1D,
     2D, and 3D histograms.
@@ -131,6 +131,10 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
     list so you can do multiple plots for each sample
   canvas is a root TCanvas
   treename is where to find the tree in each file
+
+  saveHistsRootName is a filename to save all of the histograms to
+    They will be in the top level directory as <histconfig_name>_<fileconfig_name>
+    The file will be overwritten if it already exists
 
   returns a list of histograms, profiles, or if profileXtoo=True, (histograms, profiles).
 
@@ -234,6 +238,9 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
       graphs = []
       if "graphs" in histConfig and type(histConfig["graphs"]) == list:
         graphs = histConfig["graphs"]
+      printIntegral = False
+      if "printIntegral" in histConfig and histConfig["printIntegral"]:
+        printIntegral = True
       writeImageHist = True
       if "writeImage" in histConfig: writeImageHist = histConfig["writeImage"]
       # now on to the real work
@@ -280,6 +287,8 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
             hist.Scale(1./integral)
         if "integral" in histConfig and histConfig['integral']:
           hist = getIntegralHist(hist)
+        if printIntegral:
+          print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['name'],hist.Integral()))
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       canvas.SetLogz(logz)
@@ -350,6 +359,18 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
       if not (histConfig['name'] in allHists):
         allHists[histConfig['name']] = {}
       allHists[histConfig['name']][fileConfig['name']] = hist
+  if saveHistsRootName:
+    outfile = root.TFile(saveHistsRootName,"recreate")
+    outfile.cd()
+    for var in allHists:
+      for ds in allHists[var]:
+        newname = var+"_"+ds
+        hist = allHists[var][ds]
+        oldname = hist.GetName()
+        hist.SetName(newname)
+        hist.Write()
+        hist.SetName(oldname)
+    outfile.Close()
   if len(allProfilesToo) == 0:
     return allHists
   else:

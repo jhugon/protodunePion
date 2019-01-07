@@ -7,15 +7,15 @@ root.gROOT.SetBatch(True)
 import copy
 import sys
 
-cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
-otherCuts = "*(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"
+cutGoodBeamline = "*(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+cutGoodFEMBs = "*(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"
 
 deltaXTrackBICut = "*(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"
 deltaYTrackBICut = "*(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"
 primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ < 650.)"+deltaXTrackBICut+deltaYTrackBICut
 primaryTrackCutsMu = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ > 650.)"+deltaXTrackBICut+deltaYTrackBICut
 
-primaryTrackCutsData = primaryTrackCutsMu
+primaryTrackCutsData = cutGoodFEMBs+cutGoodBeamline+primaryTrackCutsMu
 cutsMC = "(truePrimaryPDG == 211 || truePrimaryPDG == -13)"+primaryTrackCutsMu
 
 SLABTHICKNESS = 0.5
@@ -46,9 +46,8 @@ if __name__ == "__main__":
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c",
       'isData': True,
-      'cuts': "*"+cutGoodBeamline,
-      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
+      'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+primaryTrackCutsData, # for protons
     },
     {
       'fn': "piAbsSelector_run5432_1kevts_v4.10.root",
@@ -56,9 +55,8 @@ if __name__ == "__main__":
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
       'isData': True,
-      'cuts': "*"+cutGoodBeamline,
-      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+primaryTrackCutsData, # for protons
     },
     {
       'fn': "piAbsSelector_run5145_v4.10.root",
@@ -66,9 +64,9 @@ if __name__ == "__main__":
       'title': "Run 5145: 7 GeV/c",
       'caption': "Run 5145: 7 GeV/c",
       'isData': True,
-      'cuts': "*"+cutGoodBeamline,
-      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for pions
-      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+primaryTrackCutsData, # for protons
+      'cuts': "*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     },
   ]
   for i, fileConfig in enumerate(fileConfigsData):
@@ -164,8 +162,19 @@ if __name__ == "__main__":
       'cuts': "1",
       'logz': True,
     },
+    {
+      'name': "energySum",
+      'xtitle': "Primary Track Calorimetry Energy Sum [MeV]",
+      'ytitle': "Events / Bin",
+      'binning': [100,0,30000],
+      'var': "zWireEnergySum",
+      'cuts': "1",
+      'logz': True,
+      'printIntegral': True,
+    },
   ]
-  hists = plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+  histFileName = "WireHists.root"
+  hists = plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX,saveHistsRootName=histFileName)
 
   #### For MC truth stuff
 
@@ -216,9 +225,9 @@ if __name__ == "__main__":
       'logz': True,
     },
   ]
-  #plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+  plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
 
-  if True:
+  if False:
     histname = "dEdxVWireNum"
     mpvGraphs = []
     wGraphs = []
@@ -226,7 +235,7 @@ if __name__ == "__main__":
     names = []
     for samplename in sorted(hists[histname]):
       hist = hists[histname][samplename]
-      mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=0.2,nJump=20,dumpFitPlots=True)
+      mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=0.2,nJump=100,dumpFitPlots=True)
       mpvGraphs.append(mpvGraph)
       wGraphs.append(wGraph)
       label = samplename
