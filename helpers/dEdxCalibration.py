@@ -197,7 +197,12 @@ def fitLandaus(c,hist,postfix,caption,fitMin=1.6,fitMax=2.3,nLandaus=3,smearGaus
     #axisHist.Draw()
     #frame.Draw("same")
     frame.Draw()
-    frame.SetTitle(caption)
+    frame.SetTitle("")
+    frame.GetYaxis().SetTitle("Hits / Bin")
+    drawStandardCaptions(c,caption,
+        captionright1="N_{{Hits}} = {:.0f}".format(hist.Integral()),
+        captionright2="Fit Min-Max: {:.1f}-{:.1f}".format(fitMin,fitMax)
+    )
     c.SaveAs("roofit_landau_{}.png".format(postfix))
 
   bestFits = []

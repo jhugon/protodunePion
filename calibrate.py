@@ -24,7 +24,17 @@ if __name__ == "__main__":
   for key in sorted(hf.keysStartsWith(histname)):
     hist = hf[key]
     samplename = key.replace(histname+"_","")
-    mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=0.2,nJump=10,dumpFitPlots=True)
+    
+    fracMax = 0.4
+    nJump = 1
+    if "mcc" in samplename:
+      continue
+    elif not ("run5145" in samplename):
+      continue
+    else:
+      hist.RebinY(2)
+      
+    mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=fracMax,nJump=nJump,dumpFitPlots=True)
     mpvGraphs.append(mpvGraph)
     wGraphs.append(wGraph)
     label = samplename
@@ -44,4 +54,13 @@ if __name__ == "__main__":
 
   c.SaveAs("Calibrate_mpvs.png")
   c.SaveAs("Calibrate_mpvs.pdf")
+
+  for i in range(len(mpvGraphs)):
+    with open("Calibration_"+labels[i]+".txt",'w') as outfile:
+      xs = mpvGraphs[i].GetX()
+      ys = mpvGraphs[i].GetY()
+      errs = mpvGraphs[i].GetEY()
+      for j in range(mpvGraphs[i].GetN()):
+        line = "{},{},{}".format(xs[j],ys[j],errs[j])
+        outfile.write(line+"\n")
 
