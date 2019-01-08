@@ -50,7 +50,7 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+primaryTrackCutsData, # for protons
     },
     {
-      'fn': "piAbsSelector_run5432_1kevts_v4.10.root",
+      'fn': "piAbsSelector_run5432_v4.10.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",

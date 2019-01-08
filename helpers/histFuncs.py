@@ -629,3 +629,25 @@ def normToBinWidth(hist):
       hist.SetBinError(i,binError/binWidth)
     return hist
 
+class HistFile(dict):
+
+  def __init__(self,filename):
+    self.filename = filename
+    self.f = root.TFile(filename)
+
+  def __getitem__(self,key):
+    return self.f.Get(key)
+
+  def keys(self):
+    return [x.GetName() for x in self.f.GetListOfKeys()]
+
+  def keysStartsWith(self,prefix):
+    return [x for x in self.keys() if x.startswith(prefix)]
+
+  def keysEndsWith(self,postfix):
+    return [x for x in self.keys() if x.endswith(postfix)]
+
+  def __del__(self):
+    self.f.Close()
+
+  
