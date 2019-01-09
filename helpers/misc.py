@@ -50,11 +50,11 @@ def loadTree(fileConfig,treename):
         for fn in fileConfig['fn']:
             fileConfig['tree'].AddFile(fn)
     else:
-        raise Exception("")
+        raise Exception("fn isn't a string or list of strings!")
   except KeyError:
     return
   if 'addFriend' in fileConfig:
-    fileConfig['tree'].AddFriend(*(fileConfig['addFriend']))
+    fileConfig['tree'].AddFriend(*(fileConfig['addFriend'])) # [treename,filename]
   fileConfig['tree'].SetCacheSize(10000000);
   fileConfig['tree'].AddBranchToCache("*");
 

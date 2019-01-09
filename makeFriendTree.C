@@ -14,6 +14,11 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <fstream>
+
+#ifdef __MAKECINT__
+#pragma link C++ class vector<float>+;
+#endif
 
 #define pi TMath::Pi()
 
@@ -24,15 +29,14 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
   cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calibration file: "<< calibFileName.Data() << endl;
 
   bool isMC;
-  Float_t pzWC;
-  Float_t trueStartMom;
+  std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
 
   // infile chain
   TChain * tree = new TChain(inputTreeName);
   tree->Add(inputFileName);
   tree->SetBranchAddress("isMC",&isMC);
-  tree->SetBranchAddress("pzWC",&pzWC);
-  tree->SetBranchAddress("trueStartMom",&trueStartMom);
+  tree->SetBranchAddress("zWiredEdx",&zWiredEdx,&b_zWiredEdx);
+  //tree->Print();
 
   ///////////////////////////////
   ///////////////////////////////
@@ -43,13 +47,27 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
   outFile->cd();
 
   TTree* friendTree = new TTree("friend","");
-  float allWeight, pzWeight;
+  std::vector<float> zWiredEdx_corr;
 
-  friendTree->Branch("allWeight",&allWeight,"allWeight/F");
-  friendTree->Branch("pzWeight",&pzWeight,"pzWeight/F");
+  friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
 
-  Double_t pzWeightSum=0;
-  Double_t nEventsSum=0;
+  ///////////////////////////////
+  ///////////////////////////////
+  ///////////////////////////////
+  // Calibration data
+
+  std::fstream calibFile(calibFileName.Data(),ios_base::in);
+  std::string line;
+  std::vector<float> calibMap;
+  while (calibFile.good())
+  {
+    std::getline(calibFile,line,'\n');
+    if(line.size() == 0) break;
+    float val = std::stof(line);
+    calibMap.push_back(val);
+  }
+  calibFile.close();
+
 
   ///////////////////////////////
   ///////////////////////////////
@@ -66,6 +84,18 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
     if(iEvent >= maxEvents)
       break;
     tree->GetEntry(iEvent);
+    const auto& iEntry = tree->LoadTree(iEvent);
+    b_zWiredEdx->GetEntry(iEntry);
+
+    if(zWiredEdx)
+    {
+      const size_t& zWireSize = zWiredEdx->size();
+      zWiredEdx_corr.resize(zWireSize);
+      for (size_t iZWire=0; iZWire<zWireSize; iZWire++)
+      {
+        zWiredEdx_corr[iZWire] = calibMap.at(iZWire)*zWiredEdx->at(iZWire);
+      }
+    }
 
     friendTree->Fill();
   } // for iEvent
