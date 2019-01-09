@@ -7,8 +7,6 @@ root.gROOT.SetBatch(True)
 import copy
 import sys
 
-SLABTHICKNESS = 0.5
-
 if __name__ == "__main__":
 
   c = root.TCanvas()
@@ -19,6 +17,7 @@ if __name__ == "__main__":
   wGraphs = []
   labels = []
   names = []
+  nEvents = []
 
   hf = HistFile(histFileName)
   for key in sorted(hf.keysStartsWith(histname)):
@@ -29,14 +28,14 @@ if __name__ == "__main__":
     nJump = 1
     if "mcc" in samplename:
       continue
-    elif not ("run5145" in samplename):
-      continue
+    #elif not ("run5145" in samplename):
+    #  continue
     else:
       hist.RebinY(2)
-      
     mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=fracMax,nJump=nJump,dumpFitPlots=True)
     mpvGraphs.append(mpvGraph)
     wGraphs.append(wGraph)
+    nEvents.append(hist.Integral())
     label = samplename
     #for fileConfig in fileConfigsData+fileConfigsMC:
     #  if fileConfig['name'] == samplename:
@@ -61,6 +60,5 @@ if __name__ == "__main__":
       ys = mpvGraphs[i].GetY()
       errs = mpvGraphs[i].GetEY()
       for j in range(mpvGraphs[i].GetN()):
-        line = "{},{},{}".format(xs[j],ys[j],errs[j])
+        line = "{},{},{},{}".format(int(xs[j]),ys[j],errs[j],nEvents[i])
         outfile.write(line+"\n")
-

@@ -127,7 +127,7 @@ def fitLandaus(c,hist,postfix,caption,fitMin=1.6,fitMax=2.3,nLandaus=3,smearGaus
 
   for iLandau in range(1,nLandaus+1):
     iLandauStr = str(iLandau)
-    mpvl = root.RooRealVar("mpvl"+iLandauStr,"mpv landau "+iLandauStr,1.7,0,5)
+    mpvl = root.RooRealVar("mpvl"+iLandauStr,"mpv landau "+iLandauStr,0.5*(fitMin+fitMax),fitMin*0.8,fitMax*1.2)
     wl = None
     if fixedLandauWidth is None:
       wl = root.RooRealVar("wl"+iLandauStr,"width landau "+iLandauStr,0.42,0.01,10)
@@ -189,6 +189,9 @@ def fitLandaus(c,hist,postfix,caption,fitMin=1.6,fitMax=2.3,nLandaus=3,smearGaus
         plotOnArgs.append(root.RooFit.Components("lx"+iLandauStr))
       model.plotOn(*plotOnArgs)
 
+    #chiSquare = frame.chiSquare(model.GetName(),data.GetName())
+    chiSquare = frame.chiSquare()
+
     #root.gPad.SetLeftMargin(0.15)
     #frame.GetYaxis().SetTitleOffset(1.4)
     #frame.Draw("same")
@@ -199,9 +202,30 @@ def fitLandaus(c,hist,postfix,caption,fitMin=1.6,fitMax=2.3,nLandaus=3,smearGaus
     frame.Draw()
     frame.SetTitle("")
     frame.GetYaxis().SetTitle("Hits / Bin")
+    captionright4=""
+    captionright5=""
+    captionright6=""
+    if nLandaus == 1:
+      captions=[]
+      captions.append("MPV: {:.3f} #pm {:.3f}".format(landauParams[0].getVal(),landauParams[0].getError()))
+      if not fixedLandauWidth:
+        captions.append("Width: {:.3f} #pm {:.3f}".format(landauParams[1].getVal(),landauParams[1].getError()))
+      if smearGauss:
+        captions.append("#sigma: {:.3f} #pm {:.3f}".format(sg.getVal(),sg.getError()))
+      nCaptions = len(captions)
+      if nCaptions > 0:
+        captionright4=captions[0]
+      if nCaptions > 1:
+        captionright5=captions[1]
+      if nCaptions > 2:
+        captionright6=captions[2]
     drawStandardCaptions(c,caption,
         captionright1="N_{{Hits}} = {:.0f}".format(hist.Integral()),
-        captionright2="Fit Min-Max: {:.1f}-{:.1f}".format(fitMin,fitMax)
+        captionright2="Fit Min-Max: {:.2f}-{:.2f}".format(fitMin,fitMax),
+        captionright3="#chi^{{2}} / NDF = {:.2f}".format(chiSquare),
+        captionright4=captionright4,
+        captionright5=captionright5,
+        captionright6=captionright6,
     )
     c.SaveAs("roofit_landau_{}.png".format(postfix))
 
@@ -234,8 +258,14 @@ def fitSlicesLandaus(c,hist,fileprefix,nJump=1,nLandaus=1,smearGauss=False,fracM
       lastBin = (i+1)*(nJump)
       lastBin = min(lastBin,hist.GetNbinsX())
       histAll = hist.ProjectionY("_pyAll",firstBin,lastBin)
-      if histAll.GetEntries() < 10:
+      if histAll.GetEntries() < 200:
         continue
+      elif histAll.GetEntries() < 2000.:
+        histAll.Rebin(2)
+      elif histAll.GetEntries() < 1000.:
+        histAll.Rebin(4)
+      elif histAll.GetEntries() < 500.:
+        histAll.Rebin(8)
       postfix = "_"+fileprefix+"bins{}".format(i)
       xMin = xaxis.GetBinLowEdge(firstBin)
       xMax = xaxis.GetBinUpEdge(lastBin)

@@ -535,7 +535,13 @@ def getEfficiencyInterval(passed,total):
   high = eff.ClopperPearson(int(total),int(passed),quant,True)
   return [low,nom,high]
 
-def drawStandardCaptions(canvas,caption,captionleft1="",captionleft2="",captionleft3="",captionright1="",captionright2="",captionright3="",preliminaryString="",colorInside=root.kBlack):
+def drawStandardCaptions(canvas,caption,
+                            captionleft1="",captionleft2="",captionleft3="",
+                            captionleft4="",captionleft5="",captionleft6="",captionleft7="",
+                            captionright1="",captionright2="",captionright3="",
+                            captionright4="",captionright5="",captionright6="",captionright7="",
+                            preliminaryString="",
+                            colorInside=root.kBlack):
   tlatex = root.TLatex()
   tlatex.SetNDC()
 
@@ -551,10 +557,18 @@ def drawStandardCaptions(canvas,caption,captionleft1="",captionleft2="",captionl
   tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.88,captionleft1)
   tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.82,captionleft2)
   tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.76,captionleft3)
+  tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.70,captionleft4)
+  tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.64,captionleft5)
+  tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.58,captionleft6)
+  tlatex.DrawLatex(0.02+canvas.GetLeftMargin(),0.52,captionleft7)
   tlatex.SetTextAlign(32)
   tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.88,captionright1)
   tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.82,captionright2)
   tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.76,captionright3)
+  tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.70,captionright4)
+  tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.64,captionright5)
+  tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.58,captionright6)
+  tlatex.DrawLatex(0.97-canvas.GetRightMargin(),0.52,captionright7)
   return tlatex
 
 def copyTreeBranchToNewNameTree(tree,oldBranchName,newBranchName):
