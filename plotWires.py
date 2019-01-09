@@ -94,25 +94,73 @@ if __name__ == "__main__":
   ]
   fileConfigsMC = [
     {
-      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.10.root",
+      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
       'name': "mcc11_3ms_2GeV",
-      'title': "MCC 11 No SCE 2 GeV/c",
+      'title': "MCC11 No SCE 1 GeV/c",
+      'caption': "MCC11 No SCE 1 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.11.root",
+      'name': "mcc11_sce_2GeV",
+      'title': "MCC11 SCE 1 GeV/c",
+      'caption': "MCC11 SCE 1 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC11 FLF SCE 1 GeV/c",
+      'caption': "MCC11 FLF SCE 1 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
+      'name': "mcc11_3ms_2GeV",
+      'title': "MCC11 No SCE 2 GeV/c",
       'caption': "MCC11 No SCE 2 GeV/c",
       'isData': False,
       "cuts": "*"+cutsMC
     },
     {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.10.root",
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
+      'name': "mcc11_sce_2GeV",
+      'title': "MCC11 SCE 2 GeV/c",
+      'caption': "MCC11 SCE 2 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
       'name': "mcc11_flf_2GeV",
-      'title': "MCC 11 FLF SCE 2 GeV/c",
+      'title': "MCC11 FLF SCE 2 GeV/c",
       'caption': "MCC11 FLF SCE 2 GeV/c",
       'isData': False,
       "cuts": "*"+cutsMC
     },
     {
-      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.10.root",
+      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
+      'name': "mcc11_3ms_7GeV",
+      'title': "MCC11 No SCE SCE 7 GeV/c",
+      'caption': "MCC11 No SCE 7 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
+      'name': "mcc11_sce_7GeV",
+      'title': "MCC11 SCE 7 GeV/c",
+      'caption': "MCC11 SCE 7 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
       'name': "mcc11_flf_7GeV",
-      'title': "MCC 11 FLF SCE 7 GeV/c",
+      'title': "MCC11 FLF SCE 7 GeV/c",
       'caption': "MCC11 FLF SCE 7 GeV/c",
       'isData': False,
       "cuts": "*"+cutsMC
@@ -183,8 +231,26 @@ if __name__ == "__main__":
       'name': "TrueEnergyVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "True Energy Deposit from Primary [MeV]",
-      'binning': wireBinning+[200,0,20],
+      'binning': wireBinning+[300,0,20],
       'var': "zWireTrueEnergy:Iteration$",
+      'cuts': "1",
+      'logz': True,
+    },
+    {
+      'name': "TrueEnergyOverTrajPitchVWireNum",
+      'xtitle': "Z Wire Number",
+      'ytitle': "True dE/dx (Trajectory Pitch) [MeV/cm]",
+      'binning': wireBinning+[500,0,50],
+      'var': "zWireTrueEnergy/zWireTrueTrajPitch:Iteration$",
+      'cuts': "1",
+      'logz': True,
+    },
+    {
+      'name': "TrueEnergyOverdRVWireNum",
+      'xtitle': "Z Wire Number",
+      'ytitle': "True dE/dx (IDE Average Distance) [MeV/cm]",
+      'binning': wireBinning+[500,0,50],
+      'var': "zWireTrueEnergy/zWireTruedR:Iteration$",
       'cuts': "1",
       'logz': True,
     },
@@ -225,7 +291,7 @@ if __name__ == "__main__":
       'logz': True,
     },
   ]
-  plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX)
+  plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX,saveHistsRootName="WireHistsTrue.root")
 
   if False:
     histname = "dEdxVWireNum"

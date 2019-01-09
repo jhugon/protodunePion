@@ -31,22 +31,30 @@ if __name__ == "__main__":
   c = root.TCanvas("c")
 
   NMAX=10000000000
-  caption = "MCC10, 2 GeV SCE"
+  caption = "MCC11 2 GeV"
 
   fileConfigs = [
     {
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_mcc10_100evts.root",
+      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
       'title': "SCE Off",
       'caption': caption,
     },
     {
-      'fn': "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root",
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
       'title': "SCE On",
+      'caption': caption,
+    },
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+      'title': "SCE & FLF On",
       'caption': caption,
     },
   ]
   for i in range(len(fileConfigs)):
     fileConfigs[i]['color'] = COLORLIST[i]
+
+  for fc in fileConfigs:
+    print fc
 
   histConfigs = [
     {

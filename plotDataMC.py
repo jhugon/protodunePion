@@ -53,7 +53,7 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
     {
-      'fn': "piAbsSelector_run5432_1kevts_v4.10.root",
+      'fn': "piAbsSelector_run5432_v4.10.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -63,7 +63,7 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
     },
     {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.10.root",
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
       'name': "mcc11_flf_2GeV",
       'title': "MCC11 2 GeV/c FLF",
       'caption': "MCC11 2 GeV/c FLF",
@@ -136,6 +136,17 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
       'printIntegral': True,
+    },
+    {
+      'name': "PFBeamPrimGoodMatch",
+      'xtitle': "Primary PF Track Matched to True Primary Particle",
+      'ytitle': "Events / bin",
+      'binning': [3,0,3],
+      'var': "(PFBeamPrimTrueTrackID == truePrimaryTrackID) + 2*(PFBeamPrimTrueTrackMotherTrackID == truePrimaryTrackID)",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'binLabels': ["Bad Match","Good Match"," Match to Mother"]
     },
     {
       'name': "PFBeamPrimKinInteract",

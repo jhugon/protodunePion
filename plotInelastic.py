@@ -479,9 +479,9 @@ if __name__ == "__main__":
   #fn = "PiAbs_mcc11.root"
   #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
   #caption = "Beam Data, MCC10 2 & 7 GeV"
-  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.7.root"
+  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root"
   caption = "2 GeV/c Beam Data & MCC11 FLF"
-  scaleFactor = 0.6430260047281324*1.5318115342244554
+  scaleFactor = 1.
 
   fileConfigsData = [
     #{

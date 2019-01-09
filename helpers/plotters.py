@@ -458,9 +458,9 @@ def plotManyFilesOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
       except KeyError:
         pass
       hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax=nMax,isData=isData)
-      if 'color' in histConfig:
-        hist.SetLineColor(histConfig['color'])
-        hist.SetMarkerColor(histConfig['color'])
+      if 'color' in fileConfig:
+        hist.SetLineColor(fileConfig['color'])
+        hist.SetMarkerColor(fileConfig['color'])
       if printIntegral:
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
       hists.append(hist)
