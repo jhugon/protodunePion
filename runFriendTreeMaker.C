@@ -8,6 +8,6 @@
 
   makeFriendTree("piAbsSelector_run5145_v4.10.root","friendTree_piAbsSelector_run5145_v4.10.root",calibrationFn,maxEvents);
   makeFriendTree("piAbsSelector_run5387_v4.10.root","friendTree_piAbsSelector_run5387_v4.10.root",calibrationFn,maxEvents);
-  makeFriendTree("piAbsSelector_run5432_1kevts_v4.10.root","friendTree_piAbsSelector_run5432_1kevts_v4.10.root",calibrationFn,maxEvents);
+  makeFriendTree("piAbsSelector_run5432_v4.10.root","friendTree_piAbsSelector_run5432_v4.10.root",calibrationFn,maxEvents);
 
 }
