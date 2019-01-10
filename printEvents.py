@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
   print "MCC11 FLF 2 GeV v4.4"
   varNames = ["trueCategory","trueEndProcess","trueStartMom","trueEndX","trueEndY","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
+  varNames = ["trueStartMom","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
   cuts = {
     "truePrimaryPDG": ["==",-13],
     "PFNBeamSlices": ["==",1],
@@ -48,6 +49,7 @@ if __name__ == "__main__":
 
   print "Run 5387 v4.10"
   varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","PFBeamPrimTrkLen","beamMom"]
+  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","beamMom"]
   cuts = {
     "triggerIsBeam": ["=",1],
     "BITrigger": [">",0],
