@@ -27,7 +27,8 @@ if __name__ == "__main__":
     fracMax = 0.4
     nJump = 1
     if "mcc" in samplename:
-      continue
+      #continue
+      pass
     #elif not ("run5145" in samplename):
     #  continue
     else:
@@ -47,6 +48,7 @@ if __name__ == "__main__":
   for i in range(len(mpvGraphs)):
       mpvGraphs[i].SetLineColor(COLORLIST[i])
       mpvGraphs[i].SetMarkerColor(COLORLIST[i])
+      mpvGraphs[i].SetMarkerSize(0)
   ax = drawGraphs(c,mpvGraphs,"Z Wire Number","Landau MPV [MeV/cm]",xlims=[0,480*3],ylims=[0,12],freeTopSpace=0.5,drawOptions=["pez"]*len(mpvGraphs),reverseDrawOrder=True)
   leg = drawNormalLegend(mpvGraphs,labels,["lep"]*len(mpvGraphs))
   drawStandardCaptions(c,"")

@@ -295,9 +295,11 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
       prof = None
       if doProfileX:
         if "profileStdDev" in histConfig and histConfig["profileStdDev"]:
-          prof = hist.ProfileX("_pfx",1,-1,'s')
+          prof = hist.ProfileX(hist.GetName()+"_pfx",1,-1,'s')
         else:
           prof = hist.ProfileX()
+        if hist.GetNbinsX() > 499:
+          prof.SetMarkerSize(0)
         if not doProfileXtoo:
           hist = prof
       elif doProfileY:
@@ -306,6 +308,8 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
         else:
           prof = hist.ProfileY()
           hist = prof
+        if hist.GetNBinsY() > 499:
+          prof.SetMarkerSize(0)
       axisHist = None
       if hist.InheritsFrom("TH3"):
         axisHist = hist
