@@ -21,6 +21,7 @@
 #endif
 
 #define pi TMath::Pi()
+const auto DEFAULTNEG = -99999999;
 
 void makeFriendTree (TString inputFileName,TString outputFileName,TString calibFileName, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
 {
@@ -48,8 +49,14 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
 
   TTree* friendTree = new TTree("friend","");
   std::vector<float> zWiredEdx_corr;
+  Int_t zWireFirstHitWire;
+  Int_t zWireLastHitWire;
+  Int_t zWireLastContigHitWire;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
+  friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
+  friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
+  friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
 
   ///////////////////////////////
   ///////////////////////////////
@@ -87,15 +94,38 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
     const auto& iEntry = tree->LoadTree(iEvent);
     b_zWiredEdx->GetEntry(iEntry);
 
+    zWireFirstHitWire = DEFAULTNEG;
+    zWireLastHitWire = DEFAULTNEG;
+    zWireLastContigHitWire = DEFAULTNEG;
+    bool lastZWireGood=false;
     if(zWiredEdx)
     {
       const size_t& zWireSize = zWiredEdx->size();
       zWiredEdx_corr.resize(zWireSize);
       for (size_t iZWire=0; iZWire<zWireSize; iZWire++)
       {
-        zWiredEdx_corr[iZWire] = calibMap.at(iZWire)*zWiredEdx->at(iZWire);
-      }
-    }
+        const auto& dEdx = zWiredEdx->at(iZWire);
+        zWiredEdx_corr[iZWire] = calibMap.at(iZWire)*dEdx;
+        if(dEdx >= 0)
+        {
+          zWireLastHitWire = iZWire;
+          if(lastZWireGood)
+          {
+            zWireLastContigHitWire = iZWire;
+          }
+          if(zWireFirstHitWire < 0.)
+          {
+            zWireFirstHitWire = iZWire;
+            zWireLastContigHitWire = iZWire;
+            lastZWireGood = true;
+          }
+        }
+        else
+        {
+          lastZWireGood = false;
+        }
+      } // for iZWire
+    } // if zWiredEdx
 
     friendTree->Fill();
   } // for iEvent
