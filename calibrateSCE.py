@@ -252,8 +252,10 @@ if __name__ == "__main__":
         ys = []
         yErrs = []
         for iWire in range(nWires):
-          if iWire < 30 or iWire > 480*3 - 30 or iWire == 958 or iWire == 960:
-              continue
+          if iWire < 30 or iWire > 480*3 - 30 or (iWire >= 957 and iWire <= 960) or (iWire >= 479 and iWire <= 481):
+            continue
+          if "sce_2GeV" in fileName and iWire < 38:
+            continue
           nHits = proj.GetBinContent(iWire+1)
           if nHits < 20:
             continue
@@ -269,19 +271,22 @@ if __name__ == "__main__":
         ys = numpy.array(ys)
         yErrs = numpy.array(yErrs)
         yWeights = 1./yErrs
-        smoothFactor=0.6
+        smoothFactor=0.8
+        if "deltaWireTrueZVWireNum" in histName:
+          smoothFactor=0.8
         spline = interpolate.UnivariateSpline(wires,ys,yWeights,s=float(len(wires))*smoothFactor,check_finite=True)
-        ysSmoothed = spline(wires)
-        derivSmoothed = spline.derivative(1)(wires)
+        ysSmoothed = spline(numpy.arange(480*3))
+        derivSmoothed = spline.derivative(1)(numpy.arange(480*3))
         fig, ax = mpl.subplots()
         ax.fill_between(wires,ys-yErrs,ys+yErrs,color='c',label="Profile Error-band")
         ax.plot(wires,ys,"-b",label="Profile Mean")
-        ax.plot(wires,ysSmoothed,"-r",label="Smoothed")
+        ax.plot(numpy.arange(480*3),ysSmoothed,"-r",label="Smoothed")
         ax.set_xlabel(histConfig["xtitle"])
         ax.set_ylabel(histConfig["ytitle"])
         ax.set_title(fileConfig["title"])
         ax.set_xlim(0,480*3)
-        #ax.set_xlim(955,965)
+        #ax.set_xlim(460,500)
+        #ax.set_ylim(1,3)
         ax.grid()
         leg = ax.legend()
         fig.savefig("WireZ_pysmooth_"+histName+"_"+fileName+".png")
@@ -289,25 +294,33 @@ if __name__ == "__main__":
         mpl.close()
         fig, ax = mpl.subplots()
         ax.fill_between(wires,-yErrs,yErrs,color='c')
-        ax.plot(wires,ysSmoothed-ys,"-b")
+        ax.plot(wires,spline(wires)-ys,"-b")
         ax.set_xlabel(histConfig["xtitle"])
         ax.set_ylabel("Smooth-Profile for "+histConfig["ytitle"])
         ax.set_title(fileConfig["title"])
         ax.set_xlim(0,480*3)
+        #ax.set_xlim(800,1000)
+        #ax.set_xlim(460,500)
         ax.grid()
         fig.savefig("WireZ_pysmooth_diff_"+histName+"_"+fileName+".png")
         fig.savefig("WireZ_pysmooth_diff_"+histName+"_"+fileName+".pdf")
         mpl.close()
         fig, ax = mpl.subplots()
         mpl.subplots_adjust(left=0.16) # 0.14 is the default
-        ax.plot(wires,derivSmoothed,"-b")
+        ax.plot(numpy.arange(480*3),derivSmoothed,"-b")
         ax.set_xlabel(histConfig["xtitle"])
         ax.set_ylabel("Derivative of Smoothed "+histConfig["ytitle"])
         ax.set_title(fileConfig["title"])
         ax.set_xlim(0,480*3)
+        #ax.set_xlim(800,1000)
+        #ax.set_xlim(460,500)
         ax.grid()
         fig.savefig("WireZ_pysmooth_deriv_"+histName+"_"+fileName+".png")
         fig.savefig("WireZ_pysmooth_deriv_"+histName+"_"+fileName+".pdf")
         mpl.close()
+        with open("CalibrationSCE_PythonSmooth_"+name+".txt",'w') as outfile:
+          for iWire,offset in zip(numpy.arange(480*3),ysSmoothed):
+            line = "{},{}".format(iWire,-offset)
+            outfile.write(line+"\n")
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
     
