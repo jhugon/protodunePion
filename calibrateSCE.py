@@ -204,44 +204,110 @@ if __name__ == "__main__":
       #hist.RebinY(50)
       nWires = hist.GetNbinsX()
       proj = hist.ProjectionX(hist.GetName()+"_proj",1,hist.GetNbinsY())
-      proj.Print()
+      #plotHistsSimple([proj],None,histConfig['xtitle'],"N Hits",c,"WireZ_proj_"+histName+"_"+fileName)
       prof = hist.ProfileX(hist.GetName()+"_pfxAgain")
       prof.SetMarkerSize(0)
       profs.append(prof)
       labels.append(fileConfig['title'])
-      graph = root.TGraph()
-      iPoint = 0
-      for iWire in range(nWires):
-        if iWire < 30 or iWire > 480*3 - 30:
+      try:
+        import numpy
+        from scipy import interpolate
+        import matplotlib.pyplot as mpl
+      except ImportError:
+        graph = root.TGraph()
+        iPoint = 0
+        for iWire in range(nWires):
+          if iWire < 30 or iWire > 480*3 - 30:
+              continue
+          nHits = proj.GetBinContent(iWire+1)
+          if nHits < 20:
             continue
-        nHits = proj.GetBinContent(iWire+1)
-        if nHits < 20:
-          continue
-        y = prof.GetBinContent(iWire+1)
-        graph.SetPoint(iPoint,iWire,y)
+          y = prof.GetBinContent(iWire+1)
+          graph.SetPoint(iPoint,iWire,y)
+          iPoint+= 1
         graphs.append(graph)
-        iPoint+= 1
-      c.Clear()
-      print name, graph.GetN()
-      if graph.GetN() == 0:
-        continue
-      smoother = root.TGraphSmooth("smoother_"+name)
-      smooth = smoother.SmoothKern(graph,"normal",20)
-      smooth.SetLineColor(root.kBlue+1)
-      #axisHist = drawGraphs(c,[graph,smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
-      axisHist = drawGraphs(c,[smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
-      drawStandardCaptions(c,fileConfig["title"])
-      c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".png")
-      c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".pdf")
-      plotHistsSimple([proj],None,histConfig['xtitle'],"N Hits",c,"WireZ_proj_"+histName+"_"+fileName)
-      l = [0]*480*3
-      xs = smooth.GetX()
-      ys = smooth.GetY()
-      for iPoint in range(smooth.GetN()):
-        l[int(xs[iPoint])] = ys[iPoint]
-      with open("CalibrationSCE_"+name+".txt",'w') as outfile:
-        for iWire in range(len(l)):
-          line = "{},{}".format(iWire,l[iWire])
-          outfile.write(line+"\n")
+        c.Clear()
+        print name, graph.GetN()
+        if graph.GetN() == 0:
+          continue
+        smoother = root.TGraphSmooth("smoother_"+name)
+        smooth = smoother.SmoothKern(graph,"normal",20)
+        smooth.SetLineColor(root.kBlue+1)
+        #axisHist = drawGraphs(c,[graph,smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
+        axisHist = drawGraphs(c,[smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
+        drawStandardCaptions(c,fileConfig["title"])
+        c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".png")
+        c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".pdf")
+        l = [0]*480*3
+        xs = smooth.GetX()
+        ys = smooth.GetY()
+        for iPoint in range(smooth.GetN()):
+          l[int(xs[iPoint])] = ys[iPoint]
+        with open("CalibrationSCE_RootSmooth_"+name+".txt",'w') as outfile:
+          for iWire in range(len(l)):
+            line = "{},{}".format(iWire,l[iWire])
+            outfile.write(line+"\n")
+      else:
+        wires = []
+        ys = []
+        yErrs = []
+        for iWire in range(nWires):
+          if iWire < 30 or iWire > 480*3 - 30 or iWire == 958 or iWire == 960:
+              continue
+          nHits = proj.GetBinContent(iWire+1)
+          if nHits < 20:
+            continue
+          yErr = prof.GetBinError(iWire+1)
+          if yErr == 0.:
+            continue
+          wires.append(iWire)
+          ys.append(prof.GetBinContent(iWire+1))
+          yErrs.append(yErr)
+        if len(wires) == 0:
+          continue
+        wires = numpy.array(wires)
+        ys = numpy.array(ys)
+        yErrs = numpy.array(yErrs)
+        yWeights = 1./yErrs
+        smoothFactor=0.6
+        spline = interpolate.UnivariateSpline(wires,ys,yWeights,s=float(len(wires))*smoothFactor,check_finite=True)
+        ysSmoothed = spline(wires)
+        derivSmoothed = spline.derivative(1)(wires)
+        fig, ax = mpl.subplots()
+        ax.fill_between(wires,ys-yErrs,ys+yErrs,color='c',label="Profile Error-band")
+        ax.plot(wires,ys,"-b",label="Profile Mean")
+        ax.plot(wires,ysSmoothed,"-r",label="Smoothed")
+        ax.set_xlabel(histConfig["xtitle"])
+        ax.set_ylabel(histConfig["ytitle"])
+        ax.set_title(fileConfig["title"])
+        ax.set_xlim(0,480*3)
+        #ax.set_xlim(955,965)
+        ax.grid()
+        leg = ax.legend()
+        fig.savefig("WireZ_pysmooth_"+histName+"_"+fileName+".png")
+        fig.savefig("WireZ_pysmooth_"+histName+"_"+fileName+".pdf")
+        mpl.close()
+        fig, ax = mpl.subplots()
+        ax.fill_between(wires,-yErrs,yErrs,color='c')
+        ax.plot(wires,ysSmoothed-ys,"-b")
+        ax.set_xlabel(histConfig["xtitle"])
+        ax.set_ylabel("Smooth-Profile for "+histConfig["ytitle"])
+        ax.set_title(fileConfig["title"])
+        ax.set_xlim(0,480*3)
+        ax.grid()
+        fig.savefig("WireZ_pysmooth_diff_"+histName+"_"+fileName+".png")
+        fig.savefig("WireZ_pysmooth_diff_"+histName+"_"+fileName+".pdf")
+        mpl.close()
+        fig, ax = mpl.subplots()
+        mpl.subplots_adjust(left=0.16) # 0.14 is the default
+        ax.plot(wires,derivSmoothed,"-b")
+        ax.set_xlabel(histConfig["xtitle"])
+        ax.set_ylabel("Derivative of Smoothed "+histConfig["ytitle"])
+        ax.set_title(fileConfig["title"])
+        ax.set_xlim(0,480*3)
+        ax.grid()
+        fig.savefig("WireZ_pysmooth_deriv_"+histName+"_"+fileName+".png")
+        fig.savefig("WireZ_pysmooth_deriv_"+histName+"_"+fileName+".pdf")
+        mpl.close()
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
     
