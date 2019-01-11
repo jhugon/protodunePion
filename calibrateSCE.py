@@ -185,19 +185,63 @@ if __name__ == "__main__":
   root.gStyle.SetMarkerSize(0)
   for histConfig in histConfigs:
     histName = histConfig['name']
-    if "PitchTrueHitSpacing" in histName:
+    if "PitchTrueHitSpacing" in histName or not ("delta" in histName):
       continue
     profs = []
     labels = []
     derivs = []
+    graphs = []
+    lists = []
     for iFileConfig,fileConfig in enumerate(fileConfigsMC):
       fileName = fileConfig['name']
       if "3ms" in fileName:
         continue
       name = histName+"_"+fileName
       hist = hf[name]
+      if not hist:
+        continue
+      #hist.RebinX(240)
+      #hist.RebinY(50)
+      nWires = hist.GetNbinsX()
+      proj = hist.ProjectionX(hist.GetName()+"_proj",1,hist.GetNbinsY())
+      proj.Print()
       prof = hist.ProfileX(hist.GetName()+"_pfxAgain")
       prof.SetMarkerSize(0)
       profs.append(prof)
       labels.append(fileConfig['title'])
+      graph = root.TGraph()
+      iPoint = 0
+      for iWire in range(nWires):
+        if iWire < 30 or iWire > 480*3 - 30:
+            continue
+        nHits = proj.GetBinContent(iWire+1)
+        if nHits < 20:
+          continue
+        y = prof.GetBinContent(iWire+1)
+        graph.SetPoint(iPoint,iWire,y)
+        graphs.append(graph)
+        iPoint+= 1
+      c.Clear()
+      print name, graph.GetN()
+      if graph.GetN() == 0:
+        continue
+      smoother = root.TGraphSmooth("smoother_"+name)
+      smooth = smoother.SmoothKern(graph,"normal",20)
+      smooth.SetLineColor(root.kBlue+1)
+      #axisHist = drawGraphs(c,[graph,smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
+      axisHist = drawGraphs(c,[smooth],histConfig['xtitle'],"Profile of "+histConfig['ytitle'],yStartZero=False,drawOptions="l")
+      drawStandardCaptions(c,fileConfig["title"])
+      c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".png")
+      c.SaveAs("WireZ_smooth_"+histName+"_"+fileName+".pdf")
+      plotHistsSimple([proj],None,histConfig['xtitle'],"N Hits",c,"WireZ_proj_"+histName+"_"+fileName)
+      l = [0]*480*3
+      xs = smooth.GetX()
+      ys = smooth.GetY()
+      for iPoint in range(smooth.GetN()):
+        l[int(xs[iPoint])] = ys[iPoint]
+      with open("CalibrationSCE_"+name+".txt",'w') as outfile:
+        for iWire in range(len(l)):
+          line = "{},{}".format(iWire,l[iWire])
+          outfile.write(line+"\n")
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
+    
