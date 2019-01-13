@@ -22,8 +22,6 @@ SLABTHICKNESS = 0.5
 
 if __name__ == "__main__":
 
-  histConfigs = [
-  ]
   c = root.TCanvas()
   NMAX=10000000000
   #NMAX=100
@@ -71,9 +69,29 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
       #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     },
+    {
+      'fn': "piAbsSelector_run5145_v4.10.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+      'name': "run5145_evtLt15000",
+      'title': "Run 5145: 7 GeV/c, Event < 15000",
+      'caption': "Run 5145: 7 GeV/c, Event < 15000",
+      'isData': True,
+      'cuts': "*(eventNumber < 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    },
+    {
+      'fn': "piAbsSelector_run5145_v4.10.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+      'name': "run5145_evtGeq15000",
+      'title': "Run 5145: 7 GeV/c, Event #geq 15000",
+      'caption': "Run 5145: 7 GeV/c, Event #geq 15000",
+      'isData': True,
+      'cuts': "*(eventNumber >= 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+      #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    },
   ]
-  for i, fileConfig in enumerate(fileConfigsData):
-    fileConfig['color'] = COLORLIST[i]
   fileConfigsAllData = [
     {
       'fn': [
@@ -96,14 +114,14 @@ if __name__ == "__main__":
     },
   ]
   fileConfigsMC = [
-    #{
-    #  'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
-    #  'name': "mcc11_3ms_2GeV",
-    #  'title': "MCC11 No SCE 1 GeV/c",
-    #  'caption': "MCC11 No SCE 1 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+      'name': "mcc11_3ms_2GeV",
+      'title': "MCC11 No SCE 1 GeV/c",
+      'caption': "MCC11 No SCE 1 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
     {
       'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.11.root",
       'name': "mcc11_sce_2GeV",
@@ -112,30 +130,30 @@ if __name__ == "__main__":
       'isData': False,
       "cuts": "*"+cutsMC
     },
-    #{
-    #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
-    #  'name': "mcc11_flf_2GeV",
-    #  'title': "MCC11 FLF SCE 1 GeV/c",
-    #  'caption': "MCC11 FLF SCE 1 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
-    #{
-    #  'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
-    #  'name': "mcc11_3ms_2GeV",
-    #  'title': "MCC11 No SCE 2 GeV/c",
-    #  'caption': "MCC11 No SCE 2 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
-    #  'name': "mcc11_sce_2GeV",
-    #  'title': "MCC11 SCE 2 GeV/c",
-    #  'caption': "MCC11 SCE 2 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC11 FLF SCE 1 GeV/c",
+      'caption': "MCC11 FLF SCE 1 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
+      'name': "mcc11_3ms_2GeV",
+      'title': "MCC11 No SCE 2 GeV/c",
+      'caption': "MCC11 No SCE 2 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
+      'name': "mcc11_sce_2GeV",
+      'title': "MCC11 SCE 2 GeV/c",
+      'caption': "MCC11 SCE 2 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
     {
       'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
       'name': "mcc11_flf_2GeV",
@@ -144,22 +162,22 @@ if __name__ == "__main__":
       'isData': False,
       "cuts": "*"+cutsMC
     },
-    #{
-    #  'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
-    #  'name': "mcc11_3ms_7GeV",
-    #  'title': "MCC11 No SCE SCE 7 GeV/c",
-    #  'caption': "MCC11 No SCE 7 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
-    #  'name': "mcc11_sce_7GeV",
-    #  'title': "MCC11 SCE 7 GeV/c",
-    #  'caption': "MCC11 SCE 7 GeV/c",
-    #  'isData': False,
-    #  "cuts": "*"+cutsMC
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
+      'name': "mcc11_3ms_7GeV",
+      'title': "MCC11 No SCE SCE 7 GeV/c",
+      'caption': "MCC11 No SCE 7 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
+      'name': "mcc11_sce_7GeV",
+      'title': "MCC11 SCE 7 GeV/c",
+      'caption': "MCC11 SCE 7 GeV/c",
+      'isData': False,
+      "cuts": "*"+cutsMC
+    },
     {
       'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
       'name': "mcc11_flf_7GeV",
@@ -170,17 +188,91 @@ if __name__ == "__main__":
     },
   ]
 
+  for fileConfig in fileConfigsMC:
+    fileConfig['addFriend'] = ["friend","friendTree_"+fileConfig["fn"]]
+
+  fileConfigs = fileConfigsData + fileConfigsMC
+  for i, fileConfig in enumerate(fileConfigs):
+    fileConfig['color'] = COLORLIST[i]
+
+  histConfigs = [
+    {
+      'name': "firstHitWire",
+      'xtitle': "First Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [480*3,0,480*3],
+      'var': "zWireFirstHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "lastHitWire",
+      'xtitle': "Last Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [480*3,0,480*3],
+      'var': "zWireLastHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "lastContigHitWire",
+      'xtitle': "Last Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [480*3,0,480*3],
+      'var': "zWireLastContigHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "firstHitWire_zoom",
+      'xtitle': "First Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [150,0,150],
+      'var': "zWireFirstHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "firstHitWire_zoom2",
+      'xtitle': "First Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [40,50,90],
+      'var': "zWireFirstHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "lastHitWire_zoom",
+      'xtitle': "Last Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [480*3-1300,1300,480*3],
+      'var': "zWireLastHitWire",
+      'cuts': "1",
+    },
+    {
+      'name': "lastHitWire_zoom2",
+      'xtitle': "Last Hit Z Wire Number",
+      'ytitle': "Events / bin",
+      'binning': [480*3-1350,1350,480*3],
+      'var': "zWireLastHitWire",
+      'cuts': "1",
+    },
+    #{
+    #  'name': "lastContigHitWire_zoom",
+    #  'xtitle': "Last Hit Z Wire Number",
+    #  'ytitle': "Events / bin",
+    #  'binning': [480*3-1300,1300,480*3],
+    #  'var': "zWireLastContigHitWire",
+    #  'cuts': "1",
+    #},
+  ]
+
   for histConfig in histConfigs:
     histConfig["caption"] = caption
     histConfig["normalize"] = True
     histConfig["ytitle"] = "Normalized Events / Bin"
 
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",outSuffix="Hist",nMax=NMAX)
+  plotManyFilesOnePlot([x for x in fileConfigs if (not ("1p0GeV" in x["fn"])) and (not ("3ms" in x["fn"]))],histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",outSuffix="Hist",nMax=NMAX)
   for histConfig in histConfigs:
     histConfig['logy'] = True
     histConfig["normalize"] = False
     histConfig["ytitle"] = "Events / Bin"
-  plotManyFilesOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",outSuffix="_logyHist",nMax=NMAX)
+  plotManyFilesOnePlot([x for x in fileConfigs if (not ("1p0GeV" in x["fn"])) and (not ("3ms" in x["fn"]))],histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",outSuffix="_logyHist",nMax=NMAX)
 
   wireBinning = [480*3,0,480*3]
   #wireBinning = [100,0,100]
@@ -236,7 +328,7 @@ if __name__ == "__main__":
     #},
   ]
   histFileName = "WireHists.root"
-  hists = plotOneHistOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX,saveHistsRootName=histFileName)
+  hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Wires_",nMax=NMAX,saveHistsRootName=histFileName)
 
   #### For MC truth stuff
 
@@ -328,10 +420,10 @@ if __name__ == "__main__":
       'color' : COLORLIST[1],
     },
   ]
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",nMax=NMAX)
+  plotManyHistsOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",nMax=NMAX)
   for i in range(len(histConfigs)):
     histConfigs[i]['logy'] = True
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="_logy_Hist",nMax=NMAX)
+  plotManyHistsOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="_logy_Hist",nMax=NMAX)
 
   histConfigs = [
     {
@@ -355,7 +447,51 @@ if __name__ == "__main__":
       'color' : COLORLIST[1],
     },
   ]
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="zoom_Hist",nMax=NMAX)
+  plotManyHistsOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="zoom_Hist",nMax=NMAX)
   for i in range(len(histConfigs)):
     histConfigs[i]['logy'] = True
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="zoom_logy_Hist",nMax=NMAX)
+  plotManyHistsOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareCalib_",outSuffix="zoom_logy_Hist",nMax=NMAX)
+
+  #histConfigs = [
+  #  {
+  #    'title': "Event Number < 15000",
+  #    'ytitle': "Hits / Bin",
+  #    'xtitle': "Uncalibrated dE/dx [MeV/cm]",
+  #    'binning': [200,0,10],
+  #    'var': "zWiredEdx",
+  #    'cuts': "eventNumber < 15000",
+  #    'color' : COLORLIST[0],
+  #  },
+  #  {
+  #    'title': "Event Number #geq 15000",
+  #    'ytitle': "Hits / Bin",
+  #    'xtitle': "Uncalibrated dE/dx [MeV/cm]",
+  #    'binning': [200,0,10],
+  #    'var': "zWiredEdx",
+  #    'cuts': "eventNumber >=15000",
+  #    'color' : COLORLIST[1],
+  #  },
+  #]
+  #plotManyHistsOnePlot([x for x in fileConfigsData if "5145" in x["name"]],histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareParts_dEdx_",outSuffix="zoom_Hist",nMax=NMAX)
+
+  #histConfigs = [
+  #  {
+  #    'title': "Event Number < 15000",
+  #    'ytitle': "Hits / Bin",
+  #    'xtitle': "Calibrated dE/dx [MeV/cm]",
+  #    'binning': [200,0,10],
+  #    'var': "zWiredEdx_corr",
+  #    'cuts': "eventNumber < 15000",
+  #    'color' : COLORLIST[0],
+  #  },
+  #  {
+  #    'title': "Event Number #geq 15000",
+  #    'ytitle': "Hits / Bin",
+  #    'xtitle': "Calibrated dE/dx [MeV/cm]",
+  #    'binning': [200,0,10],
+  #    'var': "zWiredEdx_corr",
+  #    'cuts': "eventNumber >=15000",
+  #    'color' : COLORLIST[1],
+  #  },
+  #]
+  #plotManyHistsOnePlot([x for x in fileConfigsData if "5145" in x["name"]],histConfigs,c,"PiAbsSelector/tree",outPrefix="WiresCompareParts_dEdxCorr_",outSuffix="zoom_Hist",nMax=NMAX)

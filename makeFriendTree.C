@@ -74,6 +74,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
     calibMap.push_back(val);
   }
   calibFile.close();
+  if(calibMap.size() == 0)
+  {
+    calibMap.resize(480*3,1.);
+  }
 
 
   ///////////////////////////////
