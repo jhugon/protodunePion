@@ -32,8 +32,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   bool isMC;
   std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
   std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
-  //Float_t PFBeamPrimStartZ;
-  //Float_t PFBeamPrimEndZ;
+  std::vector<float>* zWireWireZ=0; TBranch* b_zWireWireZ;
+  Float_t PFBeamPrimStartZ;
+  Float_t PFBeamPrimEndZ;
 
   // infile chain
   TChain * tree = new TChain(inputTreeName);
@@ -41,6 +42,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("isMC",&isMC);
   tree->SetBranchAddress("zWiredEdx",&zWiredEdx,&b_zWiredEdx);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
+  tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
+  tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
+  tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
   //tree->Print();
 
   ///////////////////////////////
@@ -57,16 +61,16 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
   Int_t zWireLastContigHitWire;
-  //Float_t PFBeamPrimStartZ_corr;
-  //Float_t PFBeamPrimEndZ_corr;
+  Float_t PFBeamPrimStartZ_corr;
+  Float_t PFBeamPrimEndZ_corr;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
   friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
   friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
-  //friendTree->Branch("PFBeamPrimStartZ_corr",&PFBeamPrimStartZ_corr,"PFBeamPrimStartZ_corr/F");
-  //friendTree->Branch("PFBeamPrimEndZ_corr",&PFBeamPrimEndZ_corr,"PFBeamPrimEndZ_corr/F");
+  friendTree->Branch("PFBeamPrimStartZ_corr",&PFBeamPrimStartZ_corr,"PFBeamPrimStartZ_corr/F");
+  friendTree->Branch("PFBeamPrimEndZ_corr",&PFBeamPrimEndZ_corr,"PFBeamPrimEndZ_corr/F");
 
   ///////////////////////////////
   ///////////////////////////////
@@ -91,22 +95,27 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
   std::fstream sceCalibFile(sceCalibFileName.Data(),ios_base::in);
   std::vector<float> sceCalibMap(480*3,0);
+  std::vector<float> wirePosMap(480*3,1e-20);
   while (sceCalibFile.good())
   {
     std::getline(sceCalibFile,line,'\n');
     if(line.size() == 0) break;
-    size_t commaLoc = line.find(',');
-    if(commaLoc == std::string::npos)
+    const size_t commaLoc = line.find(',');
+    const size_t commaLoc2 = line.rfind(',');
+    if(commaLoc == std::string::npos || commaLoc2 == std::string::npos || commaLoc == commaLoc2)
     {
       std::cerr << "Warning: didn't understand line in sceCalibFile: '"<<line<<"'"<< std::endl;
     }
     else
     {
-      auto iWireStr = line.substr(0,commaLoc);
-      auto corrStr = line.substr(commaLoc+1);
-      unsigned long iWire = std::stoul(iWireStr);
-      float corr = std::stof(corrStr);
+      const auto iWireStr = line.substr(0,commaLoc);
+      const auto wirePosStr = line.substr(commaLoc+1,commaLoc2);
+      const auto corrStr = line.substr(commaLoc2+1);
+      const unsigned long iWire = std::stoul(iWireStr);
+      const float wirePos = std::stof(wirePosStr);
+      const float corr = std::stof(corrStr);
       sceCalibMap[iWire] = corr;
+      wirePosMap[iWire] = wirePos;
     }
   }
 
@@ -127,6 +136,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     tree->GetEntry(iEvent);
     const auto& iEntry = tree->LoadTree(iEvent);
     b_zWiredEdx->GetEntry(iEntry);
+    b_zWireZ->GetEntry(iEntry);
+    b_zWireWireZ->GetEntry(iEntry);
 
     for (size_t iZWire=0; iZWire<480*3; iZWire++)
     {
@@ -137,6 +148,44 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     zWireFirstHitWire = DEFAULTNEG;
     zWireLastHitWire = DEFAULTNEG;
     zWireLastContigHitWire = DEFAULTNEG;
+    PFBeamPrimStartZ_corr = DEFAULTNEG;
+    PFBeamPrimEndZ_corr = DEFAULTNEG;
+    // Find which wire is the start and end point to correct Z
+    if(zWireWireZ)
+    {
+      const size_t& zWireSize = zWireWireZ->size();
+      if (PFBeamPrimStartZ <= zWireWireZ->at(0)) PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[0];
+      else if (PFBeamPrimStartZ >= zWireWireZ->at(zWireSize-1)) PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[zWireSize-1];
+      if (PFBeamPrimEndZ <= zWireWireZ->at(0)) PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[0];
+      else if (PFBeamPrimEndZ >= zWireWireZ->at(zWireSize-1)) PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[zWireSize-1];
+      for (size_t iZWire=0; iZWire<zWireSize-1; iZWire++)
+      {
+        if(PFBeamPrimStartZ_corr < -10000. && PFBeamPrimStartZ >= zWireWireZ->at(iZWire))
+        {
+          if(PFBeamPrimStartZ-zWireWireZ->at(iZWire) < zWireWireZ->at(iZWire+1)-PFBeamPrimStartZ)
+          {
+            PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[iZWire];
+          }
+          else
+          {
+            PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[iZWire+1];
+          }
+        }
+        if(PFBeamPrimEndZ_corr < -10000. && PFBeamPrimEndZ >= zWireWireZ->at(iZWire))
+        {
+          if(PFBeamPrimEndZ-zWireWireZ->at(iZWire) < zWireWireZ->at(iZWire+1)-PFBeamPrimEndZ)
+          {
+            PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[iZWire];
+          }
+          else
+          {
+            PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[iZWire+1];
+          }
+        }
+      } // for iZWire
+    } // if zWireWireZ
+    std::cout << "Start, end: " << PFBeamPrimStartZ_corr << "    " << PFBeamPrimEndZ_corr << std::endl;
+    // Now per wire stuff
     bool lastZWireGood=false;
     if(zWiredEdx)
     {
