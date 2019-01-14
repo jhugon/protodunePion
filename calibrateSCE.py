@@ -366,7 +366,8 @@ if __name__ == "__main__":
       corrsScaleData[iWire] = corrs[iWire]*sf
     with open(scaleDataFn,'w') as outfile:
       for iWire in range(480*3):
-        outline = "{},{}\n".format(iWire,corrs[iWire]*sf)
+        # wire num, wire z (no correction), correction
+        outline = "{},{},{}\n".format(iWire,wireLocs[iWire],corrs[iWire]*sf)
         outfile.write(outline)
     if "deltaWireTrue" in calibFn:
       try:
