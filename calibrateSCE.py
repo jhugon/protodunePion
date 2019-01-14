@@ -361,7 +361,38 @@ if __name__ == "__main__":
         corr = float(record[1])
         corrs[wireNum] = corr
     sf = (wireLocs[0]-wireLocs[firstWire])/corrs[firstWire]
+    corrsScaleData = [0.]*480*3
+    for iWire in range(480*3):
+      corrsScaleData[iWire] = corrs[iWire]*sf
     with open(scaleDataFn,'w') as outfile:
       for iWire in range(480*3):
-        outline = "{},{},{}\n".format(iWire,corrs[iWire]*sf,corrs[iWire]*sf+wireLocs[iWire])
+        outline = "{},{}\n".format(iWire,corrs[iWire]*sf)
         outfile.write(outline)
+    if "deltaWireTrue" in calibFn:
+      try:
+        import numpy
+        import matplotlib.pyplot as mpl
+      except ImportError:
+        pass
+      else:
+        corrs = numpy.array(corrs)
+        corrsScaleData = numpy.array(corrsScaleData)
+        rawPos = numpy.array(wireLocs)
+        mcCorPos = rawPos+corrs
+        dataCorPos = rawPos+corrsScaleData
+        fig, ax = mpl.subplots()
+        ax.plot(rawPos,dataCorPos,"-b",label="MC Scaled to Data")
+        ax.plot(rawPos,mcCorPos,"-r",label="MC")
+        ax.plot(rawPos,rawPos,":k",label="Identity")
+        ax.set_xlabel("Raw Reconstructed Z Position [cm]")
+        ax.set_ylabel("Corrected Reconstructed Z Position [cm]")
+        #ax.set_title(fileConfig["title"])
+        #ax.set_xlim(0,480*3)
+        ax.set_xlim(0,700)
+        ax.set_ylim(0,700)
+        #ax.set_xlim(460,500)
+        leg = ax.legend()
+
+        fig.savefig(calibFn.replace(".txt",".png"))
+        fig.savefig(calibFn.replace(".txt",".pdf"))
+        mpl.close()
