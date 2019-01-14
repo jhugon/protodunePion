@@ -23,20 +23,24 @@
 #define pi TMath::Pi()
 const auto DEFAULTNEG = -99999999;
 
-void makeFriendTree (TString inputFileName,TString outputFileName,TString calibFileName, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
+void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
 {
   using namespace std;
 
-  cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calibration file: "<< calibFileName.Data() << endl;
+  cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calo calibration file: "<< caloCalibFileName.Data() << " and SCE calib file: "<< sceCalibFileName<< endl;
 
   bool isMC;
   std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
+  std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
+  //Float_t PFBeamPrimStartZ;
+  //Float_t PFBeamPrimEndZ;
 
   // infile chain
   TChain * tree = new TChain(inputTreeName);
   tree->Add(inputFileName);
   tree->SetBranchAddress("isMC",&isMC);
   tree->SetBranchAddress("zWiredEdx",&zWiredEdx,&b_zWiredEdx);
+  tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   //tree->Print();
 
   ///////////////////////////////
@@ -48,37 +52,63 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
   outFile->cd();
 
   TTree* friendTree = new TTree("friend","");
-  std::vector<float> zWiredEdx_corr;
+  std::vector<float> zWiredEdx_corr(480*3);
+  std::vector<float> zWireZ_corr(480*3);
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
   Int_t zWireLastContigHitWire;
+  //Float_t PFBeamPrimStartZ_corr;
+  //Float_t PFBeamPrimEndZ_corr;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
+  friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
   friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
+  //friendTree->Branch("PFBeamPrimStartZ_corr",&PFBeamPrimStartZ_corr,"PFBeamPrimStartZ_corr/F");
+  //friendTree->Branch("PFBeamPrimEndZ_corr",&PFBeamPrimEndZ_corr,"PFBeamPrimEndZ_corr/F");
 
   ///////////////////////////////
   ///////////////////////////////
   ///////////////////////////////
   // Calibration data
-
-  std::fstream calibFile(calibFileName.Data(),ios_base::in);
   std::string line;
-  std::vector<float> calibMap;
-  while (calibFile.good())
+
+  std::fstream caloCalibFile(caloCalibFileName.Data(),ios_base::in);
+  std::vector<float> caloCalibMap;
+  while (caloCalibFile.good())
   {
-    std::getline(calibFile,line,'\n');
+    std::getline(caloCalibFile,line,'\n');
     if(line.size() == 0) break;
     float val = std::stof(line);
-    calibMap.push_back(val);
+    caloCalibMap.push_back(val);
   }
-  calibFile.close();
-  if(calibMap.size() == 0)
+  caloCalibFile.close();
+  if(caloCalibMap.size() == 0)
   {
-    calibMap.resize(480*3,1.);
+    caloCalibMap.resize(480*3,1.);
   }
 
+  std::fstream sceCalibFile(sceCalibFileName.Data(),ios_base::in);
+  std::vector<float> sceCalibMap(480*3,0);
+  while (sceCalibFile.good())
+  {
+    std::getline(sceCalibFile,line,'\n');
+    if(line.size() == 0) break;
+    size_t commaLoc = line.find(',');
+    if(commaLoc == std::string::npos)
+    {
+      std::cerr << "Warning: didn't understand line in sceCalibFile: '"<<line<<"'"<< std::endl;
+    }
+    else
+    {
+      auto iWireStr = line.substr(0,commaLoc);
+      auto corrStr = line.substr(commaLoc+1);
+      unsigned long iWire = std::stoul(iWireStr);
+      float corr = std::stof(corrStr);
+      sceCalibMap[iWire] = corr;
+    }
+  }
 
   ///////////////////////////////
   ///////////////////////////////
@@ -98,6 +128,12 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
     const auto& iEntry = tree->LoadTree(iEvent);
     b_zWiredEdx->GetEntry(iEntry);
 
+    for (size_t iZWire=0; iZWire<480*3; iZWire++)
+    {
+      zWiredEdx_corr[iZWire] = DEFAULTNEG;
+      zWireZ_corr[iZWire] = DEFAULTNEG;
+    }
+
     zWireFirstHitWire = DEFAULTNEG;
     zWireLastHitWire = DEFAULTNEG;
     zWireLastContigHitWire = DEFAULTNEG;
@@ -105,13 +141,13 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString calibF
     if(zWiredEdx)
     {
       const size_t& zWireSize = zWiredEdx->size();
-      zWiredEdx_corr.resize(zWireSize);
       for (size_t iZWire=0; iZWire<zWireSize; iZWire++)
       {
         const auto& dEdx = zWiredEdx->at(iZWire);
-        zWiredEdx_corr[iZWire] = calibMap.at(iZWire)*dEdx;
         if(dEdx >= 0)
         {
+          zWiredEdx_corr[iZWire] = caloCalibMap.at(iZWire)*dEdx;
+          zWireZ_corr[iZWire] = zWireZ->at(iZWire) + sceCalibMap.at(iZWire);
           zWireLastHitWire = iZWire;
           if(lastZWireGood)
           {
