@@ -194,6 +194,14 @@ if __name__ == "__main__":
       tfile.Close()
       break
 
+  wireLocs = [0.]*480*3
+  with open("WireZPositions.txt") as wireLocFile:
+    for line in wireLocFile:
+      record = line.replace("\n","").split(",")
+      wireNum = int(record[0])
+      pos = float(record[1])
+      wireLocs[wireNum] = pos
+
   histFileName = "WireHistsSCE.root"
   histname = "dEdxVWireNum"
   hf = HistFile(histFileName)
@@ -335,17 +343,9 @@ if __name__ == "__main__":
         mpl.close()
         with open("CalibrationSCE_PythonSmooth_"+name+".txt",'w') as outfile:
           for iWire,offset in zip(numpy.arange(480*3),ysSmoothed):
-            line = "{},{}".format(iWire,-offset)
+            line = "{},{},{}".format(iWire,wireLocs[iWire],-offset)
             outfile.write(line+"\n")
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
-
-  wireLocs = [0.]*480*3
-  with open("WireZPositions.txt") as wireLocFile:
-    for line in wireLocFile:
-      record = line.replace("\n","").split(",")
-      wireNum = int(record[0])
-      pos = float(record[1])
-      wireLocs[wireNum] = pos
 
   firstWire = 67
   firstWirePosShouldBe = wireLocs[0]
@@ -358,7 +358,7 @@ if __name__ == "__main__":
       for line in infile:
         record = line.replace("\n","").split(",")
         wireNum = int(record[0])
-        corr = float(record[1])
+        corr = float(record[2])
         corrs[wireNum] = corr
     sf = (wireLocs[0]-wireLocs[firstWire])/corrs[firstWire]
     corrsScaleData = [0.]*480*3
