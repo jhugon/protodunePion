@@ -69,28 +69,58 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
       #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     },
-    {
-      'fn': "piAbsSelector_run5145_v4.10.root",
-      'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
-      'name': "run5145_evtLt15000",
-      'title': "Run 5145: 7 GeV/c, Event < 15000",
-      'caption': "Run 5145: 7 GeV/c, Event < 15000",
-      'isData': True,
-      'cuts': "*(eventNumber < 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
-      #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
-      #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
-    },
-    {
-      'fn': "piAbsSelector_run5145_v4.10.root",
-      'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
-      'name': "run5145_evtGeq15000",
-      'title': "Run 5145: 7 GeV/c, Event #geq 15000",
-      'caption': "Run 5145: 7 GeV/c, Event #geq 15000",
-      'isData': True,
-      'cuts': "*(eventNumber >= 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
-      #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
-      #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
-    },
+    #{
+    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'name': "run5145_evtLt15000",
+    #  'title': "Run 5145: 7 GeV/c, Event < 15000",
+    #  'caption': "Run 5145: 7 GeV/c, Event < 15000",
+    #  'isData': True,
+    #  'cuts': "*(eventNumber < 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'name': "run5145_evtGeq15000",
+    #  'title': "Run 5145: 7 GeV/c, Event #geq 15000",
+    #  'caption': "Run 5145: 7 GeV/c, Event #geq 15000",
+    #  'isData': True,
+    #  'cuts': "*(eventNumber >= 15000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'name': "run5145_evtLt2000",
+    #  'title': "Run 5145: 7 GeV/c, Event < 2000",
+    #  'caption': "Run 5145: 7 GeV/c, Event < 2000",
+    #  'isData': True,
+    #  'cuts': "*(eventNumber < 2000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'name': "run5145_evtGeq37000",
+    #  'title': "Run 5145: 7 GeV/c, Event #geq 37000",
+    #  'caption': "Run 5145: 7 GeV/c, Event #geq 37000",
+    #  'isData': True,
+    #  'cuts': "*(eventNumber >= 37000)*(CKov1Status == 1 && CKov0Status == 1)*"+primaryTrackCutsData, # for pions/electrons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 1)*"+primaryTrackCutsData, # for kaons
+    #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'name': "run5145_noCuts",
+    #  'title': "Run 5145: 7 GeV/c, No Cuts",
+    #  'caption': "Run 5145: 7 GeV/c, No Cuts",
+    #  'isData': True,
+    #},
   ]
   fileConfigsAllData = [
     {
@@ -237,6 +267,22 @@ if __name__ == "__main__":
       'cuts': "1",
     },
     {
+      'name': "firstHitWireZ_zoom",
+      'xtitle': "First Hit Wire Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [160,0,80],
+      'var': "zWireWireZ[zWireFirstHitWire]",
+      'cuts': "1",
+    },
+    {
+      'name': "firstHitWireZ_zoom2",
+      'xtitle': "First Hit Wire Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [80,10,50],
+      'var': "zWireWireZ[zWireFirstHitWire]",
+      'cuts': "1",
+    },
+    {
       'name': "lastHitWire_zoom",
       'xtitle': "Last Hit Z Wire Number",
       'ytitle': "Events / bin",
@@ -252,6 +298,22 @@ if __name__ == "__main__":
       'var': "zWireLastHitWire",
       'cuts': "1",
     },
+    {
+      'name': "lastHitWireZ_zoom",
+      'xtitle': "Last Hit Wire Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [200,600,700],
+      'var': "zWireWireZ[zWireLastHitWire]",
+      'cuts': "1",
+    },
+    {
+      'name': "lastHitWireZ_zoom2",
+      'xtitle': "Last Hit Wire Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [100,650,700],
+      'var': "zWireWireZ[zWireLastHitWire]",
+      'cuts': "1",
+    },
     #{
     #  'name': "lastContigHitWire_zoom",
     #  'xtitle': "Last Hit Z Wire Number",
@@ -260,6 +322,22 @@ if __name__ == "__main__":
     #  'var': "zWireLastContigHitWire",
     #  'cuts': "1",
     #},
+    {
+      'name': "SillyTest",
+      'xtitle': "dE/dx of Wire 105",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "zWiredEdx[105]",
+      'cuts': "1",
+    },
+    {
+      'name': "SillyTest2",
+      'xtitle': "dE/dx of Wire 224",
+      'ytitle': "Events / bin",
+      'binning': [100,0,10],
+      'var': "zWiredEdx[224]",
+      'cuts': "1",
+    },
   ]
 
   for histConfig in histConfigs:

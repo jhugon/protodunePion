@@ -64,3 +64,5 @@ if __name__ == "__main__":
     "PFBeamPrimEndZ": [">",650],
   }
   printEvents("piAbsSelector_run5387_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
+
+  # want something like PFBeamPrimEndZ-zWireWireZ[zWireLastHitWire] > 50.

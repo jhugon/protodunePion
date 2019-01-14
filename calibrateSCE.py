@@ -20,6 +20,7 @@ cutsMC = "(truePrimaryPDG == 211 || truePrimaryPDG == -13)"+primaryTrackCutsMu
 if __name__ == "__main__":
 
   makeHists=False
+  getWireLocs=False
 
   histConfigs = [
   ]
@@ -178,6 +179,20 @@ if __name__ == "__main__":
   ]
   if makeHists:
     plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="WireZ_",nMax=NMAX,saveHistsRootName="WireHistsSCE.root")
+
+  if getWireLocs:
+    ### Getting True Z-wire locations
+    for fileConfig in fileConfigsMC:
+      tfile = root.TFile(fileConfig['fn'])
+      tree = tfile.Get("PiAbsSelector/tree")
+      tree.GetEntry(0)
+      with open("WireZPositions.txt",'w') as outfile:
+        for iWire in range(tree.zWireWireZ.size()):
+          outstr = "{},{}\n".format(iWire,tree.zWireWireZ[iWire])
+          outfile.write(outstr)
+      del tree
+      tfile.Close()
+      break
 
   histFileName = "WireHistsSCE.root"
   histname = "dEdxVWireNum"
