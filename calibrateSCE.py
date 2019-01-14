@@ -338,4 +338,30 @@ if __name__ == "__main__":
             line = "{},{}".format(iWire,-offset)
             outfile.write(line+"\n")
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
-    
+
+  wireLocs = [0.]*480*3
+  with open("WireZPositions.txt") as wireLocFile:
+    for line in wireLocFile:
+      record = line.replace("\n","").split(",")
+      wireNum = int(record[0])
+      pos = float(record[1])
+      wireLocs[wireNum] = pos
+
+  firstWire = 67
+  firstWirePosShouldBe = wireLocs[0]
+  for calibFn in glob.glob("CalibrationSCE_*Smooth*.txt"):
+    if "scaleData" in calibFn:
+      continue
+    scaleDataFn = calibFn.replace(".txt","_scaleData.txt")
+    corrs = [0.]*480*3
+    with open(calibFn) as infile:
+      for line in infile:
+        record = line.replace("\n","").split(",")
+        wireNum = int(record[0])
+        corr = float(record[1])
+        corrs[wireNum] = corr
+    sf = (wireLocs[0]-wireLocs[firstWire])/corrs[firstWire]
+    with open(scaleDataFn,'w') as outfile:
+      for iWire in range(480*3):
+        outline = "{},{},{}\n".format(iWire,corrs[iWire]*sf,corrs[iWire]*sf+wireLocs[iWire])
+        outfile.write(outline)
