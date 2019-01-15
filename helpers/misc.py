@@ -107,7 +107,7 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
   else:
     hist.Sumw2()
     scaleFactor = 1.
-    if "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
+    if not isData and "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
     hist.Scale(scaleFactor)
     if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
       normToBinWidth(hist)
@@ -129,9 +129,6 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
       else:
         hist = hist.ProfileY()
   hist.UseCurrentStyle()
-  scaleFactor = 1.
-  if not isData and "scaleFactor" in fileConfig: scaleFactor = fileConfig['scaleFactor']
-  hist.Scale(scaleFactor)
   if "normToBinWidth" in histConfig and histConfig["normToBinWidth"]:
     normToBinWidth(hist)
   if "integral" in histConfig and histConfig['integral']:

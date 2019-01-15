@@ -71,7 +71,7 @@ if __name__ == "__main__":
       #'cuts': "",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 0.9732047159699893,
+      'scaleFactor': 5.921757770632369,
     },
     #{
     #  'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.4.root",
@@ -83,6 +83,8 @@ if __name__ == "__main__":
     #  'scaleFactor': 1,
     #},
   ]
+  for fc in fileConfigs:
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   histConfigs = [
     #{
@@ -142,7 +144,7 @@ if __name__ == "__main__":
       'xtitle': "Primary PF Track Matched to True Primary Particle",
       'ytitle': "Events / bin",
       'binning': [3,0,3],
-      'var': "(PFBeamPrimTrueTrackID == truePrimaryTrackID) + 2*(PFBeamPrimTrueTrackMotherTrackID == truePrimaryTrackID)",
+      'var': "(PFBeamPrimTrueTrackID == truePrimaryTrackID) + 2*(PFBeamPrimTrueMotherTrackID == truePrimaryTrackID)",
       'cuts': weightStr,
       #'normalize': True,
       'logy': logy,
@@ -234,9 +236,33 @@ if __name__ == "__main__":
       'name': "PFBeamPrimStartZ",
       'xtitle': "Pandora Beam Primary Start Z [cm]",
       'ytitle': "Events / bin",
-      'binning': [200,-5,100],
+      'binning': [95*2,-5,100],
       'var': "PFBeamPrimStartZ",
       'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimStartZ_corr",
+      'xtitle': "Pandora Beam Primary Start Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [250,-25,100],
+      'var': "PFBeamPrimStartZ_corr",
+      'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimStartZ_corrFLF",
+      'xtitle': "Pandora Beam Primary Start Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [250,-25,100],
+      'var': "PFBeamPrimStartZ_corrFLF",
+      'cuts': weightStr,
+    },
+    {
+      'name': "zWireZFirstHitWire",
+      'xtitle': "Pandora Beam Primary Start Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [250,-25,100],
+      'var': "zWireZ[zWireFirstHitWire]",
+      'cuts': weightStr+"*(zWireFirstHitWire >= 0)",
     },
     {
       'name': "PFBeamPrimEndX",
@@ -292,6 +318,22 @@ if __name__ == "__main__":
       'ytitle': "Events / bin",
       'binning': [150,600,750],
       'var': "PFBeamPrimEndZ",
+      'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimEndZ_corr_zoomBack",
+      'xtitle': "Pandora Beam Primary End Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [150,600,750],
+      'var': "PFBeamPrimEndZ_corr",
+      'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimEndZ_corrFLF_zoomBack",
+      'xtitle': "Pandora Beam Primary End Z [cm]",
+      'ytitle': "Events / bin",
+      'binning': [150,600,750],
+      'var': "PFBeamPrimEndZ_corrFLF",
       'cuts': weightStr,
     },
     {

@@ -113,7 +113,7 @@ def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
     print outStr
   print "="*rowCharLength
 
-def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=False,nMax=100):
+def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=False,nMax=100,friendTreeName=None,friendTreeFileName=None):
   tree = root.TChain(treename)
   try:
     if type(infilename) is str:
@@ -125,6 +125,8 @@ def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=Fals
         raise Exception("")
   except KeyError:
     return
+  if friendTreeFileName and friendTreeName:
+    tree.AddFriend(friendTreeName,friendTreeFileName)
   nEvents = tree.GetEntries()
   nEvents = min(nEvents,nMax)
   allVals = []

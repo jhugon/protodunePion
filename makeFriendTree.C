@@ -189,11 +189,13 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       {
         if (PFBeamPrimStartZ <= zWireWireZ->at(0)) 
         {
+          //cout << "Start is < first wire\n";
           PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[0];
           PFBeamPrimStartZ_corrFLF = PFBeamPrimStartZ+sceCalibMapFLF[0];
         }
         else if (PFBeamPrimStartZ >= zWireWireZ->at(zWireSize-1)) 
         {
+          //cout << "Start is >= last wire\n";
           PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[zWireSize-1];
           PFBeamPrimStartZ_corrFLF = PFBeamPrimStartZ+sceCalibMapFLF[zWireSize-1];
         }
@@ -211,39 +213,48 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
           PFBeamPrimEndZ_corrFLF = PFBeamPrimEndZ+sceCalibMapFLF[zWireSize-1];
         }
       }
-      for (size_t iZWire=0; iZWire<zWireSize-1; iZWire++)
+      for (size_t iZWire=1; iZWire<zWireSize; iZWire++)
       {
-        if(PFBeamPrimStartZ > -10000. && PFBeamPrimStartZ_corr < -10000. && PFBeamPrimStartZ >= zWireWireZ->at(iZWire))
+        if(PFBeamPrimStartZ > -10000. && PFBeamPrimStartZ_corr < -10000. && PFBeamPrimStartZ < zWireWireZ->at(iZWire))
         {
-          if(PFBeamPrimStartZ-zWireWireZ->at(iZWire) < zWireWireZ->at(iZWire+1)-PFBeamPrimStartZ)
+          //cout << "Start is < wire: "<<iZWire<<" at "<<zWireWireZ->at(iZWire)<<"\n";
+          if(PFBeamPrimStartZ-zWireWireZ->at(iZWire-1) < zWireWireZ->at(iZWire)-PFBeamPrimStartZ)
           {
+            //cout << "  Using prev one: wire: "<<iZWire-1<<" at "<<zWireWireZ->at(iZWire-1)
+            //        <<" corr: "<<sceCalibMap[iZWire-1]<<"\n";
+            PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[iZWire-1];
+            PFBeamPrimStartZ_corrFLF = PFBeamPrimStartZ+sceCalibMapFLF[iZWire-1];
+          }
+          else
+          {
+            //cout << "  Using this one, corr: "<<sceCalibMap[iZWire]<<"\n";
             PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[iZWire];
             PFBeamPrimStartZ_corrFLF = PFBeamPrimStartZ+sceCalibMapFLF[iZWire];
           }
-          else
-          {
-            PFBeamPrimStartZ_corr = PFBeamPrimStartZ+sceCalibMap[iZWire+1];
-            PFBeamPrimStartZ_corrFLF = PFBeamPrimStartZ+sceCalibMapFLF[iZWire+1];
-          }
         }
-        if(PFBeamPrimEndZ > -10000. && PFBeamPrimEndZ_corr < -10000. && PFBeamPrimEndZ >= zWireWireZ->at(iZWire))
+        if(PFBeamPrimEndZ > -10000. && PFBeamPrimEndZ_corr < -10000. && PFBeamPrimEndZ < zWireWireZ->at(iZWire))
         {
-          if(PFBeamPrimEndZ-zWireWireZ->at(iZWire) < zWireWireZ->at(iZWire+1)-PFBeamPrimEndZ)
+          if(PFBeamPrimEndZ-zWireWireZ->at(iZWire-1) < zWireWireZ->at(iZWire)-PFBeamPrimEndZ)
+          {
+            PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[iZWire-1];
+            PFBeamPrimEndZ_corrFLF = PFBeamPrimEndZ+sceCalibMapFLF[iZWire-1];
+          }
+          else
           {
             PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[iZWire];
             PFBeamPrimEndZ_corrFLF = PFBeamPrimEndZ+sceCalibMapFLF[iZWire];
-          }
-          else
-          {
-            PFBeamPrimEndZ_corr = PFBeamPrimEndZ+sceCalibMap[iZWire+1];
-            PFBeamPrimEndZ_corrFLF = PFBeamPrimEndZ+sceCalibMapFLF[iZWire+1];
           }
         }
       } // for iZWire
     } // if zWireWireZ
     // Now per wire stuff
-    //std::cout << "Start, end:     " << PFBeamPrimStartZ_corr << "    " << PFBeamPrimEndZ_corr << std::endl;
+    //std::cout << "Start, end:     " << PFBeamPrimStartZ << "    " << PFBeamPrimEndZ << std::endl;
+    //std::cout << "Start, end: SCE " << PFBeamPrimStartZ_corr << "    " << PFBeamPrimEndZ_corr << std::endl;
     //std::cout << "Start, end: FLF " << PFBeamPrimStartZ_corrFLF << "    " << PFBeamPrimEndZ_corrFLF << std::endl;
+    //std::cout << "Start, end: SCE diff to normal: " << PFBeamPrimStartZ_corr - PFBeamPrimStartZ
+    //            << "    " << PFBeamPrimEndZ_corr - PFBeamPrimEndZ << std::endl;
+    //std::cout << "Start, end: FLF diff to normal: " << PFBeamPrimStartZ_corrFLF - PFBeamPrimStartZ
+    //            << "    " << PFBeamPrimEndZ_corrFLF - PFBeamPrimEndZ << std::endl;
     bool lastZWireGood=false;
     if(zWiredEdx)
     {

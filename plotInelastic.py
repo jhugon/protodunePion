@@ -243,6 +243,46 @@ if __name__ == "__main__":
       'histConfigs':
         [
           {
+            'name': "PFBeamPrimStartZ_corr",
+            'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-5,60],
+            'var': "PFBeamPrimStartZ_corr",
+          },
+          {
+            'name': "PFBeamPrimStartZ_corr_wide",
+            'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [400,-10,705],
+            'var': "PFBeamPrimStartZ_corr",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimStartZ_corrFLF",
+            'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-5,60],
+            'var': "PFBeamPrimStartZ_corrFLF",
+          },
+          {
+            'name': "PFBeamPrimStartZ_corrFLF_wide",
+            'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [400,-10,705],
+            'var': "PFBeamPrimStartZ_corrFLF",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
             'name': "PFBeamPrimEndX",
             'xtitle': "Track End X Position [cm]",
             'ytitle': "Events / bin",
@@ -298,6 +338,46 @@ if __name__ == "__main__":
           },
        ],
       'cut': "PFBeamPrimEndZ<650",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimEndZ_corrFLF",
+            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [61,-5,300],
+            'var': "PFBeamPrimEndZ_corrFLF",
+          },
+          {
+            'name': "PFBeamPrimEndZ_corrFLF_wide",
+            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [143,-10,705],
+            'var': "PFBeamPrimEndZ_corrFLF",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimEndZ_corr",
+            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [61,-5,300],
+            'var': "PFBeamPrimEndZ_corr",
+          },
+          {
+            'name': "PFBeamPrimEndZ_corr_wide",
+            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
+            'ytitle': "Events / bin",
+            'binning': [143,-10,705],
+            'var': "PFBeamPrimEndZ_corr",
+          },
+       ],
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -500,7 +580,8 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
     #},
     {
-      'fn': "piAbsSelector_run5432_1kevts_v4.10.root",
+      'fn': "piAbsSelector_run5432_v4.10.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5432_v4.10.root"],
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -554,6 +635,8 @@ if __name__ == "__main__":
       'scaleFactor': scaleFactor,
     },
   ]
+  for fc in fileConfigsMC:
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   mcscecuts = "*((trueCategory == 13 || trueCategory < 11) && trueCategory != 0 )"
   fileConfigsSCEMC = [
@@ -585,6 +668,8 @@ if __name__ == "__main__":
       'color': root.kGreen+3,
     },
   ]
+  for fc in fileConfigsSCEMC:
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   for cutConfig in cutConfigs:
     if "histConfigs" in cutConfig:

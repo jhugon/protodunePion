@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
   print "MCC11 FLF 2 GeV v4.4"
   varNames = ["trueCategory","trueEndProcess","trueStartMom","trueEndX","trueEndY","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
-  varNames = ["trueStartMom","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
+  varNames = ["trueStartMom","trueEndZ","PFBeamPrimStartZ","PFBeamPrimStartZ_corr","PFBeamPrimStartZ_corrFLF","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF"]
   cuts = {
     "truePrimaryPDG": ["==",-13],
     "PFNBeamSlices": ["==",1],
@@ -45,24 +45,24 @@ if __name__ == "__main__":
     "PFBeamPrimStartZ": ["<",50],
     "PFBeamPrimEndZ": ["<",650],
   }
-  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
+  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
 
-  print "Run 5387 v4.10"
-  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","PFBeamPrimTrkLen","beamMom"]
-  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","beamMom"]
-  cuts = {
-    "triggerIsBeam": ["=",1],
-    "BITrigger": [">",0],
-    "BITriggerMatched": [">",0],
-    "nBeamTracks": ["=",1],
-    "nBeamMom": ["=",1],
-    "CKov1Status":["=",0],
-    "TOF":["<",170.],
-    "PFNBeamSlices": ["==",1],
-    "PFBeamPrimIsTracklike": ["==",1],
-    "PFBeamPrimStartZ": ["<",50],
-    "PFBeamPrimEndZ": [">",650],
-  }
-  printEvents("piAbsSelector_run5387_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
+#  print "Run 5387 v4.10"
+#  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","PFBeamPrimTrkLen","beamMom"]
+#  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","beamMom"]
+#  cuts = {
+#    "triggerIsBeam": ["=",1],
+#    "BITrigger": [">",0],
+#    "BITriggerMatched": [">",0],
+#    "nBeamTracks": ["=",1],
+#    "nBeamMom": ["=",1],
+#    "CKov1Status":["=",0],
+#    "TOF":["<",170.],
+#    "PFNBeamSlices": ["==",1],
+#    "PFBeamPrimIsTracklike": ["==",1],
+#    "PFBeamPrimStartZ": ["<",50],
+#    "PFBeamPrimEndZ": [">",650],
+#  }
+#  printEvents("piAbsSelector_run5387_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
 
   # want something like PFBeamPrimEndZ-zWireWireZ[zWireLastHitWire] > 50.
