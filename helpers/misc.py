@@ -1150,3 +1150,37 @@ TRUECATEGORYFEWERCONFIGS = [
 for iCat in range(len(TRUECATEGORYFEWERCONFIGS)):
     TRUECATEGORYFEWERCONFIGS[iCat]['color'] = COLORLIST[iCat]
 
+TRUECATEGORYPOORMATCHCONFIGS = [
+   {
+     'title': "#pi Inelastic--Good Reco",
+     'cuts':"(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)",
+   },
+   {
+     'title': "#pi Inelastic--Bad Reco/True Interaction Match",
+     'cuts':"(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))>=20)",
+   },
+   {
+     'title': "#pi Inelastic--Bad Track/True Primary Match",
+     'cuts':"(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID != truePrimaryTrackID)",
+   },
+   {
+     'title': "#pi Decay",
+     'cuts':"trueCategory==9 || trueCategory==10",
+   },
+   {
+     'title': "#pi Interacted Outside TPC",
+     'cuts':"trueCategory==6 || trueCategory==7 || trueCategory==8",
+   },
+   {
+     'title': "Non-#pi Primary",
+     'cuts':"trueCategory>=11 && trueCategory<=14",
+   },
+   {
+     'title': "Unknown",
+     'cuts':"trueCategory==0 || trueCategory==16 || trueCategory == 15",
+   },
+]
+
+for iCat in range(len(TRUECATEGORYPOORMATCHCONFIGS)):
+    TRUECATEGORYPOORMATCHCONFIGS[iCat]['color'] = COLORLIST[iCat]
+

@@ -22,6 +22,11 @@
 
 #define pi TMath::Pi()
 const auto DEFAULTNEG = -99999999;
+const auto MCHARGEDPION = 139.57018; // MeV/c^2
+const auto MPROTON = 938.2720813; // MeV/c^2
+const auto KINLOSTBEFORETPC = 0.0; //MeV; from LArIAT pion total cross section group
+const auto KINLOSTBEFORETPCPROTON = 0.0; //MeV; from LArIAT pion total cross section group
+
 
 void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
 {
@@ -31,20 +36,24 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
   bool isMC;
   std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
+  std::vector<float>* zWirePitch=0; TBranch* b_zWirePitch;
   std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
   std::vector<float>* zWireWireZ=0; TBranch* b_zWireWireZ;
   Float_t PFBeamPrimStartZ;
   Float_t PFBeamPrimEndZ;
+  Float_t pWC;
 
   // infile chain
   TChain * tree = new TChain(inputTreeName);
   tree->Add(inputFileName);
   tree->SetBranchAddress("isMC",&isMC);
   tree->SetBranchAddress("zWiredEdx",&zWiredEdx,&b_zWiredEdx);
+  tree->SetBranchAddress("zWirePitch",&zWirePitch,&b_zWirePitch);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
   tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
   tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
+  tree->SetBranchAddress("pWC",&pWC);
   //tree->Print();
 
   ///////////////////////////////
@@ -59,6 +68,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float> zWiredEdx_corr(480*3);
   std::vector<float> zWireZ_corr(480*3);
   std::vector<float> zWireZ_corrFLF(480*3);
+  std::vector<float> zWirePartKin_corr(480*3);
+  std::vector<float> zWirePartKinProton_corr(480*3);
+  Float_t zWireEnergySum_corr;
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
   Int_t zWireLastContigHitWire;
@@ -70,6 +82,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
   friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireZ_corrFLF",&zWireZ_corrFLF);
+  friendTree->Branch("zWirePartKin_corr",&zWirePartKin_corr);
+  friendTree->Branch("zWirePartKinProton_corr",&zWirePartKinProton_corr);
+  friendTree->Branch("zWireEnergySum_corr",&zWireEnergySum_corr,"zWireEnergySum_corr/F");
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
   friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
@@ -164,6 +179,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     tree->GetEntry(iEvent);
     const auto& iEntry = tree->LoadTree(iEvent);
     b_zWiredEdx->GetEntry(iEntry);
+    b_zWirePitch->GetEntry(iEntry);
     b_zWireZ->GetEntry(iEntry);
     b_zWireWireZ->GetEntry(iEntry);
 
@@ -172,8 +188,11 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       zWiredEdx_corr[iZWire] = DEFAULTNEG;
       zWireZ_corr[iZWire] = DEFAULTNEG;
       zWireZ_corrFLF[iZWire] = DEFAULTNEG;
+      zWirePartKin_corr[iZWire] = DEFAULTNEG;
+      zWirePartKinProton_corr[iZWire] = DEFAULTNEG;
     }
 
+    zWireEnergySum_corr = DEFAULTNEG;
     zWireFirstHitWire = DEFAULTNEG;
     zWireLastHitWire = DEFAULTNEG;
     zWireLastContigHitWire = DEFAULTNEG;
@@ -181,6 +200,17 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     PFBeamPrimEndZ_corr = DEFAULTNEG;
     PFBeamPrimStartZ_corrFLF = DEFAULTNEG;
     PFBeamPrimEndZ_corrFLF = DEFAULTNEG;
+
+    // Either got pWC from beam or from primaryParticle, so now is the time to do this
+    float eWC = sqrt(pWC*pWC+MCHARGEDPION*MCHARGEDPION); // assume charged pion in MeV
+    float kinWC = eWC - MCHARGEDPION; // assume charged pion in MeV
+    float kinWCInTPC = kinWC - KINLOSTBEFORETPC;
+                   
+    // for proton
+    float eWCProton = sqrt(pWC*pWC+MPROTON*MPROTON);
+    float kinWCProton = eWCProton - MPROTON;
+    float kinWCInTPCProton = kinWCProton - KINLOSTBEFORETPCPROTON;
+
     // Find which wire is the start and end point to correct Z
     if(zWireWireZ)
     {
@@ -285,6 +315,20 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         }
       } // for iZWire
     } // if zWiredEdx
+    // Now redo kin and energy sum and stuff
+    if(zWirePitch)
+    {
+      zWireEnergySum_corr = 0.;
+      for (long iZWire=0; iZWire <= zWireLastHitWire; iZWire++)
+      {    
+        zWirePartKin_corr.at(iZWire) = kinWCInTPC - zWireEnergySum_corr;
+        zWirePartKinProton_corr.at(iZWire) = kinWCInTPCProton - zWireEnergySum_corr;
+        if(zWiredEdx_corr.at(iZWire) >= 0.)
+        {    
+          zWireEnergySum_corr += zWiredEdx_corr.at(iZWire) * zWirePitch->at(iZWire);
+        }    
+      } // for iZWire
+    } // if zWiredEdx && zWirePitch
 
     friendTree->Fill();
   } // for iEvent

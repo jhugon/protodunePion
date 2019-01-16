@@ -326,7 +326,7 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndZ",
             'xtitle': "TPC Track End Z [cm]",
             'ytitle': "Events / bin",
-            'binning': [61,-5,300],
+            'binning': [55,600,705],
             'var': "PFBeamPrimEndZ",
           },
           {
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndZ_corrFLF",
             'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
             'ytitle': "Events / bin",
-            'binning': [61,-5,300],
+            'binning': [55,600,705],
             'var': "PFBeamPrimEndZ_corrFLF",
           },
           {
@@ -366,7 +366,7 @@ if __name__ == "__main__":
             'name': "PFBeamPrimEndZ_corr",
             'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
             'ytitle': "Events / bin",
-            'binning': [61,-5,300],
+            'binning': [55,600,705],
             'var': "PFBeamPrimEndZ_corr",
           },
           {
@@ -591,19 +591,37 @@ if __name__ == "__main__":
   fileConfigsMC = [
     #{
     #  'fn': mcfn,
-    #  'name': "mcc11",
-    #  'title': "MCC11",
-    #  'caption': "MCC11",
-    #  'cuts': "*(abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)",
+    #  'name': "mcc11_piInel",
+    #  'title': "MCC11 #pi Inelastic",
+    #  'caption': "MCC11 #pi Inelastic",
+    #  'cuts': "*(trueCategory>=1 && trueCategory <=4)",
     #  'color': root.kBlue-7,
     #  'scaleFactor': scaleFactor,
     #},
     {
       'fn': mcfn,
-      'name': "mcc11_piInel",
-      'title': "MCC11 #pi Inelastic",
-      'caption': "MCC11 #pi Inelastic",
-      'cuts': "*(trueCategory>=1 && trueCategory <=4)",
+      'name': "mcc11_piInel_good",
+      'title': "MCC11 #pi Inelastic--Good Reco",
+      'caption': "MCC11 #pi Inelastic--Good Reco",
+      'cuts':"*(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)",
+      'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': mcfn,
+      'name': "mcc11_piInel_badIntMatch",
+      'title': "MCC11 #pi Inelastic--Bad Reco/True Interaction Match",
+      'caption': "MCC11 #pi Inelastic--Bad Reco/True Interaction Match",
+      'cuts':"*(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))>=20)",
+      'color': root.kBlue-7,
+      'scaleFactor': scaleFactor,
+    },
+    {
+      'fn': mcfn,
+      'name': "mcc11_piInel_badTrkMatch",
+      'title': "MCC11 #pi Inelastic--Bad Track/True Primary Match",
+      'caption': "MCC11 #pi Inelastic--Bad Track/True Primary Match",
+      'cuts':"*(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID != truePrimaryTrackID)",
       'color': root.kBlue-7,
       'scaleFactor': scaleFactor,
     },
@@ -635,8 +653,9 @@ if __name__ == "__main__":
       'scaleFactor': scaleFactor,
     },
   ]
-  for fc in fileConfigsMC:
+  for iFC, fc in enumerate(fileConfigsMC):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+    fc["color"] = COLORLIST[iFC]
 
   mcscecuts = "*((trueCategory == 13 || trueCategory < 11) && trueCategory != 0 )"
   fileConfigsSCEMC = [
