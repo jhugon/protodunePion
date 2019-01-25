@@ -39,6 +39,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float>* zWirePitch=0; TBranch* b_zWirePitch;
   std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
   std::vector<float>* zWireWireZ=0; TBranch* b_zWireWireZ;
+  std::vector<float>* PFBeamPrimdEdxs=0; TBranch* b_PFBeamPrimdEdxs;
+  std::vector<Int_t>* PFBeamPrimZWires=0; TBranch* b_PFBeamPrimZWires;
+  std::vector<float>* PFBeamPrimPitches=0; TBranch* b_PFBeamPrimPitches;
+  std::vector<float>* PFBeamPrimZs=0; TBranch* b_PFBeamPrimZs;
   Float_t PFBeamPrimStartZ;
   Float_t PFBeamPrimEndZ;
   Float_t pWC;
@@ -51,6 +55,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("zWirePitch",&zWirePitch,&b_zWirePitch);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
+  tree->SetBranchAddress("PFBeamPrimdEdxs",&PFBeamPrimdEdxs,&b_PFBeamPrimdEdxs);
+  tree->SetBranchAddress("PFBeamPrimZWires",&PFBeamPrimZWires,&b_PFBeamPrimZWires);
+  tree->SetBranchAddress("PFBeamPrimPitches",&PFBeamPrimPitches,&b_PFBeamPrimPitches);
+  tree->SetBranchAddress("PFBeamPrimZs",&PFBeamPrimZs,&b_PFBeamPrimZs);
   tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
   tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
   tree->SetBranchAddress("pWC",&pWC);
@@ -70,6 +78,11 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float> zWireZ_corrFLF(480*3);
   std::vector<float> zWirePartKin_corr(480*3);
   std::vector<float> zWirePartKinProton_corr(480*3);
+  std::vector<float> PFBeamPrimdEdxs_corr(480*3);
+  std::vector<float> PFBeamPrimKins_corr(480*3);
+  std::vector<float> PFBeamPrimKinsProton_corr(480*3);
+  std::vector<float> PFBeamPrimZs_corr(480*3);
+  std::vector<float> PFBeamPrimZs_corrFLF(480*3);
   Float_t zWireEnergySum_corr;
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
@@ -78,12 +91,20 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Float_t PFBeamPrimEndZ_corr;
   Float_t PFBeamPrimStartZ_corrFLF;
   Float_t PFBeamPrimEndZ_corrFLF;
+  Float_t PFBeamPrimKinInteract_corr;
+  Float_t PFBeamPrimKinInteractProton_corr;
+  Float_t PFBeamPrimEnergySum_corr;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
   friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireZ_corrFLF",&zWireZ_corrFLF);
   friendTree->Branch("zWirePartKin_corr",&zWirePartKin_corr);
   friendTree->Branch("zWirePartKinProton_corr",&zWirePartKinProton_corr);
+  friendTree->Branch("PFBeamPrimdEdxs_corr",&PFBeamPrimdEdxs_corr);
+  friendTree->Branch("PFBeamPrimKins_corr",&PFBeamPrimKins_corr);
+  friendTree->Branch("PFBeamPrimKinsProton_corr",&PFBeamPrimKinsProton_corr);
+  friendTree->Branch("PFBeamPrimZs_corr",&PFBeamPrimZs_corr);
+  friendTree->Branch("PFBeamPrimZs_corrFLF",&PFBeamPrimZs_corrFLF);
   friendTree->Branch("zWireEnergySum_corr",&zWireEnergySum_corr,"zWireEnergySum_corr/F");
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
@@ -92,6 +113,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("PFBeamPrimEndZ_corr",&PFBeamPrimEndZ_corr,"PFBeamPrimEndZ_corr/F");
   friendTree->Branch("PFBeamPrimStartZ_corrFLF",&PFBeamPrimStartZ_corrFLF,"PFBeamPrimStartZ_corrFLF/F");
   friendTree->Branch("PFBeamPrimEndZ_corrFLF",&PFBeamPrimEndZ_corrFLF,"PFBeamPrimEndZ_corrFLF/F");
+  friendTree->Branch("PFBeamPrimKinInteract_corr",&PFBeamPrimKinInteract_corr,"PFBeamPrimKinInteract_corr/F");
+  friendTree->Branch("PFBeamPrimKinInteractProton_corr",&PFBeamPrimKinInteractProton_corr,"PFBeamPrimKinInteractProton_corr/F");
+  friendTree->Branch("PFBeamPrimEnergySum_corr",&PFBeamPrimEnergySum_corr,"PFBeamPrimEnergySum_corr/F");
 
   ///////////////////////////////
   ///////////////////////////////
@@ -182,6 +206,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     b_zWirePitch->GetEntry(iEntry);
     b_zWireZ->GetEntry(iEntry);
     b_zWireWireZ->GetEntry(iEntry);
+    b_PFBeamPrimdEdxs->GetEntry(iEntry);
+    b_PFBeamPrimZWires->GetEntry(iEntry);
+    b_PFBeamPrimZs->GetEntry(iEntry);
 
     for (size_t iZWire=0; iZWire<480*3; iZWire++)
     {
@@ -191,6 +218,11 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       zWirePartKin_corr[iZWire] = DEFAULTNEG;
       zWirePartKinProton_corr[iZWire] = DEFAULTNEG;
     }
+    PFBeamPrimdEdxs_corr.clear();
+    PFBeamPrimKins_corr.clear();
+    PFBeamPrimKinsProton_corr.clear();
+    PFBeamPrimZs_corr.clear();
+    PFBeamPrimZs_corrFLF.clear();
 
     zWireEnergySum_corr = DEFAULTNEG;
     zWireFirstHitWire = DEFAULTNEG;
@@ -200,6 +232,9 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     PFBeamPrimEndZ_corr = DEFAULTNEG;
     PFBeamPrimStartZ_corrFLF = DEFAULTNEG;
     PFBeamPrimEndZ_corrFLF = DEFAULTNEG;
+    PFBeamPrimKinInteract_corr = DEFAULTNEG;
+    PFBeamPrimKinInteractProton_corr = DEFAULTNEG;
+    PFBeamPrimEnergySum_corr = DEFAULTNEG;
 
     // Either got pWC from beam or from primaryParticle, so now is the time to do this
     float eWC = sqrt(pWC*pWC+MCHARGEDPION*MCHARGEDPION); // assume charged pion in MeV
@@ -329,6 +364,47 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         }    
       } // for iZWire
     } // if zWiredEdx && zWirePitch
+
+    // Now on to PFBeamPrimdEdxs, etc.
+    if(PFBeamPrimdEdxs && PFBeamPrimZWires && PFBeamPrimPitches && PFBeamPrimZs)
+    {
+      size_t nHits = PFBeamPrimdEdxs->size();
+      PFBeamPrimEnergySum_corr = 0.;
+      for(size_t iHit=0; iHit < nHits; iHit++)
+      {
+        long iWire = PFBeamPrimZWires->at(iHit);
+        if(iWire >= 0)
+        {
+          PFBeamPrimKins_corr.push_back(kinWCInTPC-PFBeamPrimEnergySum_corr);
+          PFBeamPrimKinsProton_corr.push_back(kinWCInTPCProton-PFBeamPrimEnergySum_corr);
+          float dEdx = PFBeamPrimdEdxs->at(iHit);
+          //cout << "dEdx: " << dEdx << " iWire: " << iWire;
+          if(dEdx > 0.)
+          {
+            //cout << " calib:  " << caloCalibMap.at(iWire);
+            dEdx *= caloCalibMap.at(iWire);
+            //cout << " dEdx:  " << dEdx;
+            PFBeamPrimEnergySum_corr += dEdx * PFBeamPrimPitches->at(iHit);
+          }
+          //cout << endl;
+          PFBeamPrimdEdxs_corr.push_back(dEdx);
+          PFBeamPrimZs_corr.push_back(PFBeamPrimZs->at(iHit)+sceCalibMap.at(iWire));
+          PFBeamPrimZs_corrFLF.push_back(PFBeamPrimZs->at(iHit)+sceCalibMapFLF.at(iWire));
+        } // if iWire >= 0
+        else
+        {
+          PFBeamPrimKins_corr.push_back(DEFAULTNEG);
+          PFBeamPrimKinsProton_corr.push_back(DEFAULTNEG);
+          PFBeamPrimdEdxs_corr.push_back(DEFAULTNEG);
+          PFBeamPrimZs_corr.push_back(DEFAULTNEG);
+          PFBeamPrimZs_corrFLF.push_back(DEFAULTNEG);
+        }
+        //cout << "Hit: " << iHit << " dEdx: " << PFBeamPrimdEdxs->at(iHit)
+        //                << " dEdx_corr: " << PFBeamPrimdEdxs_corr.at(iHit) << endl;
+      } // for iHit
+      PFBeamPrimKinInteract_corr = kinWCInTPC - PFBeamPrimEnergySum_corr;
+      PFBeamPrimKinInteractProton_corr = kinWCInTPCProton - PFBeamPrimEnergySum_corr;
+    } // if PFBeamPrimdEdxs and PFBeamPrimZWires and PFBeamPrimPitches
 
     friendTree->Fill();
   } // for iEvent

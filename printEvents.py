@@ -35,17 +35,20 @@ if __name__ == "__main__":
   #print "Run 5780, 3 GeV/c"
   #printEvents("piAbsSelector_run5780.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100)
 
-  print "MCC11 FLF 2 GeV v4.4"
-  varNames = ["trueCategory","trueEndProcess","trueStartMom","trueEndX","trueEndY","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
-  varNames = ["trueStartMom","trueEndZ","PFBeamPrimStartZ","PFBeamPrimStartZ_corr","PFBeamPrimStartZ_corrFLF","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF"]
+  varNames = ["trueStartMom","trueEndMom","trueSecondToEndMom","truePrimaryTrackID","PFBeamPrimTrueTrackID","trueEndZ","PFBeamPrimStartZ","PFBeamPrimEndZ"]
+  #varNames = ["trueStartMom","trueEndZ","PFBeamPrimStartZ","PFBeamPrimStartZ_corr","PFBeamPrimStartZ_corrFLF","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF"]
   cuts = {
-    "truePrimaryPDG": ["==",-13],
+    #"truePrimaryPDG": ["==",-13],
+    "truePrimaryPDG": ["==",2212],
     "PFNBeamSlices": ["==",1],
     "PFBeamPrimIsTracklike": ["==",1],
     "PFBeamPrimStartZ": ["<",50],
     "PFBeamPrimEndZ": ["<",650],
   }
-  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
+  #print "MCC11 FLF 2 GeV v4.11 -- Protons"
+  #printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
+  print "MCC11 FLF 1 GeV v4.11 -- Protons"
+  printEvents("piAbsSelector_mcc11_flf_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",printFileBasename=True)
 
 #  print "Run 5387 v4.10"
 #  varNames = ["PFBeamPrimStartX","PFBeamPrimStartY","PFBeamPrimStartZ","PFBeamPrimEndX","PFBeamPrimEndY","PFBeamPrimEndZ","PFBeamPrimTrkLen","beamMom"]
