@@ -43,48 +43,48 @@ if __name__ == "__main__":
     #  'isData': True,
     #  'cuts': "*(CKov1Status == 1 && CKov0Status == 1)*"+cutGoodBeamline,
     #},
-    {
-      'fn': "piAbsSelector_run5387_v4.10.root",
-      'name': "run5387",
-      'title': "Run 5387: 1 GeV/c",
-      'caption': "Run 5387: 1 GeV/c",
-      'isData': True,
-      #'cuts': "*"+cutGoodBeamline,
-      #'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline, # for pions
-      'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline, # for protons
-    },
     #{
-    #  'fn': "piAbsSelector_run5432_v4.10.root",
-    #  'name': "run5432",
-    #  'title': "Run 5432: 2 GeV/c",
-    #  'caption': "Run 5432: 2 GeV/c",
+    #  'fn': "piAbsSelector_run5387_v4.10.root",
+    #  'name': "run5387",
+    #  'title': "Run 5387: 1 GeV/c",
+    #  'caption': "Run 5387: 1 GeV/c",
     #  'isData': True,
     #  #'cuts': "*"+cutGoodBeamline,
-    #  #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
-    #  'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
+    #  #'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline, # for pions
+    #  'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline, # for protons
     #},
     {
-      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
-      'name': "mcc11_flf_1GeV",
-      'title': "MCC11 1 GeV/c FLF",
-      'caption': "MCC11 1 GeV/c FLF",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1,
+      'fn': "piAbsSelector_run5432_v4.10.root",
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
+      'isData': True,
+      #'cuts': "*"+cutGoodBeamline,
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
     },
     #{
-    #  'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
-    #  'name': "mcc11_flf_2GeV",
-    #  'title': "MCC11 2 GeV/c FLF",
-    #  'caption': "MCC11 2 GeV/c FLF",
+    #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+    #  'name': "mcc11_flf_1GeV",
+    #  'title': "MCC11 1 GeV/c FLF",
+    #  'caption': "MCC11 1 GeV/c FLF",
     #  'color': root.kBlue-7,
     #  #'cuts': "",
     #  #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
     #  'cuts': "*(truePrimaryPDG == 2212)", # for protons
-    #  'scaleFactor': 5.921757770632369,
+    #  'scaleFactor': 1,
     #},
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC11 2 GeV/c FLF",
+      'caption': "MCC11 2 GeV/c FLF",
+      'color': root.kBlue-7,
+      #'cuts': "",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 5.921757770632369,
+    },
     #{
     #  'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.4.root",
     #  'name': "mcc11_flf_7GeV",
@@ -161,16 +161,6 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
       'binLabels': ["Bad Match","Good Match"," Match to Mother"]
-    },
-    {
-      'name': "PFBeamPrimKinInteract",
-      'xtitle': "Primary PF Track Interaction Kinetic Energy [GeV]",
-      'ytitle': "Events / bin",
-      'binning': [50,0,10],
-      'var': "PFBeamPrimKinInteract/1000.",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
     },
     #{
     #  'name': "PFBeamPrimdEdxAverageLast3Hits",
@@ -630,6 +620,46 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
     },
+    {
+      'name': "trueSecondToEndKin",
+      'xtitle': "True End KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [300,-3.0,3.0],
+      'var': "trueSecondToEndKin/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "deltazWireTruePartKintrueSecondToEndKin",
+      'xtitle': "zWireTruePartKin-True End KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [60,-3.0,3.0],
+      'var': "zWireTruePartKin[zWireLastHitWire]/1000.-trueSecondToEndKin/1000.",
+      'cuts': weightStr+"*(zWireLastHitWire >= 0)",
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "deltazWireTrueTrajKintrueSecondToEndKin",
+      'xtitle': "zWireTrueTrajKin-True End KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [60,-3.0,3.0],
+      'var': "zWireTrueTrajKin[zWireLastHitWire]/1000.-trueSecondToEndKin/1000.",
+      'cuts': weightStr+"*(zWireLastHitWire >= 0)",
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "deltazWirePartKintrueSecondToEndKin",
+      'xtitle': "zWirePartKin-True End KE [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [60,-3.0,3.0],
+      'var': "zWirePartKin[zWireLastHitWire]/1000.-trueSecondToEndKin/1000.",
+      'cuts': weightStr+"*(zWireLastHitWire >= 0)",
+      #'normalize': True,
+      'logy': logy,
+    },
     ##############################################
     ################  Per Hit  ###################
     ##############################################
@@ -796,11 +826,12 @@ if __name__ == "__main__":
   ]
 
   #for i in reversed(range(len(histConfigs))):
-  #  if histConfigs[i]['name'] != "pzWC":
-  #  #if histConfigs[i]['name'] != "zWC4Hit":
+  #  #if histConfigs[i]['name'] != "trueSecondToEndKin":
+  #  if not ("trueSecondToEndKin" in histConfigs[i]['name']):
+  #  #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
   #    histConfigs.pop(i)
 
-  if False:
+  if True:
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     fileConfigMCs = copy.deepcopy(fileConfigs)
     fileConfigDatas = []

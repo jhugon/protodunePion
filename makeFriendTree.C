@@ -39,6 +39,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float>* zWirePitch=0; TBranch* b_zWirePitch;
   std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
   std::vector<float>* zWireWireZ=0; TBranch* b_zWireWireZ;
+  std::vector<float>* zWireTrueEnergy=0; TBranch* b_zWireTrueEnergy;
   std::vector<float>* PFBeamPrimdEdxs=0; TBranch* b_PFBeamPrimdEdxs;
   std::vector<Int_t>* PFBeamPrimZWires=0; TBranch* b_PFBeamPrimZWires;
   std::vector<float>* PFBeamPrimPitches=0; TBranch* b_PFBeamPrimPitches;
@@ -55,6 +56,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("zWirePitch",&zWirePitch,&b_zWirePitch);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
+  tree->SetBranchAddress("zWireWireTrueEnergy",&zWireTrueEnergy,&b_zWireTrueEnergy);
   tree->SetBranchAddress("PFBeamPrimdEdxs",&PFBeamPrimdEdxs,&b_PFBeamPrimdEdxs);
   tree->SetBranchAddress("PFBeamPrimZWires",&PFBeamPrimZWires,&b_PFBeamPrimZWires);
   tree->SetBranchAddress("PFBeamPrimPitches",&PFBeamPrimPitches,&b_PFBeamPrimPitches);
@@ -87,6 +89,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
   Int_t zWireLastContigHitWire;
+  Int_t zWireFirstHitWireTrue;
+  Int_t zWireLastHitWireTrue;
   Float_t PFBeamPrimStartZ_corr;
   Float_t PFBeamPrimEndZ_corr;
   Float_t PFBeamPrimStartZ_corrFLF;
@@ -109,6 +113,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
   friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
+  friendTree->Branch("zWireFirstHitWireTrue",&zWireFirstHitWireTrue,"zWireFirstHitWireTrue/I");
+  friendTree->Branch("zWireLastHitWireTrue",&zWireLastHitWireTrue,"zWireLastHitWireTrue/I");
   friendTree->Branch("PFBeamPrimStartZ_corr",&PFBeamPrimStartZ_corr,"PFBeamPrimStartZ_corr/F");
   friendTree->Branch("PFBeamPrimEndZ_corr",&PFBeamPrimEndZ_corr,"PFBeamPrimEndZ_corr/F");
   friendTree->Branch("PFBeamPrimStartZ_corrFLF",&PFBeamPrimStartZ_corrFLF,"PFBeamPrimStartZ_corrFLF/F");
@@ -206,6 +212,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     b_zWirePitch->GetEntry(iEntry);
     b_zWireZ->GetEntry(iEntry);
     b_zWireWireZ->GetEntry(iEntry);
+    b_zWireTrueEnergy->GetEntry(iEntry);
     b_PFBeamPrimdEdxs->GetEntry(iEntry);
     b_PFBeamPrimZWires->GetEntry(iEntry);
     b_PFBeamPrimZs->GetEntry(iEntry);
@@ -228,6 +235,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     zWireFirstHitWire = DEFAULTNEG;
     zWireLastHitWire = DEFAULTNEG;
     zWireLastContigHitWire = DEFAULTNEG;
+    zWireFirstHitWireTrue = DEFAULTNEG;
+    zWireLastHitWireTrue = DEFAULTNEG;
     PFBeamPrimStartZ_corr = DEFAULTNEG;
     PFBeamPrimEndZ_corr = DEFAULTNEG;
     PFBeamPrimStartZ_corrFLF = DEFAULTNEG;
@@ -337,7 +346,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
           {
             zWireLastContigHitWire = iZWire;
           }
-          if(zWireFirstHitWire < 0.)
+          if(zWireFirstHitWire < 0)
           {
             zWireFirstHitWire = iZWire;
             zWireLastContigHitWire = iZWire;
@@ -364,6 +373,23 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         }    
       } // for iZWire
     } // if zWiredEdx && zWirePitch
+    // Now true wires
+    if(zWireTrueEnergy)
+    {
+      const size_t& zWireSize = zWireTrueEnergy->size();
+      for (size_t iZWire=0; iZWire<zWireSize; iZWire++)
+      {
+        const auto& trueE = zWireTrueEnergy->at(iZWire);
+        if(trueE >= 0)
+        {
+          zWireLastHitWireTrue = iZWire;
+          if(zWireFirstHitWireTrue < 0)
+          {
+            zWireFirstHitWireTrue = iZWire;
+          }
+        }
+      } // for iZWire
+    } // if zWireTrueEnergy
 
     // Now on to PFBeamPrimdEdxs, etc.
     if(PFBeamPrimdEdxs && PFBeamPrimZWires && PFBeamPrimPitches && PFBeamPrimZs)

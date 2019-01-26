@@ -12,7 +12,6 @@ def getIncidentInteractingHists(fileConfig,
   if type(fileConfig) != dict:
     raise Exception("fileConfig must be dict, not list or something. Is: ",type(fileConfig))
   c1 = root.TCanvas(uuid.uuid1().hex)
-  plotOneHistOnePlot
   histConfigs = [
     {
       'name': "Incident",
@@ -33,9 +32,13 @@ def getIncidentInteractingHists(fileConfig,
       'cuts': interactingCuts,
     },
   ]
+  print "incid histCuts: ", histConfigs[0]['cuts']
+  print "inter histCuts: ", histConfigs[1]['cuts']
   kinHists = plotOneHistOnePlot([fileConfig],histConfigs,c1,treeName,nMax=nMax,writeImages=False)
   incidentHist = kinHists["Incident"][fileConfig["name"]]
   interactingHist = kinHists["Interacting"][fileConfig["name"]]
+  #print fileConfig["name"]
+  #fileConfig["tree"].Print()
   return incidentHist,interactingHist
 
 def getXsec(incident,interacting,

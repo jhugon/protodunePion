@@ -265,6 +265,10 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
       if 'color' in histConfig:
         hist.SetLineColor(histConfig['color'])
       varAndHist = var + " >> " + hist.GetName()
+      print fileConfig["name"], histConfig["name"]
+      print "fileConfig['cuts']", fileConfig['cuts']
+      print "histConfig['cuts']", histConfig['cuts']
+      print varAndHist, thiscuts
       tree.Draw(varAndHist,thiscuts,"",nMax)
       if "efficiencyDenomCuts" in histConfig and type(histConfig["efficiencyDenomCuts"]) == str:
         denomHist = hist.Clone(hist.GetName()+"_denom")

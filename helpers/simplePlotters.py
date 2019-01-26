@@ -37,7 +37,11 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
   if not (drawOptions is list):
     drawOptions = [drawOptions]*len(hists)
   assert(len(drawOptions) == len(hists))
-  axisHist = makeStdAxisHist(hists,logy=logy,freeTopSpace=freeTopSpace,xlim=xlim,ylim=ylim)
+  includeErrorBar=False
+  for drawOpt in drawOptions:
+    if drawOpt == "E":
+      includeErrorBar=True
+  axisHist = makeStdAxisHist(hists,logy=logy,freeTopSpace=freeTopSpace,xlim=xlim,ylim=ylim,includeErrorBar=includeErrorBar)
   if xtitle is None:
     xtitle = hists[0].GetXaxis().GetTitle()
   if ytitle is None:
