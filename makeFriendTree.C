@@ -56,7 +56,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("zWirePitch",&zWirePitch,&b_zWirePitch);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
-  tree->SetBranchAddress("zWireWireTrueEnergy",&zWireTrueEnergy,&b_zWireTrueEnergy);
+  tree->SetBranchAddress("zWireTrueEnergy",&zWireTrueEnergy,&b_zWireTrueEnergy);
   tree->SetBranchAddress("PFBeamPrimdEdxs",&PFBeamPrimdEdxs,&b_PFBeamPrimdEdxs);
   tree->SetBranchAddress("PFBeamPrimZWires",&PFBeamPrimZWires,&b_PFBeamPrimZWires);
   tree->SetBranchAddress("PFBeamPrimPitches",&PFBeamPrimPitches,&b_PFBeamPrimPitches);
