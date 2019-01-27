@@ -69,3 +69,15 @@ if __name__ == "__main__":
 #  printEvents("piAbsSelector_run5387_v4.10.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=10000,printFileBasename=True)
 
   # want something like PFBeamPrimEndZ-zWireWireZ[zWireLastHitWire] > 50.
+
+  varNames = ["trueStartMom","trueEndZ","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF","zWireLastHitWire","zWireLastHitWireTrue"]
+  cuts = {
+    "truePrimaryPDG": ["==",211],
+    #"truePrimaryPDG": ["==",2212],
+    "PFNBeamSlices": ["==",1],
+    "PFBeamPrimIsTracklike": ["==",1],
+    "PFBeamPrimStartZ": ["<",50],
+    "PFBeamPrimEndZ": ["<",650],
+  }
+  print "MCC11 FLF 2 GeV v4.11 -- Pions"
+  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
