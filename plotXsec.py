@@ -25,22 +25,27 @@ if __name__ == "__main__":
 
   deltaXTrackBICut = "&& ((isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30)))"
   deltaYTrackBICut = "&& ((isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27)))"
-  primaryTrackCuts = "&& (PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ < 650. && PFBeamPrimEndZ > 25.)"+deltaXTrackBICut+deltaYTrackBICut
-  incidHitCut = "&& (zWireZ > 15. && zWireZ < 600.)"
-  interHitCut = "&& (zWireLastHitWire >= 0) && (zWireZ[zWireLastHitWire] > 15. && zWireZ[zWireLastHitWire] < 600.)"
+  primaryTrackCuts = "&& zWireLastHitWire >= 0 && (PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ < 650. && PFBeamPrimEndZ > 5.)"+deltaXTrackBICut+deltaYTrackBICut+" && zWirePartKin[zWireLastHitWire] >= 0."
+  incidHitCut = "&& (zWireZ < 600.)"
+  interHitCut = "&& (zWireLastHitWire >= 0) && (zWireZ[zWireLastHitWire] > 5. && zWireZ[zWireLastHitWire] < 600.)"
   weightStr = "1"+primaryTrackCuts
 
-  trueFiducialCut = "(trueCategory>=1 && trueCategory <=4) && (trueEndZ > 25.)"#"*(trueEndZ > 650 || (trueEndX < -15 && trueEndX > -300 && trueEndY < 500 && trueEndY > 200))"
-  trueFiducialIncidHitCut = "&& (zWireTrueZ > 15. && zWireTrueZ < 600.)"
-  trueFiducialInterHitCut = "&& (zWireLastHitWireTrue >=0) && (zWireTrueZ[zWireLastHitWireTrue] > 15. && zWireTrueZ[zWireLastHitWireTrue] < 600.)"
+  trueFiducialCut = "((trueCategory>=1 && trueCategory <=4) || trueCategory==8 || trueCategory==6) && (trueEndZ > 5.)"
+  trueFiducialCutGoodReco = "((trueCategory>=1 && trueCategory <=4 && (sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)) || trueCategory==8 || trueCategory==6) && (PFBeamPrimTrueTrackID == truePrimaryTrackID) && (trueEndZ > 5.)"
+  trueFiducialIncidHitCut = "&& (zWireTrueZ < 600.)"
+  trueFiducialInterHitCut = "&& (zWireLastHitWireTrue >=0) && (zWireTrueZ[zWireLastHitWireTrue] > 5. && zWireTrueZ[zWireLastHitWireTrue] < 600.)"
   trueGoodReco = "&& (PFBeamPrimTrueTrackID == truePrimaryTrackID) && (sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)"
 
   denomCut="((trueCategory>=1 && trueCategory <=4) || trueCategory==6 || trueCategory==8)"
-  numerCut=denomCut+"&& (trueEndZ > 25.)"+primaryTrackCuts
   incidHitCutDenom=denomCut+trueFiducialIncidHitCut
   interHitCutDenom="(zWireLastHitWire >= 0)*"+denomCut+trueFiducialInterHitCut
-  incidHitCutNumer=incidHitCutDenom+primaryTrackCuts+incidHitCut
-  interHitCutNumer=interHitCutDenom+primaryTrackCuts+interHitCut
+  incidHitCutNumer=incidHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+incidHitCut
+  interHitCutNumer=interHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+interHitCut
+
+  incidRecoCutsBkg="(!("+trueFiducialCutGoodReco+"))"+primaryTrackCuts+"(!("+trueFiducialIncidHitCut+"))"+incidHitCut
+  interRecoCutsBkg="(!("+trueFiducialCutGoodReco+"))"+primaryTrackCuts+"(!("+trueFiducialInterHitCut+"))"+interHitCut
+  incidRecoCutsSig=trueFiducialCutGoodReco+primaryTrackCuts+trueFiducialIncidHitCut+incidHitCut
+  interRecoCutsSig=trueFiducialCutGoodReco+primaryTrackCuts+trueFiducialInterHitCut+interHitCut
 
   #nData = 224281.0
   logy = False
@@ -59,11 +64,22 @@ if __name__ == "__main__":
 #      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
 #      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
 #    },
+#    {
+#      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+#      'name': "mcc11_flf_2GeV",
+#      'title': "MCC11 2 GeV/c FLF",
+#      'caption': "MCC11 2 GeV/c FLF",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
     {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
-      'name': "mcc11_flf_2GeV",
-      'title': "MCC11 2 GeV/c FLF",
-      'caption': "MCC11 2 GeV/c FLF",
+      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+      'name': "mcc11_3ms_1GeV",
+      'title': "MCC11 1 GeV/c No SCE",
+      'caption': "MCC11 1 GeV/c No SCE",
       'color': root.kBlue-7,
       #'cuts': "",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
@@ -85,8 +101,10 @@ if __name__ == "__main__":
   for fc in fileConfigs:
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
-  binning = [30,-5,2.5]
-  binning = [10,0.2,2.2]
+  #binning = [30,-5,2.5]
+  #binning = [10,0.2,2.2]
+  binning = [12,0,2.4]
+  xsecHistos=[]
   for fileConfig in fileConfigs:
     legEntries = []
     extraLegEntries = []
@@ -232,26 +250,17 @@ if __name__ == "__main__":
       #extraLegEntries.append("zWirePartKin Not in Fid")
 
       incidRecoBkg, interRecoBkg = getIncidentInteractingHists(fileConfig,
-                                                  incidentCuts=weightStr+incidHitCut+" && (!("+trueFiducialCut+trueFiducialIncidHitCut+"))",
-                                                  interactingCuts="(zWireLastHitWire >= 0) && "+weightStr+interHitCut+" && (!("+trueFiducialCut+trueFiducialInterHitCut+"))",
+                                                  incidentCuts=incidRecoCutsBkg,
+                                                  interactingCuts=interRecoCutsBkg,
                                                   incidentVar="zWirePartKin*1e-3",
                                                   interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                   nMax=NMAX,binning=binning)
       incidHists.append(incidRecoBkg)
       interHists.append(interRecoBkg)
       extraLegEntries.append("zWirePartKin 'Bkg'")
-      incidRecoBkg2, interRecoBkg2 = getIncidentInteractingHists(fileConfig,
-                                                  incidentCuts=weightStr+incidHitCut+" && (!(trueCategory>=1 && trueCategory <=4))",
-                                                  interactingCuts="(zWireLastHitWire >= 0) && "+weightStr+interHitCut+" && (!(trueCategory>=1 && trueCategory <=4))",
-                                                  incidentVar="zWirePartKin*1e-3",
-                                                  interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
-                                                  nMax=NMAX,binning=binning)
-      #incidHists.append(incidRecoBkg2)
-      #interHists.append(interRecoBkg2)
-      #extraLegEntries.append("zWirePartKin '~Bkg' not sigCat")
       incidRecoSig, interRecoSig = getIncidentInteractingHists(fileConfig,
-                                                  incidentCuts=weightStr+incidHitCut+" && (("+trueFiducialCut+trueFiducialIncidHitCut+"))",
-                                                  interactingCuts="(zWireLastHitWire >= 0) && "+weightStr+interHitCut+"&& (("+trueFiducialCut+trueFiducialInterHitCut+"))",
+                                                  incidentCuts=incidRecoCutsSig,
+                                                  interactingCuts=interRecoCutsSig,
                                                   incidentVar="zWirePartKin*1e-3",
                                                   interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                   nMax=NMAX,binning=binning)
@@ -334,9 +343,10 @@ if __name__ == "__main__":
       xsecPerKEHists.append(xsecPerKEBkgSub)
       xsecPerBinHists.append(xsecPerBinBkgSubEff)
       xsecPerKEHists.append(xsecPerKEBkgSubEff)
+      xsecHistos.append(xsecPerKEBkgSubEff)
 
-      legEntries.append("reco Bkg Sub")
-      legEntries.append("reco Bkg Sub Eff")
+      legEntries.append("Reco Bkg Sub'd")
+      legEntries.append("Reco Bkg Sub'd & Eff. Corr.")
 
     plotHistsSimple(incidHists,legEntries+extraLegEntries,"Reco Hit Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_incident",captionArgs=[fileConfig["caption"]])
     plotHistsSimple(interHists,legEntries+extraLegEntries,"Reco Interaction Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_interacting",captionArgs=[fileConfig["caption"]])
@@ -349,3 +359,108 @@ if __name__ == "__main__":
     plotHistsSimple(xsecPerKEHists,legEntries,"Reco Kinetic Energy [GeV]","d#sigma / dE_{reco} [barns / GeV]",c,"XS_"+fileConfig["name"]+"_xsPerGeV_wide",drawOptions="E",captionArgs=[fileConfig["caption"]])
     plotHistsSimple(xsecPerKEHists,legEntries,"Reco Kinetic Energy [GeV]","d#sigma / dE_{reco} [barns / GeV]",c,"XS_"+fileConfig["name"]+"_xsPerGeV",drawOptions="E",xlim=[0,3.],ylim=[0,12],captionArgs=[fileConfig["caption"]])
 
+    catConfigs=[
+       {
+         'title': "#pi Inelastic--Good",
+         'cuts':"(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)*(zWireTrueZ < 600.)*(trueEndZ > 5.)",
+       },
+       {
+         'title': "#pi Through-going--Good",
+         'cuts':"(trueCategory==6 || trueCategory==8)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(zWireTrueZ < 600.)*(trueEndZ > 5.)",
+       },
+       {
+         'title': "#pi Inelastic--Bad Reco/True Interaction Match",
+         'cuts':"(trueCategory>=1 && trueCategory <=4)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))>=20)*(zWireTrueZ < 600.)*(trueEndZ > 5.)",
+       },
+       {
+         'title': "#pi Inelastic or Through-going--Bad Track/True Primary Match",
+         'cuts':"((trueCategory>=1 && trueCategory <=4) || trueCategory==6 || trueCategory==8)*(PFBeamPrimTrueTrackID != truePrimaryTrackID)",
+       },
+       #{
+       #  'title': "#pi Inelastic--Wire Outside Fiducial",
+       #  'cuts':"(trueCategory>=1 && trueCategory <=4)*(!(zWireTrueZ < 600.))*(trueEndZ > 5.)",
+       #},
+       {
+         'title': "#pi Interacted Outside Fiducial",
+         'cuts':"(trueCategory>=1 && trueCategory <=4)*(!(trueEndZ > 5.)) || trueCategory==7",
+       },
+       #{
+       #  'title': "#pi Interacted Outside Fiducial",
+       #  'cuts':"(trueCategory>=1 && trueCategory <=4)*(!(trueEndZ > 5.))",
+       #},
+       {
+         'title': "#pi Decay",
+         'cuts':"trueCategory==9 || trueCategory==10",
+       },
+       #{
+       #  'title': "#pi Interacted Before TPC",
+       #  'cuts':"trueCategory==7",
+       #},
+       {
+         'title': "Non-#pi Primary",
+         'cuts':"trueCategory>=11 && trueCategory<=14",
+       },
+       #{
+       #  'title': "Unknown",
+       #  'cuts':"trueCategory==0 || trueCategory==16 || trueCategory == 15",
+       #},
+    ]
+    histConfigs = [
+      {
+        'name': "Incident",
+        'title': "Incident",
+        'xtitle': "Reco Incident Hit Kinetic Energy [GeV]",
+        'ytitle': "Hits / Bin",
+        'binning': binning,
+        'var': "zWirePartKin*1e-3",
+        'cuts': weightStr+incidHitCut,
+      },
+      {
+        'name': "IncidentFrac",
+        'title': "Incident",
+        'xtitle': "Reco Incident Hit Kinetic Energy [GeV]",
+        'ytitle': "Fraction of Reco Selected Hits",
+        'binning': binning,
+        'var': "zWirePartKin*1e-3",
+        'cuts': weightStr+incidHitCut,
+        'efficiencyDenomCuts': weightStr+incidHitCut+fileConfig['cuts'],
+      },
+    ]
+    for iCat in range(len(catConfigs)):
+        catConfigs[iCat]['color'] = COLORLIST[iCat]
+    dataMCCategoryStack([],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
+                  outPrefix="XS_"+fileConfig["name"]+"_Stack_",nMax=NMAX,
+                  #catConfigs=TRUECATEGORYFEWERCONFIGS
+                  catConfigs=catConfigs
+               )
+    for iCat in range(len(catConfigs)):
+        catConfigs[iCat]['cuts'] = catConfigs[iCat]['cuts'].replace("zWireTrueZ","zWireTrueZ[zWireLastHitWireTrue]")
+    histConfigs = [
+      {
+        'name': "Interacting",
+        'title': "Interacting",
+        'xtitle': "Reco Interaction Kinetic Energy [GeV]",
+        'ytitle': "Track Interactions / Bin",
+        'binning': binning,
+        'var': "zWirePartKin[zWireLastHitWire]*1e-3",
+        'cuts': "(zWireLastHitWire >= 0)*"+weightStr+interHitCut,
+      },
+      {
+        'name': "InteractingFrac",
+        'title': "Interacting",
+        'xtitle': "Reco Interaction Kinetic Energy [GeV]",
+        'ytitle': "Fraction of Reco Selected Events",
+        'binning': binning,
+        'var': "zWirePartKin[zWireLastHitWire]*1e-3",
+        'cuts': "(zWireLastHitWire >= 0)*"+weightStr+interHitCut,
+        'efficiencyDenomCuts': "(zWireLastHitWire >= 0)*"+weightStr+interHitCut+fileConfig['cuts'],
+      },
+    ]
+    dataMCCategoryStack([],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
+                  outPrefix="XS_"+fileConfig["name"]+"_Stack_",nMax=NMAX,
+                  #catConfigs=TRUECATEGORYFEWERCONFIGS
+                  catConfigs=catConfigs
+               )
+
+  for fileConfig, xsecHisto in zip(fileConfig,xsecHistos):
+    plotHistsSimple(xsecHistos,[x["title"] for x in fileConfigs],None,None,c,"XS_All_xsPerGeV",drawOptions="E",xlim=[0,3.],ylim=[0,12])

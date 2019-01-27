@@ -211,16 +211,21 @@ if __name__ == "__main__":
     if "PitchTrueHitSpacing" in histName or not ("delta" in histName):
       continue
     profs = []
+    projs = []
     labels = []
-    derivs = []
+    goodWireIs = []
+    derivFuncs = []
     graphs = []
     lists = []
     for iFileConfig,fileConfig in enumerate(fileConfigsMC):
       fileName = fileConfig['name']
       if "3ms" in fileName:
         continue
+      if not ("deltaWireTrue" in histName):
+        continue
       name = histName+"_"+fileName
       hist = hf[name]
+      print "justin",name,hist
       if not hist:
         continue
       #hist.RebinX(240)
@@ -231,6 +236,7 @@ if __name__ == "__main__":
       prof = hist.ProfileX(hist.GetName()+"_pfxAgain")
       prof.SetMarkerSize(0)
       profs.append(prof)
+      projs.append(proj)
       labels.append(fileConfig['title'])
       try:
         import numpy
@@ -274,13 +280,15 @@ if __name__ == "__main__":
         wires = []
         ys = []
         yErrs = []
+        print "made it here"
         for iWire in range(nWires):
           if iWire < 30 or iWire > 480*3 - 30 or (iWire >= 957 and iWire <= 960) or (iWire >= 479 and iWire <= 481):
             continue
           if "sce_2GeV" in fileName and iWire < 38:
             continue
           nHits = proj.GetBinContent(iWire+1)
-          if nHits < 20:
+          #if nHits < 20:
+          if nHits < 10 or ((not ("sce_7GeV" in fileName)) and nHits < 20):
             continue
           yErr = prof.GetBinError(iWire+1)
           if yErr == 0.:
@@ -296,10 +304,18 @@ if __name__ == "__main__":
         yWeights = 1./yErrs
         smoothFactor=0.8
         if "deltaWireTrueZVWireNum" in histName:
-          smoothFactor=0.8
+          smoothFactor=1.
+          if "sce_7GeV" in fileName:
+            smoothFactor=1.1
+          if "sce_2GeV" in fileName:
+            smoothFactor=0.9
+          if "flf_2GeV" in fileName:
+            smoothFactor=1.
         spline = interpolate.UnivariateSpline(wires,ys,yWeights,s=float(len(wires))*smoothFactor,check_finite=True)
         ysSmoothed = spline(numpy.arange(480*3))
         derivSmoothed = spline.derivative(1)(numpy.arange(480*3))
+        goodWireIs.append(wires)
+        derivFuncs.append(spline.derivative(1))
         fig, ax = mpl.subplots()
         ax.fill_between(wires,ys-yErrs,ys+yErrs,color='c',label="Profile Error-band")
         ax.plot(wires,ys,"-b",label="Profile Mean")
@@ -330,7 +346,8 @@ if __name__ == "__main__":
         mpl.close()
         fig, ax = mpl.subplots()
         mpl.subplots_adjust(left=0.16) # 0.14 is the default
-        ax.plot(numpy.arange(480*3),derivSmoothed,"-b")
+        iWiresForDeriv=numpy.arange(wires[0],wires[-1])
+        ax.plot(iWiresForDeriv,spline.derivative(1)(iWiresForDeriv),"-b")
         ax.set_xlabel(histConfig["xtitle"])
         ax.set_ylabel("Derivative of Smoothed "+histConfig["ytitle"])
         ax.set_title(fileConfig["title"])
@@ -346,6 +363,46 @@ if __name__ == "__main__":
             line = "{},{},{}".format(iWire,wireLocs[iWire],-offset)
             outfile.write(line+"\n")
     plotHistsSimple(profs,labels,histConfig['xtitle'],"Profile of "+histConfig['ytitle'],c,"WireZ_prof_"+histName,drawOptions="",ylim=[-10,25])
+    c.SetLogy(True)
+    plotHistsSimple(projs,labels,histConfig['xtitle'],"N Hits / bin",c,"WireZ_proj_"+histName,drawOptions="",logy=True)
+    c.SetLogy(False)
+    try:
+      import numpy
+      from scipy import interpolate
+      import matplotlib.pyplot as mpl
+    except ImportError:
+      pass
+    else:
+      fig, ax = mpl.subplots()
+      mpl.subplots_adjust(left=0.16) # 0.14 is the default
+      for wires, deriv, label in zip(goodWireIs,derivFuncs,labels):
+        if "1 GeV" in label:
+          continue
+        iWiresForDeriv=numpy.arange(wires[0],wires[-1])
+        ax.plot(iWiresForDeriv,(deriv(iWiresForDeriv)/0.5792+1)*100,label=label)
+      ax.set_xlabel(histConfig["xtitle"])
+      ax.set_ylabel("Slice Width Scale Factor from SCE [%]")
+      ax.set_xlim(0,480*3)
+      ax.grid()
+      leg = ax.legend(loc="best")
+      fig.savefig("WireZ_pysmooth_allderiv_"+histName+".png")
+      fig.savefig("WireZ_pysmooth_allderiv_"+histName+".pdf")
+      mpl.close()
+      fig, ax = mpl.subplots()
+      mpl.subplots_adjust(left=0.16) # 0.14 is the default
+      for wires, deriv, label in zip(goodWireIs,derivFuncs,labels):
+        if "1 GeV" in label:
+          continue
+        iWiresForDeriv=numpy.arange(wires[0],wires[-1])
+        ax.plot([wireLocs[iWire] for iWire in iWiresForDeriv],(deriv(iWiresForDeriv)/0.5792+1)*100.,label=label)
+      ax.set_xlabel("Wire Z Position [cm]")
+      ax.set_ylabel("Slice Width Scale Factor from SCE [%]")
+      ax.set_xlim(wireLocs[0],wireLocs[-1])
+      ax.grid()
+      leg = ax.legend(loc="best")
+      fig.savefig("WireZ_pysmooth_allderiv_wireZ_"+histName+".png")
+      fig.savefig("WireZ_pysmooth_allderiv_wireZ_"+histName+".pdf")
+      mpl.close()
 
   firstWire = 67
   firstWirePosShouldBe = wireLocs[0]

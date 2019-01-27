@@ -58,7 +58,7 @@ def loadTree(fileConfig,treename):
   fileConfig['tree'].SetCacheSize(10000000);
   fileConfig['tree'].AddBranchToCache("*");
 
-def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
+def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData,isStack=False):
   """
   Creates a TH1 from a histConfig and fileConfig
 
@@ -102,8 +102,13 @@ def loadHist(histConfig,fileConfig,binning,var,cuts,nMax,isData):
     denomHist.Reset()
     varAndHistDenom = var + " >> " + denomHist.GetName()
     tree.Draw(varAndHistDenom,histConfig["efficiencyDenomCuts"],"",nMax)
-    teff = root.TEfficiency(hist,denomHist)
-    hist = teff
+    if not isStack:
+      teff = root.TEfficiency(hist,denomHist)
+      hist = teff
+    else: # TEfficiency doesn't stack well
+      returnVal = hist.Divide(denomHist)
+      if not returnVal:
+        print "Warning: TH4.Divide failed for file '{}' hist '{}'".format(fileConfig["name"],histConfig["name"])
   else:
     hist.Sumw2()
     scaleFactor = 1.

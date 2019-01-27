@@ -69,13 +69,13 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       # now on to the real work
       dataHists = []
       for fileConfig in fileConfigDatas:
-        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
         dataHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
       mcHists = []
       for fileConfig in fileConfigMCs:
-        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
         if "color" in fileConfig:
           hist.SetLineColor(fileConfig['color'])
           hist.SetMarkerColor(fileConfig['color'])
@@ -175,7 +175,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         # now on to the real work
         dataHists = []
         for iFile, fileConfig in enumerate(fileConfigDatas):
-          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False,isStack=True)
           dataHists.append(hist)
           if table and iHistConfig == 0:
             nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
@@ -183,7 +183,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
         mcHists = []
         for iFile, fileConfig in enumerate(fileConfigMCs):
-          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False,isStack=True)
           if "color" in fileConfig:
             hist.SetLineColor(fileConfig['color'])
             hist.SetMarkerColor(fileConfig['color'])
@@ -306,7 +306,7 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       # now on to the real work
       dataHists = []
       for fileConfig in fileConfigDatas:
-        dataHist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False)
+        dataHist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
         dataHists.append(dataHist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],dataHist.Integral()))
@@ -315,7 +315,7 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
         thisCuts = cuts + "*(" + catConfig["cuts"] + ")"
         catHist = None
         for fileConfig in fileConfigMCs:
-          hist = loadHist(histConfig,fileConfig,binning,var,thisCuts,nMax,False)
+          hist = loadHist(histConfig,fileConfig,binning,var,thisCuts,nMax,False,isStack=True)
           if "color" in fileConfig:
             hist.SetLineColor(fileConfig['color'])
             hist.SetMarkerColor(fileConfig['color'])
