@@ -237,7 +237,7 @@ if __name__ == "__main__":
             'var': "PFBeamPrimStartZ",
           },
        ],
-      'cut': "PFBeamPrimStartZ<50",
+      'cut': "PFBeamPrimStartZ<50 && PFBeamPrimStartZ>25",
     },
     {
       'histConfigs':
