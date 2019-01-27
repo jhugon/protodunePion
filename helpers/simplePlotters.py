@@ -22,7 +22,10 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
         print("Hist '{}' is a null pointer".format(iHist))
         raise e
   for hist in hists:
-    hist.Sumw2(True)
+    try:
+      hist.Sumw2(True)
+    except:
+      pass
   if colors is None:
     colors = COLORLIST
   freeTopSpace = 0.35

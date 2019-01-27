@@ -581,7 +581,7 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
-      'name': "zWirePartKin",
+      'name': "zWirePartKinInteract",
       'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
       'ytitle': "Events / bin",
       'binning': [200,-10,10],
@@ -591,7 +591,7 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
-      'name': "zWirePartKin_corr",
+      'name': "zWirePartKinInteract_corr",
       'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
       'ytitle': "Events / bin",
       'binning': [200,-10,10],
@@ -601,7 +601,7 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
-      'name': "zWirePartKinGeq0",
+      'name': "zWirePartKinInteractGeq0",
       'xtitle': "Primary PF Track End Kinetic Energy #geq 0",
       'ytitle': "Events / bin",
       'binning': [2,-0.5,1.5],
@@ -611,7 +611,7 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
-      'name': "zWirePartKinGeq0_corr",
+      'name': "zWirePartKinInteractGeq0_corr",
       'xtitle': "Primary PF Track End Kinetic Energy #geq 0",
       'ytitle': "Events / bin",
       'binning': [2,-0.5,1.5],
@@ -823,13 +823,23 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
     },
+    {
+      'name': "zWirePartKin",
+      'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [200,-10,10],
+      'var': "zWirePartKin/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
   ]
 
-  #for i in reversed(range(len(histConfigs))):
-  #  #if histConfigs[i]['name'] != "trueSecondToEndKin":
-  #  if not ("trueSecondToEndKin" in histConfigs[i]['name']):
-  #  #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
-  #    histConfigs.pop(i)
+  for i in reversed(range(len(histConfigs))):
+    #if histConfigs[i]['name'] != "trueSecondToEndKin":
+    if not ("zWirePartKin" in histConfigs[i]['name']):
+    #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
+      histConfigs.pop(i)
 
   if True:
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
