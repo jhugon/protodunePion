@@ -65,3 +65,31 @@ def getXsec(incident,interacting,
   xsec.Scale(scaleFactorBarn)
   return xsec
 
+def applyBkgSub(reco,bkg):
+  assert(reco.GetNbinsX() == bkg.GetNbinsX())
+  result = reco.Clone(reco.GetName()+"_BkgSub")
+  for iBin in range(1,reco.GetNbinsX()+1):
+    recoVal = reco.GetBinContent(iBin)
+    recoErr = reco.GetBinError(iBin)
+    bkgSubVal = recoVal - bkg.GetBinContent(iBin)
+    bkgSubErr = recoErr
+    result.SetBinContent(iBin,bkgSubVal)
+    result.SetBinError(iBin,bkgSubErr)
+  return result
+
+def applyEfficiencyCorr(reco,eff,defaultErr=10.):
+  assert(reco.GetNbinsX() == eff.GetTotalHistogram().GetNbinsX())
+  result = reco.Clone(reco.GetName()+"_EffCorr")
+  for iBin in range(1,reco.GetNbinsX()+1):
+    recoVal = reco.GetBinContent(iBin)
+    recoErr = reco.GetBinError(iBin)
+    effVal = eff.GetEfficiency(iBin)
+    recoEffCorVal = 0.
+    if effVal > 0.:
+      recoEffCorVal = recoVal/effVal
+    recoEffCorErr = defaultErr
+    if effVal > 0.:
+      recoEffCorVal = recoErr/effVal
+    result.SetBinContent(iBin,recoEffCorVal)
+    result.SetBinError(iBin,recoEffCorErr)
+  return result

@@ -1,6 +1,6 @@
 from misc import *
 
-def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=[""],xlim=[],ylim=[],drawOptions="hist",logy=False,colors=None,normalize=False,rebin=None,dontclone=False):
+def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=[""],captionKArgs={},xlim=[],ylim=[],drawOptions="hist",logy=False,colors=None,normalize=False,rebin=None,dontclone=False):
   if len(hists) == 0:
     print "Warning: plotHistsSimple hists is empty for "+outfileprefix
     return
@@ -66,7 +66,7 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
     legOptions = ["l"]*len(hists)
     leg = drawNormalLegend(hists,labels,legOptions,wide=True)
   thisCaptionArgs = [canvas] + captionArgs
-  drawStandardCaptions(*thisCaptionArgs)
+  drawStandardCaptions(*thisCaptionArgs,**captionKArgs)
   canvas.SaveAs(outfileprefix+".png")
   canvas.SaveAs(outfileprefix+".pdf")
 

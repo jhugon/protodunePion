@@ -418,43 +418,11 @@ if __name__ == "__main__":
       plotHistsSimple([incidEff],None,"Incident Reco Hit Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_incidentEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
       plotHistsSimple([interEff],None,"Reco Interacting Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_interactingEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
 
-      incidRecoBkgSub = incidReco.Clone(incidReco.GetName()+"_bkgSub")
-      incidRecoBkgSubEff = incidReco.Clone(incidReco.GetName()+"_bkgSubEff")
-      for iBin in range(1,incidReco.GetNbinsX()+1):
-        recoVal = incidReco.GetBinContent(iBin)
-        bkgSubVal = recoVal - incidRecoBkg.GetBinContent(iBin)
-        effVal = incidEff.GetEfficiency(iBin)
-        bkgSubEffVal = 0.
-        if effVal > 0.:
-          bkgSubEffVal = bkgSubVal/effVal
-        recoErr = incidReco.GetBinError(iBin)
-        bkgSubErr = recoErr
-        bkgSubEffErr = 10.
-        if effVal > 0.:
-          bkgSubEffErr = bkgSubErr/effVal
-        incidRecoBkgSub.SetBinContent(iBin,bkgSubVal)
-        incidRecoBkgSubEff.SetBinContent(iBin,bkgSubEffVal)
-        incidRecoBkgSub.SetBinError(iBin,bkgSubErr)
-        incidRecoBkgSubEff.SetBinError(iBin,bkgSubEffErr)
+      incidRecoBkgSub = applyBkgSub(incidReco,incidRecoBkg)
+      interRecoBkgSub = applyBkgSub(interReco,interRecoBkg)
+      incidRecoBkgSubEff = applyEfficiencyCorr(incidRecoBkgSub,incidEff)
+      interRecoBkgSubEff = applyEfficiencyCorr(interRecobkgSub,interEff)
 
-      interRecoBkgSub = interReco.Clone(interReco.GetName()+"_bkgSub")
-      interRecoBkgSubEff = interReco.Clone(interReco.GetName()+"_bkgSubEff")
-      for iBin in range(1,interReco.GetNbinsX()+1):
-        recoVal = interReco.GetBinContent(iBin)
-        bkgSubVal = recoVal - interRecoBkg.GetBinContent(iBin)
-        effVal = interEff.GetEfficiency(iBin)
-        bkgSubEffVal = 0.
-        if effVal > 0.:
-          bkgSubEffVal = bkgSubVal/effVal
-        recoErr = interReco.GetBinError(iBin)
-        bkgSubErr = recoErr
-        bkgSubEffErr = 10000.
-        if effVal > 0.:
-          bkgSubEffErr = bkgSubErr/effVal
-        interRecoBkgSub.SetBinContent(iBin,bkgSubVal)
-        interRecoBkgSubEff.SetBinContent(iBin,bkgSubEffVal)
-        interRecoBkgSub.SetBinError(iBin,bkgSubErr)
-        interRecoBkgSubEff.SetBinError(iBin,bkgSubEffErr)
       incidHists.append(incidRecoBkgSub)
       incidHists.append(incidRecoBkgSubEff)
       interHists.append(interRecoBkgSub)
