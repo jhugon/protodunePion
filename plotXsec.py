@@ -66,17 +66,17 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
     #  #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
     #},
-    {
-      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
-      'name': "mcc11_3ms_1GeV",
-      'title': "MCC11 1 GeV/c No SCE",
-      'caption': "MCC11 1 GeV/c No SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
+#    {
+#      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+#      'name': "mcc11_3ms_1GeV",
+#      'title': "MCC11 1 GeV/c No SCE",
+#      'caption': "MCC11 1 GeV/c No SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
     {
       'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
       'name': "mcc11_3ms_2GeV",
@@ -88,83 +88,83 @@ if __name__ == "__main__":
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
       'scaleFactor': 1.,
     },
-    {
-      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
-      'name': "mcc11_3ms_7GeV",
-      'title': "MCC11 7 GeV/c No SCE",
-      'caption': "MCC11 7 GeV/c No SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.11.root",
-      'name': "mcc11_sce_1GeV",
-      'title': "MCC11 1 GeV/c SCE",
-      'caption': "MCC11 1 GeV/c SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
-      'name': "mcc11_sce_2GeV",
-      'title': "MCC11 2 GeV/c SCE",
-      'caption': "MCC11 2 GeV/c SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
-      'name': "mcc11_sce_7GeV",
-      'title': "MCC11 7 GeV/c SCE",
-      'caption': "MCC11 7 GeV/c SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
-      'name': "mcc11_flf_1GeV",
-      'title': "MCC11 1 GeV/c FLF SCE",
-      'caption': "MCC11 1 GeV/c FLF SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
-      'name': "mcc11_flf_2GeV",
-      'title': "MCC11 2 GeV/c FLF SCE",
-      'caption': "MCC11 2 GeV/c FLF SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
-      'name': "mcc11_flf_7GeV",
-      'title': "MCC11 7 GeV/c FLF SCE",
-      'caption': "MCC11 7 GeV/c FLF SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1.,
-    },
+#    {
+#      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
+#      'name': "mcc11_3ms_7GeV",
+#      'title': "MCC11 7 GeV/c No SCE",
+#      'caption': "MCC11 7 GeV/c No SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
+#    {
+#      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.11.root",
+#      'name': "mcc11_sce_1GeV",
+#      'title': "MCC11 1 GeV/c SCE",
+#      'caption': "MCC11 1 GeV/c SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
+    #{
+    #  'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
+    #  'name': "mcc11_sce_2GeV",
+    #  'title': "MCC11 2 GeV/c SCE",
+    #  'caption': "MCC11 2 GeV/c SCE",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  'scaleFactor': 1.,
+    #},
+#    {
+#      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
+#      'name': "mcc11_sce_7GeV",
+#      'title': "MCC11 7 GeV/c SCE",
+#      'caption': "MCC11 7 GeV/c SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
+#    {
+#      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+#      'name': "mcc11_flf_1GeV",
+#      'title': "MCC11 1 GeV/c FLF SCE",
+#      'caption': "MCC11 1 GeV/c FLF SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
+    #{
+    #  'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+    #  'name': "mcc11_flf_2GeV",
+    #  'title': "MCC11 2 GeV/c FLF SCE",
+    #  'caption': "MCC11 2 GeV/c FLF SCE",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  'scaleFactor': 1.,
+    #},
+#    {
+#      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
+#      'name': "mcc11_flf_7GeV",
+#      'title': "MCC11 7 GeV/c FLF SCE",
+#      'caption': "MCC11 7 GeV/c FLF SCE",
+#      'color': root.kBlue-7,
+#      #'cuts': "",
+#      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+#      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+#      'scaleFactor': 1.,
+#    },
   ]
   for fc in fileConfigs:
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
@@ -208,7 +208,8 @@ if __name__ == "__main__":
 
   #binning = [30,-5,2.5]
   #binning = [10,0.2,2.2]
-  binning = [20,0,8]
+  #binning = [20,0,8]
+  binning = [8,0.,2.5]
   xsecHistos=[]
   for fileConfig in fileConfigs:
     for systConfig in systConfigs:
