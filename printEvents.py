@@ -70,14 +70,35 @@ if __name__ == "__main__":
 
   # want something like PFBeamPrimEndZ-zWireWireZ[zWireLastHitWire] > 50.
 
-  varNames = ["trueStartMom","trueEndZ","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF","zWireLastHitWire","zWireLastHitWireTrue"]
+  #varNames = ["trueStartMom","trueEndZ","PFBeamPrimEndZ","PFBeamPrimEndZ_corr","PFBeamPrimEndZ_corrFLF","zWireLastHitWire","zWireLastHitWireTrue"]
+  #cuts = {
+  #  "truePrimaryPDG": ["==",211],
+  #  #"truePrimaryPDG": ["==",2212],
+  #  "PFNBeamSlices": ["==",1],
+  #  "PFBeamPrimIsTracklike": ["==",1],
+  #  "PFBeamPrimStartZ": ["<",50],
+  #  "PFBeamPrimEndZ": ["<",650],
+  #}
+  #print "MCC11 FLF 2 GeV v4.11 -- Pions"
+  #printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
+
+  varNames = ["trueStartMom","truePrimaryPDG","trueEndProcess","trueSecondToEndMom"]
   cuts = {
-    "truePrimaryPDG": ["==",211],
-    #"truePrimaryPDG": ["==",2212],
-    "PFNBeamSlices": ["==",1],
-    "PFBeamPrimIsTracklike": ["==",1],
-    "PFBeamPrimStartZ": ["<",50],
-    "PFBeamPrimEndZ": ["<",650],
+    "trueCategory": ["==",0],
   }
-  print "MCC11 FLF 2 GeV v4.11 -- Pions"
-  printEvents("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root")
+  print "MCC11 FLF 1 GeV v4.11 -- True Unknown"
+  printEvents("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",printFileBasename=True)
+
+  varNames = ["trueStartMom","truePrimaryPDG","trueEndProcess","trueSecondToEndMom"]
+  cuts = {
+    "trueCategory": ["==",15],
+  }
+  print "MCC11 FLF 1 GeV v4.11 -- True Primary Other non-Pion"
+  printEvents("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",printFileBasename=True)
+
+  varNames = ["trueStartMom","truePrimaryPDG","trueEndProcess","trueSecondToEndMom"]
+  cuts = {
+    "trueCategory": ["==",16],
+  }
+  print "MCC11 FLF 1 GeV v4.11 -- True Other Stopping"
+  printEvents("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",printFileBasename=True)
