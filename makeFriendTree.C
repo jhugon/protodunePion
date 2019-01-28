@@ -76,16 +76,25 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
   TTree* friendTree = new TTree("friend","");
   std::vector<float> zWiredEdx_corr(480*3);
+  std::vector<float> zWiredEdx_caloScaleUp(480*3);
+  std::vector<float> zWiredEdx_caloScaleDown(480*3);
   std::vector<float> zWireZ_corr(480*3);
   std::vector<float> zWireZ_corrFLF(480*3);
   std::vector<float> zWirePartKin_corr(480*3);
   std::vector<float> zWirePartKinProton_corr(480*3);
+  std::vector<float> zWirePartKin_caloScaleUp(480*3);
+  std::vector<float> zWirePartKin_caloScaleDown(480*3);
+  std::vector<float> zWirePartKin_beamScaleUp(480*3);
+  std::vector<float> zWirePartKin_beamScaleDown(480*3);
   std::vector<float> PFBeamPrimdEdxs_corr(480*3);
   std::vector<float> PFBeamPrimKins_corr(480*3);
   std::vector<float> PFBeamPrimKinsProton_corr(480*3);
   std::vector<float> PFBeamPrimZs_corr(480*3);
   std::vector<float> PFBeamPrimZs_corrFLF(480*3);
+  Float_t zWireEnergySum;
   Float_t zWireEnergySum_corr;
+  Float_t zWireEnergySum_caloScaleUp;
+  Float_t zWireEnergySum_caloScaleDown;
   Int_t zWireFirstHitWire;
   Int_t zWireLastHitWire;
   Int_t zWireLastContigHitWire;
@@ -100,16 +109,25 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Float_t PFBeamPrimEnergySum_corr;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
+  friendTree->Branch("zWiredEdx_caloScaleUp",&zWiredEdx_caloScaleUp);
+  friendTree->Branch("zWiredEdx_caloScaleDown",&zWiredEdx_caloScaleDown);
   friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireZ_corrFLF",&zWireZ_corrFLF);
   friendTree->Branch("zWirePartKin_corr",&zWirePartKin_corr);
   friendTree->Branch("zWirePartKinProton_corr",&zWirePartKinProton_corr);
+  friendTree->Branch("zWirePartKin_caloScaleUp",&zWirePartKin_caloScaleUp);
+  friendTree->Branch("zWirePartKin_caloScaleDown",&zWirePartKin_caloScaleDown);
+  friendTree->Branch("zWirePartKin_beamScaleUp",&zWirePartKin_beamScaleUp);
+  friendTree->Branch("zWirePartKin_beamScaleDown",&zWirePartKin_beamScaleDown);
   friendTree->Branch("PFBeamPrimdEdxs_corr",&PFBeamPrimdEdxs_corr);
   friendTree->Branch("PFBeamPrimKins_corr",&PFBeamPrimKins_corr);
   friendTree->Branch("PFBeamPrimKinsProton_corr",&PFBeamPrimKinsProton_corr);
   friendTree->Branch("PFBeamPrimZs_corr",&PFBeamPrimZs_corr);
   friendTree->Branch("PFBeamPrimZs_corrFLF",&PFBeamPrimZs_corrFLF);
+  friendTree->Branch("zWireEnergySum",&zWireEnergySum,"zWireEnergySum/F");
   friendTree->Branch("zWireEnergySum_corr",&zWireEnergySum_corr,"zWireEnergySum_corr/F");
+  friendTree->Branch("zWireEnergySum_caloScaleUp",&zWireEnergySum_caloScaleUp,"zWireEnergySum_caloScaleUp/F");
+  friendTree->Branch("zWireEnergySum_caloScaleDown",&zWireEnergySum_caloScaleDown,"zWireEnergySum_caloScaleDown/F");
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
   friendTree->Branch("zWireLastHitWire",&zWireLastHitWire,"zWireLastHitWire/I");
   friendTree->Branch("zWireLastContigHitWire",&zWireLastContigHitWire,"zWireLastContigHitWire/I");
@@ -220,10 +238,16 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     for (size_t iZWire=0; iZWire<480*3; iZWire++)
     {
       zWiredEdx_corr[iZWire] = DEFAULTNEG;
+      zWiredEdx_caloScaleUp[iZWire] = DEFAULTNEG;
+      zWiredEdx_caloScaleDown[iZWire] = DEFAULTNEG;
       zWireZ_corr[iZWire] = DEFAULTNEG;
       zWireZ_corrFLF[iZWire] = DEFAULTNEG;
       zWirePartKin_corr[iZWire] = DEFAULTNEG;
       zWirePartKinProton_corr[iZWire] = DEFAULTNEG;
+      zWirePartKin_caloScaleUp[iZWire] = DEFAULTNEG;
+      zWirePartKin_caloScaleDown[iZWire] = DEFAULTNEG;
+      zWirePartKin_beamScaleUp[iZWire] = DEFAULTNEG;
+      zWirePartKin_beamScaleDown[iZWire] = DEFAULTNEG;
     }
     PFBeamPrimdEdxs_corr.clear();
     PFBeamPrimKins_corr.clear();
@@ -231,7 +255,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     PFBeamPrimZs_corr.clear();
     PFBeamPrimZs_corrFLF.clear();
 
+    zWireEnergySum = DEFAULTNEG;
     zWireEnergySum_corr = DEFAULTNEG;
+    zWireEnergySum_caloScaleUp = DEFAULTNEG;
+    zWireEnergySum_caloScaleDown = DEFAULTNEG;
     zWireFirstHitWire = DEFAULTNEG;
     zWireLastHitWire = DEFAULTNEG;
     zWireLastContigHitWire = DEFAULTNEG;
@@ -339,6 +366,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         if(dEdx >= 0)
         {
           zWiredEdx_corr[iZWire] = caloCalibMap.at(iZWire)*dEdx;
+          zWiredEdx_caloScaleUp[iZWire] = 1.1*dEdx;
+          zWiredEdx_caloScaleDown[iZWire] = 0.9*dEdx;
           zWireZ_corr[iZWire] = zWireZ->at(iZWire) + sceCalibMap.at(iZWire);
           zWireZ_corrFLF[iZWire] = zWireZ->at(iZWire) + sceCalibMapFLF.at(iZWire);
           zWireLastHitWire = iZWire;
@@ -362,14 +391,29 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     // Now redo kin and energy sum and stuff
     if(zWirePitch)
     {
+      zWireEnergySum = 0.;
       zWireEnergySum_corr = 0.;
+      zWireEnergySum_caloScaleUp = 0.;
+      zWireEnergySum_caloScaleDown = 0.;
       for (long iZWire=0; iZWire <= zWireLastHitWire; iZWire++)
       {    
         zWirePartKin_corr.at(iZWire) = kinWCInTPC - zWireEnergySum_corr;
         zWirePartKinProton_corr.at(iZWire) = kinWCInTPCProton - zWireEnergySum_corr;
+        zWirePartKin_caloScaleUp.at(iZWire) = kinWCInTPC - zWireEnergySum_caloScaleUp;
+        zWirePartKin_caloScaleDown.at(iZWire) = kinWCInTPC - zWireEnergySum_caloScaleDown;
+        zWirePartKin_beamScaleUp.at(iZWire) = kinWCInTPC*1.1 - zWireEnergySum;
+        zWirePartKin_beamScaleDown.at(iZWire) = kinWCInTPC*0.9 - zWireEnergySum;
+        const auto pitch = zWirePitch->at(iZWire);
         if(zWiredEdx_corr.at(iZWire) >= 0.)
         {    
-          zWireEnergySum_corr += zWiredEdx_corr.at(iZWire) * zWirePitch->at(iZWire);
+          zWireEnergySum_corr += zWiredEdx_corr.at(iZWire) * pitch;
+        }    
+        if(zWiredEdx->at(iZWire) >= 0.)
+        {    
+          const auto& dEdx = zWiredEdx->at(iZWire);
+          zWireEnergySum += dEdx * pitch;
+          zWireEnergySum_caloScaleUp += dEdx * pitch * 1.1;
+          zWireEnergySum_caloScaleDown += dEdx * pitch * 0.9;
         }    
       } // for iZWire
     } // if zWiredEdx && zWirePitch
