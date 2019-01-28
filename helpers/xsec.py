@@ -32,8 +32,8 @@ def getIncidentInteractingHists(fileConfig,
       'cuts': interactingCuts,
     },
   ]
-  print "incid histCuts: ", histConfigs[0]['cuts']
-  print "inter histCuts: ", histConfigs[1]['cuts']
+  #print "incid histCuts: ", histConfigs[0]['cuts']
+  #print "inter histCuts: ", histConfigs[1]['cuts']
   kinHists = plotOneHistOnePlot([fileConfig],histConfigs,c1,treeName,nMax=nMax,writeImages=False)
   incidentHist = kinHists["Incident"][fileConfig["name"]]
   interactingHist = kinHists["Interacting"][fileConfig["name"]]

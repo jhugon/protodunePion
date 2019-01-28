@@ -59,7 +59,7 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
       hist.SetLineColor(color)
       hist.SetMarkerColor(color)
     drawstr = "same"+drawOpt
-    print xtitle, drawstr
+    #print xtitle, drawstr
     hist.Draw(drawstr)
   leg = None
   if not (labels is None):

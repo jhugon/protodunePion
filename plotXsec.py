@@ -27,7 +27,7 @@ if __name__ == "__main__":
   deltaYTrackBICut = "&& ((isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27)))"
   primaryTrackCuts = "&& zWireLastHitWire >= 0 && (PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50. && PFBeamPrimEndZ < 650. && PFBeamPrimEndZ > 5.)"+deltaXTrackBICut+deltaYTrackBICut+" && zWirePartKin[zWireLastHitWire] >= 0."
   incidHitCut = "&& (zWireZ < 600.)"
-  interHitCut = "&& (zWireLastHitWire >= 0) && (zWireZ[zWireLastHitWire] > 5. && zWireZ[zWireLastHitWire] < 600.)"
+  interHitCut = "&& (zWireLastHitWire >= 0) && zWireZ[zWireLastHitWire] > 5. && zWireZ[zWireLastHitWire] < 600."
   weightStr = "1"+primaryTrackCuts
 
   trueFiducialCut = "((trueCategory>=1 && trueCategory <=4) || trueCategory==8 || trueCategory==6) && (trueEndZ > 5.)"
@@ -38,12 +38,12 @@ if __name__ == "__main__":
 
   denomCut="((trueCategory>=1 && trueCategory <=4) || trueCategory==6 || trueCategory==8)"
   incidHitCutDenom=denomCut+trueFiducialIncidHitCut
-  interHitCutDenom="(zWireLastHitWire >= 0)*"+denomCut+trueFiducialInterHitCut
+  interHitCutDenom="(zWireLastHitWire >= 0) && "+denomCut+trueFiducialInterHitCut
   incidHitCutNumer=incidHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+incidHitCut
   interHitCutNumer=interHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+interHitCut
 
-  incidRecoCutsBkg="(!("+trueFiducialCutGoodReco+"))"+primaryTrackCuts+"(!("+trueFiducialIncidHitCut+"))"+incidHitCut
-  interRecoCutsBkg="(!("+trueFiducialCutGoodReco+"))"+primaryTrackCuts+"(!("+trueFiducialInterHitCut+"))"+interHitCut
+  #incidRecoCutsBkg="(!("+trueFiducialCutGoodReco+"|| (1"+trueFiducialIncidHitCut+")))"+primaryTrackCuts+incidHitCut
+  #interRecoCutsBkg="(!("+trueFiducialCutGoodReco+"|| (1"+trueFiducialInterHitCut+")))"+primaryTrackCuts+interHitCut
   incidRecoCutsSig=trueFiducialCutGoodReco+primaryTrackCuts+trueFiducialIncidHitCut+incidHitCut
   interRecoCutsSig=trueFiducialCutGoodReco+primaryTrackCuts+trueFiducialInterHitCut+interHitCut
 
@@ -97,19 +97,32 @@ if __name__ == "__main__":
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
       'scaleFactor': 1.,
     },
+    {
+      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
+      'name': "mcc11_3ms_7GeV",
+      'title': "MCC11 7 GeV/c No SCE",
+      'caption': "MCC11 7 GeV/c No SCE",
+      'color': root.kBlue-7,
+      #'cuts': "",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 1.,
+    },
   ]
   for fc in fileConfigs:
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   #binning = [30,-5,2.5]
   #binning = [10,0.2,2.2]
-  binning = [12,0,2.4]
+  binning = [20,0,8]
   xsecHistos=[]
   for fileConfig in fileConfigs:
     legEntries = []
-    extraLegEntries = []
     incidHists = []
     interHists = []
+    extraLegEntries = []
+    extraIncidHists = []
+    extraInterHists = []
     xsecPerBinHists = []
     xsecPerKEHists = []
 
@@ -158,7 +171,7 @@ if __name__ == "__main__":
 
     incidZWire, interZWire = getIncidentInteractingHists(fileConfig,
                                                 incidentCuts=weightStr+incidHitCut,
-                                                interactingCuts="(zWireLastHitWire >= 0)*"+weightStr+interHitCut,
+                                                interactingCuts="zWireLastHitWire >= 0 && "+weightStr+interHitCut,
                                                 incidentVar="zWirePartKin*1e-3",
                                                 interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                 nMax=NMAX,binning=binning)
@@ -168,7 +181,7 @@ if __name__ == "__main__":
     interHists.append(interZWire)
     xsecPerBinHists.append(xsecPerBinZWire)
     xsecPerKEHists.append(xsecPerKEZWire)
-    legEntries.append("zWirePartKin+HitCuts")
+    legEntries.append("Reco")
     incidReco=incidZWire
     interReco=interZWire
 
@@ -236,8 +249,8 @@ if __name__ == "__main__":
       #                                            incidentVar="zWirePartKin*1e-3",
       #                                            interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
       #                                            nMax=NMAX,binning=binning)
-      #incidHists.append(incidZWireTrueFidCut)
-      #interHists.append(interZWireTrueFidCut)
+      #extraIncidHists.append(incidZWireTrueFidCut)
+      #extraInterHists.append(interZWireTrueFidCut)
       #extraLegEntries.append("zWirePartKin in Fid")
       #incidZWireNotTrueFidCut, interZWireNotTrueFidCut = getIncidentInteractingHists(fileConfig,
       #                                            incidentCuts="(!("+trueFiducialCut+trueFiducialIncidHitCut+"))",
@@ -245,28 +258,38 @@ if __name__ == "__main__":
       #                                            incidentVar="zWirePartKin*1e-3",
       #                                            interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
       #                                            nMax=NMAX,binning=binning)
-      #incidHists.append(incidZWireNotTrueFidCut)
-      #interHists.append(interZWireNotTrueFidCut)
+      #extraIncidHists.append(incidZWireNotTrueFidCut)
+      #extraInterHists.append(interZWireNotTrueFidCut)
       #extraLegEntries.append("zWirePartKin Not in Fid")
 
-      incidRecoBkg, interRecoBkg = getIncidentInteractingHists(fileConfig,
-                                                  incidentCuts=incidRecoCutsBkg,
-                                                  interactingCuts=interRecoCutsBkg,
-                                                  incidentVar="zWirePartKin*1e-3",
-                                                  interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
-                                                  nMax=NMAX,binning=binning)
-      incidHists.append(incidRecoBkg)
-      interHists.append(interRecoBkg)
-      extraLegEntries.append("zWirePartKin 'Bkg'")
       incidRecoSig, interRecoSig = getIncidentInteractingHists(fileConfig,
                                                   incidentCuts=incidRecoCutsSig,
                                                   interactingCuts=interRecoCutsSig,
                                                   incidentVar="zWirePartKin*1e-3",
                                                   interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                   nMax=NMAX,binning=binning)
-      #incidHists.append(incidRecoSig)
-      #interHists.append(interRecoSig)
-      #extraLegEntries.append("zWirePartKin 'Sig'")
+      extraIncidHists.append(incidRecoSig)
+      extraInterHists.append(interRecoSig)
+      extraLegEntries.append("Reco Signal")
+
+
+      #incidRecoBkg, interRecoBkg = getIncidentInteractingHists(fileConfig,
+      #                                            incidentCuts=incidRecoCutsBkg,
+      #                                            interactingCuts=interRecoCutsBkg,
+      #                                            incidentVar="zWirePartKin*1e-3",
+      #                                            interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
+      #                                            nMax=NMAX,binning=binning)
+      incidRecoBkg = incidReco.Clone(incidReco.GetName()+"_Bkg")
+      interRecoBkg = interReco.Clone(interReco.GetName()+"_Bkg")
+      incidRecoBkg.Add(incidRecoSig,-1.)
+      interRecoBkg.Add(interRecoSig,-1.)
+      extraIncidHists.append(incidRecoBkg)
+      extraInterHists.append(interRecoBkg)
+      extraLegEntries.append("Reco Background")
+
+      incidPurity = root.TEfficiency(incidRecoSig,incidReco)
+      interPurity = root.TEfficiency(interRecoSig,interReco)
+      plotHistsSimple([incidPurity,interPurity],["Incident","Interacting"],"Reco Hit Kinetic Energy [GeV]","Purity (Reco Signal / All Reco)",c,"XS_"+fileConfig["name"]+"_Purity",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
 
       incidDenom, interDenom = getIncidentInteractingHists(fileConfig,
                                                   incidentCuts=incidHitCutDenom,
@@ -274,25 +297,25 @@ if __name__ == "__main__":
                                                   incidentVar="zWirePartKin*1e-3",
                                                   interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                   nMax=NMAX,binning=binning)
-      #incidHists.append(incidDenom)
-      #interHists.append(interDenom)
-      #extraLegEntries.append("zWirePartKin 'Denom'")
+      extraIncidHists.append(incidDenom)
+      extraInterHists.append(interDenom)
+      extraLegEntries.append("Efficiency Denominator")
       incidNumer, interNumer = getIncidentInteractingHists(fileConfig,
                                                   incidentCuts=incidHitCutNumer,
                                                   interactingCuts=interHitCutNumer,
                                                   incidentVar="zWirePartKin*1e-3",
                                                   interactingVar="zWirePartKin[zWireLastHitWire]*1e-3",
                                                   nMax=NMAX,binning=binning)
-      #incidHists.append(incidNumer)
-      #interHists.append(interNumer)
-      #extraLegEntries.append("zWirePartKin 'Numer'")
+      extraIncidHists.append(incidNumer)
+      extraInterHists.append(interNumer)
+      extraLegEntries.append("Efficiency Numerator")
 
       incidEff = root.TEfficiency(incidNumer,incidDenom)
       interEff = root.TEfficiency(interNumer,interDenom)
 
-      plotHistsSimple([incidEff,interEff],["Incident","Interacting"],"Reco Hit Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_Eff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0",xlim=[0,3.])
-      plotHistsSimple([incidEff],None,"Incident Reco Hit Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_incidentEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0",xlim=[0,3.])
-      plotHistsSimple([interEff],None,"Reco Interacting Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_interactingEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0",xlim=[0,3.])
+      plotHistsSimple([incidEff,interEff],["Incident","Interacting"],"Reco Hit Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_Eff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
+      plotHistsSimple([incidEff],None,"Incident Reco Hit Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_incidentEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
+      plotHistsSimple([interEff],None,"Reco Interacting Kinetic Energy [GeV]","Efficiency",c,"XS_"+fileConfig["name"]+"_interactingEff",captionArgs=[fileConfig["caption"]],drawOptions="PEZ0")
 
       incidRecoBkgSub = incidReco.Clone(incidReco.GetName()+"_bkgSub")
       incidRecoBkgSubEff = incidReco.Clone(incidReco.GetName()+"_bkgSubEff")
@@ -348,16 +371,16 @@ if __name__ == "__main__":
       legEntries.append("Reco Bkg Sub'd")
       legEntries.append("Reco Bkg Sub'd & Eff. Corr.")
 
-    plotHistsSimple(incidHists,legEntries+extraLegEntries,"Reco Hit Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_incident",captionArgs=[fileConfig["caption"]])
-    plotHistsSimple(interHists,legEntries+extraLegEntries,"Reco Interaction Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_interacting",captionArgs=[fileConfig["caption"]])
+    plotHistsSimple(incidHists+extraIncidHists,legEntries+extraLegEntries,"Reco Hit Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_incident",captionArgs=[fileConfig["caption"]])
+    plotHistsSimple(interHists+extraInterHists,legEntries+extraLegEntries,"Reco Interaction Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_interacting",captionArgs=[fileConfig["caption"]])
     c.SetLogy(True)
-    plotHistsSimple(incidHists,legEntries+extraLegEntries,"Reco Hit Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_incident_logy",logy=True,captionArgs=[fileConfig["caption"]])
-    plotHistsSimple(interHists,legEntries+extraLegEntries,"Reco Interaction Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_interacting_logy",logy=True,captionArgs=[fileConfig["caption"]])
+    plotHistsSimple(incidHists+extraIncidHists,legEntries+extraLegEntries,"Reco Hit Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_incident_logy",logy=True,captionArgs=[fileConfig["caption"]])
+    plotHistsSimple(interHists+extraInterHists,legEntries+extraLegEntries,"Reco Interaction Kinetic Energy [GeV]","Hits / bin",c,"XS_"+fileConfig["name"]+"_interacting_logy",logy=True,captionArgs=[fileConfig["caption"]])
     c.SetLogy(False)
 
     plotHistsSimple(xsecPerBinHists,legEntries,"Reco Kinetic Energy [GeV]","Cross-section / bin [barns]",c,"XS_"+fileConfig["name"]+"_xsPerBin",drawOptions="E",captionArgs=[fileConfig["caption"]])
     plotHistsSimple(xsecPerKEHists,legEntries,"Reco Kinetic Energy [GeV]","d#sigma / dE_{reco} [barns / GeV]",c,"XS_"+fileConfig["name"]+"_xsPerGeV_wide",drawOptions="E",captionArgs=[fileConfig["caption"]])
-    plotHistsSimple(xsecPerKEHists,legEntries,"Reco Kinetic Energy [GeV]","d#sigma / dE_{reco} [barns / GeV]",c,"XS_"+fileConfig["name"]+"_xsPerGeV",drawOptions="E",xlim=[0,3.],ylim=[0,12],captionArgs=[fileConfig["caption"]])
+    plotHistsSimple(list(reversed(xsecPerKEHists)),list(reversed(legEntries)),"Reco Kinetic Energy [GeV]","d#sigma / dE_{reco} [barns / GeV]",c,"XS_"+fileConfig["name"]+"_xsPerGeV",drawOptions="E",ylim=[0,12],captionArgs=[fileConfig["caption"]])
 
     catConfigs=[
        {
@@ -428,7 +451,7 @@ if __name__ == "__main__":
     ]
     for iCat in range(len(catConfigs)):
         catConfigs[iCat]['color'] = COLORLIST[iCat]
-    dataMCCategoryStack([],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
+    dataMCCategoryStack([fileConfig],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
                   outPrefix="XS_"+fileConfig["name"]+"_Stack_",nMax=NMAX,
                   #catConfigs=TRUECATEGORYFEWERCONFIGS
                   catConfigs=catConfigs
@@ -456,11 +479,11 @@ if __name__ == "__main__":
         'efficiencyDenomCuts': "(zWireLastHitWire >= 0)*"+weightStr+interHitCut+fileConfig['cuts'],
       },
     ]
-    dataMCCategoryStack([],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
+    dataMCCategoryStack([fileConfig],[fileConfig],histConfigs,c,"PiAbsSelector/tree",
                   outPrefix="XS_"+fileConfig["name"]+"_Stack_",nMax=NMAX,
                   #catConfigs=TRUECATEGORYFEWERCONFIGS
                   catConfigs=catConfigs
                )
 
   for fileConfig, xsecHisto in zip(fileConfig,xsecHistos):
-    plotHistsSimple(xsecHistos,[x["title"] for x in fileConfigs],None,None,c,"XS_All_xsPerGeV",drawOptions="E",xlim=[0,3.],ylim=[0,12])
+    plotHistsSimple(xsecHistos,[x["title"] for x in fileConfigs],None,None,c,"XS_All_xsPerGeV",drawOptions="E",ylim=[0,12])
