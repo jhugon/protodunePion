@@ -8,7 +8,9 @@ def getIncidentInteractingHists(fileConfig,
                     incidentVar="PFBeamPrimKins*1e-3",interactingVar="PFBeamPrimKinInteract*1e-3",
                 treeName="PiAbsSelector/tree",
                 binning=[1500,0.,7.5],
-                nMax=sys.maxint):
+                nMax=sys.maxint,
+                printIntegral=False
+                ):
   if type(fileConfig) != dict:
     raise Exception("fileConfig must be dict, not list or something. Is: ",type(fileConfig))
   c1 = root.TCanvas(uuid.uuid1().hex)
@@ -21,6 +23,7 @@ def getIncidentInteractingHists(fileConfig,
       'binning': binning,
       'var': incidentVar,
       'cuts': incidentCuts,
+      'printIntegral': printIntegral,
     },
     {
       'name': "Interacting",
@@ -30,6 +33,7 @@ def getIncidentInteractingHists(fileConfig,
       'binning': binning,
       'var': interactingVar,
       'cuts': interactingCuts,
+      'printIntegral': printIntegral,
     },
   ]
   #print "incid histCuts: ", histConfigs[0]['cuts']
