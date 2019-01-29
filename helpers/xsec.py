@@ -89,7 +89,7 @@ def applyEfficiencyCorr(reco,eff,defaultErr=10.):
       recoEffCorVal = recoVal/effVal
     recoEffCorErr = defaultErr
     if effVal > 0.:
-      recoEffCorVal = recoErr/effVal
+      recoEffCorErr = recoErr/effVal
     result.SetBinContent(iBin,recoEffCorVal)
     result.SetBinError(iBin,recoEffCorErr)
   return result

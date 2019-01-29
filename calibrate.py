@@ -27,10 +27,12 @@ if __name__ == "__main__":
     fracMax = 0.4
     nJump = 1
     if "mcc" in samplename:
-      #continue
-      pass
+      continue
+      #pass
     #elif not ("run5145" in samplename):
     #  continue
+    elif ("run5387" in samplename):
+      continue
     else:
       hist.RebinY(2)
     mpvGraph, wGraph = fitSlicesLandaus(c,hist,samplename,fracMax=fracMax,nJump=nJump,dumpFitPlots=True)

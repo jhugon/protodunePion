@@ -110,17 +110,17 @@ if __name__ == "__main__":
 #      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
 #      'scaleFactor': 1.,
 #    },
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
-    #  'name': "mcc11_sce_2GeV",
-    #  'title': "MCC11 2 GeV/c SCE",
-    #  'caption': "MCC11 2 GeV/c SCE",
-    #  'color': root.kBlue-7,
-    #  #'cuts': "",
-    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-    #  'scaleFactor': 1.,
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
+      'name': "mcc11_sce_2GeV",
+      'title': "MCC11 2 GeV/c SCE",
+      'caption': "MCC11 2 GeV/c SCE",
+      'color': root.kBlue-7,
+      #'cuts': "",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 1.,
+    },
 #    {
 #      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
 #      'name': "mcc11_sce_7GeV",
@@ -143,17 +143,17 @@ if __name__ == "__main__":
 #      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
 #      'scaleFactor': 1.,
 #    },
-    #{
-    #  'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
-    #  'name': "mcc11_flf_2GeV",
-    #  'title': "MCC11 2 GeV/c FLF SCE",
-    #  'caption': "MCC11 2 GeV/c FLF SCE",
-    #  'color': root.kBlue-7,
-    #  #'cuts': "",
-    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-    #  'scaleFactor': 1.,
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+      'name': "mcc11_flf_2GeV",
+      'title': "MCC11 2 GeV/c FLF SCE",
+      'caption': "MCC11 2 GeV/c FLF SCE",
+      'color': root.kBlue-7,
+      #'cuts': "",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 1.,
+    },
 #    {
 #      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
 #      'name': "mcc11_flf_7GeV",
@@ -209,7 +209,7 @@ if __name__ == "__main__":
   #binning = [30,-5,2.5]
   #binning = [10,0.2,2.2]
   #binning = [20,0,8]
-  binning = [8,0.,2.5]
+  binning = [5,0.,2.5]
   xsecHistos=[]
   for fileConfig in fileConfigs:
     for systConfig in systConfigs:
