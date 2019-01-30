@@ -36,11 +36,8 @@ if __name__ == "__main__":
   trueFiducialInterHitCut = "&& (zWireLastHitWireTrue >=0) && (zWireTrueZ[zWireLastHitWireTrue] > 5. && zWireTrueZ[zWireLastHitWireTrue] < 600.)"
   trueGoodReco = "&& (PFBeamPrimTrueTrackID == truePrimaryTrackID) && (sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)"
 
-  denomCut="((trueCategory>=1 && trueCategory <=4) || trueCategory==6 || trueCategory==8)"
-  incidHitCutDenom=denomCut+trueFiducialIncidHitCut
-  interHitCutDenom="(zWireLastHitWire >= 0) && "+denomCut+trueFiducialInterHitCut
-  incidHitCutNumer=incidHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+incidHitCut
-  interHitCutNumer=interHitCutDenom+" && "+trueFiducialCutGoodReco+primaryTrackCuts+interHitCut
+  denomCut="(trueCategory>=1 && trueCategory <=4)"+primaryTrackCuts+trueFiducialInterHitCut
+  numerCut=denomCut+" && "+trueFiducialCutGoodReco
 
   #incidRecoCutsBkg="(!("+trueFiducialCutGoodReco+"|| (1"+trueFiducialIncidHitCut+")))"+primaryTrackCuts+incidHitCut
   #interRecoCutsBkg="(!("+trueFiducialCutGoodReco+"|| (1"+trueFiducialInterHitCut+")))"+primaryTrackCuts+interHitCut
@@ -50,7 +47,7 @@ if __name__ == "__main__":
   #nData = 224281.0
   logy = False
 
-  outrootfile = root.TFile("XSHists.root","recreate")
+  outrootfile = root.TFile("XSHists_noIncidEff.root","recreate")
 
   c = root.TCanvas()
   NMAX=10000000000
@@ -418,8 +415,8 @@ if __name__ == "__main__":
         interPurity.Write()
 
         incidDenom, interDenom = getIncidentInteractingHists(fileConfig,
-                                                    incidentCuts=modStrSyst(incidHitCutDenom),
-                                                    interactingCuts=modStrSyst(interHitCutDenom),
+                                                    incidentCuts=modStrSyst("0"),
+                                                    interactingCuts=modStrSyst("zWireLastHitWire >= 0 && "+denomCut),
                                                     incidentVar=modStrSyst("zWirePartKin*1e-3"),
                                                     interactingVar=modStrSyst("zWirePartKin[zWireLastHitWire]*1e-3"),
                                                     nMax=NMAX,binning=binning)
@@ -432,8 +429,8 @@ if __name__ == "__main__":
         interDenom.SetName(modStrSyst.makeName("interDenom"))
         interDenom.Write()
         incidNumer, interNumer = getIncidentInteractingHists(fileConfig,
-                                                    incidentCuts=modStrSyst(incidHitCutNumer),
-                                                    interactingCuts=modStrSyst(interHitCutNumer),
+                                                    incidentCuts=modStrSyst("0"),
+                                                    interactingCuts=modStrSyst("zWireLastHitWire >= 0 && "+numerCut),
                                                     incidentVar=modStrSyst("zWirePartKin*1e-3"),
                                                     interactingVar=modStrSyst("zWirePartKin[zWireLastHitWire]*1e-3"),
                                                     nMax=NMAX,binning=binning)
@@ -460,7 +457,7 @@ if __name__ == "__main__":
 
         incidRecoBkgSub = applyBkgSub(incidReco,incidRecoBkg)
         interRecoBkgSub = applyBkgSub(interReco,interRecoBkg)
-        incidRecoBkgSubEff = applyEfficiencyCorr(incidRecoBkgSub,incidEff)
+        incidRecoBkgSubEff = incidRecoBkgSub
         interRecoBkgSubEff = applyEfficiencyCorr(interRecoBkgSub,interEff)
 
         incidHists.append(incidRecoBkgSub)
@@ -469,7 +466,7 @@ if __name__ == "__main__":
         interHists.append(interRecoBkgSubEff)
         xsecPerBinBkgSub = getXsec(incidRecoBkgSub,interRecoBkgSub,sliceThickness=0.5)
         xsecPerKEBkgSub = normToBinWidth(xsecPerBinBkgSub.Clone(xsecPerBinBkgSub.GetName()+"_perKE"))
-        xsecPerBinBkgSubEff = getXsec(incidRecoBkgSubEff,interRecoBkgSubEff,sliceThickness=0.5)
+        xsecPerBinBkgSubEff = getXsec(incidRecoBkgSub,interRecoBkgSubEff,sliceThickness=0.5)
         xsecPerKEBkgSubEff = normToBinWidth(xsecPerBinBkgSubEff.Clone(xsecPerBinBkgSubEff.GetName()+"_perKE"))
         xsecPerBinHists.append(xsecPerBinBkgSub)
         xsecPerKEHists.append(xsecPerKEBkgSub)
