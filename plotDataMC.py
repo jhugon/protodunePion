@@ -50,8 +50,8 @@ if __name__ == "__main__":
     #  'caption': "Run 5387: 1 GeV/c",
     #  'isData': True,
     #  #'cuts': "*"+cutGoodBeamline,
-    #  #'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline, # for pions
-    #  'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline, # for protons
+    #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline, # for pions
+    #  #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline, # for protons
     #},
     {
       'fn': "piAbsSelector_run5432_v4.10.root",
@@ -64,27 +64,38 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
     },
     #{
+    #  'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+    #  'name': "mcc11_3ms_1GeV",
+    #  'title': "MCC11 1 GeV/c No SCE",
+    #  'caption': "MCC11 1 GeV/c No SCE",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  'scaleFactor': 0.4213848152960832,
+    #},
+    #{
     #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
     #  'name': "mcc11_flf_1GeV",
     #  'title': "MCC11 1 GeV/c FLF",
     #  'caption': "MCC11 1 GeV/c FLF",
     #  'color': root.kBlue-7,
     #  #'cuts': "",
-    #  #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-    #  'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  'scaleFactor': 8.254545454545454,
+    #},
+    #{
+    #  'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
+    #  'name': "mcc11_3ms_2GeV",
+    #  'title': "MCC11 2 GeV/c No SCE",
+    #  'caption': "MCC11 2 GeV/c No SCE",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  #'cuts': "*(truePrimaryPDG == 2212)", # for protons
     #  'scaleFactor': 1,
     #},
-    {
-      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
-      'name': "mcc11_3ms_2GeV",
-      'title': "MCC11 2 GeV/c No SCE",
-      'caption': "MCC11 2 GeV/c No SCE",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 1,
-    },
     {
       'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
       'name': "mcc11_flf_2GeV",
@@ -612,6 +623,27 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
+      'name': "zWirePartKinInteractLt2p5",
+      'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [50,-2.5,2.5],
+      'var': "zWirePartKin[zWireLastHitWire]/1000.",
+      'cuts': weightStr+"*(zWireLastHitWire >= 0)",
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "zWirePartKinInteractLt2p5_corr",
+      'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
+      'ytitle': "Events / bin",
+      'binning': [50,-2.5,2.5],
+      'var': "zWirePartKin_corr[zWireLastHitWire]/1000.",
+      'cuts': weightStr+"*(zWireLastHitWire >= 0)",
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
       'name': "zWirePartKinInteractGeq0",
       'xtitle': "Primary PF Track End Kinetic Energy #geq 0",
       'ytitle': "Events / bin",
@@ -835,24 +867,88 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
+      'name': "zWiredEdx_zoom",
+      'xtitle': "Primary PF Track Hit dE/dx [MeV/cm]",
+      'ytitle': "Hit / bin",
+      'binning': [200,0,10],
+      'var': "zWiredEdx",
+      'cuts': weightStr+"*(zWireZ<600.)",
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "zWirePitch",
+      'xtitle': "Primary PF Track Hit Pitch [cm]",
+      'ytitle': "Hit / bin",
+      'binning': [100,0,10],
+      'var': "zWirePitch",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "zWirePitch_zoom",
+      'xtitle': "Primary PF Track Hit Pitch [cm]",
+      'ytitle': "Hit / bin",
+      'binning': [50,0.4,0.65],
+      'var': "zWirePitch",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
       'name': "zWirePartKin",
-      'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
-      'ytitle': "Events / bin",
+      'xtitle': "Primary PF Track Hit Kinetic Energy [GeV]",
+      'ytitle': "Hits / bin",
       'binning': [200,-10,10],
       'var': "zWirePartKin/1000.",
       'cuts': weightStr,
       #'normalize': True,
       'logy': logy,
     },
+    {
+      'name': "zWirePartKin_corr",
+      'xtitle': "Primary PF Track Hit Kinetic Energy [GeV]",
+      'ytitle': "Hits / bin",
+      'binning': [200,-10,10],
+      'var': "zWirePartKin_corr/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "zWirePartKinLt2p5",
+      'xtitle': "Primary PF Track Hit Kinetic Energy [GeV]",
+      'ytitle': "Hits / bin",
+      'binning': [50,-2.5,2.5],
+      'var': "zWirePartKin/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "zWirePartKinLt2p5_corr",
+      'xtitle': "Primary PF Track Hit Kinetic Energy [GeV]",
+      'ytitle': "Hits / bin",
+      'binning': [50,-2.5,2.5],
+      'var': "zWirePartKin_corr/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
   ]
 
   for i in reversed(range(len(histConfigs))):
-    #if histConfigs[i]['name'] != "trueSecondToEndKin":
-    if not ("zWirePartKin" in histConfigs[i]['name']):
+    #if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
+    #if (histConfigs[i]['name'] != "zWirePitch") and (histConfigs[i]['name'] != "zWirePitch_zoom") and (histConfigs[i]['name'] != "zWiredEdx_zoom"):
+    if (histConfigs[i]['name'] != "zWirePitch_zoom"):
+    #if histConfigs[i]['name'] != "pWC":
+    #if (not ("zWirePartKin" in histConfigs[i]['name'])) or histConfigs[i]["name"] == "zWirePartKin":
     #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
       histConfigs.pop(i)
 
-  if False:
+  if True:
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     fileConfigMCs = copy.deepcopy(fileConfigs)
     fileConfigDatas = []
@@ -875,6 +971,7 @@ if __name__ == "__main__":
                   catConfigs=TRUECATEGORYPOORMATCHCONFIGS
                )
 
+  sys.exit(0)
   #######################################
   ############ 2D Plots #################
   #######################################

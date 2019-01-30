@@ -37,9 +37,13 @@ def plotHistsSimple(hists,labels,xtitle,ytitle,canvas,outfileprefix,captionArgs=
   if not (rebin is None):
     for hist in hists:
       hist.Rebin(rebin)
-  if not (drawOptions is list):
+  print drawOptions
+  if not (type(drawOptions) is list):
     drawOptions = [drawOptions]*len(hists)
-  assert(len(drawOptions) == len(hists))
+  else:
+    drawOptions = drawOptions
+  if len(drawOptions) != len(hists):
+    raise Exception("len(drawOptions) != len(hists)",len(drawOptions),len(hists))
   includeErrorBar=False
   for drawOpt in drawOptions:
     if drawOpt == "E":
