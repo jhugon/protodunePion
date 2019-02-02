@@ -27,6 +27,28 @@ const auto MPROTON = 938.2720813; // MeV/c^2
 const auto KINLOSTBEFORETPC = 0.0; //MeV; from LArIAT pion total cross section group
 const auto KINLOSTBEFORETPCPROTON = 0.0; //MeV; from LArIAT pion total cross section group
 
+class ChargeCorrectorAjib
+{
+  public:
+    ChargeCorrectorAjib(TString calibFn);
+    // Get calibrated dE/dx for dQ/dx and position
+    float calibrateddEdx(float dqdx, float x, float y, float z);
+    // Given a dQ/dx returns a dE/dx corrected using modified box model
+    float boxChargeToEnergy(float dqdx);
+    // Calibrate the dqdx based on the position in the detector
+    float calibrateCharge(float dqdx, float x, float y, float z);
+  private:
+    const double Rho = 1.383;//g/cm^3 (liquid argon density at a pressure 18.0 psia)      
+    const double betap = 0.212;//(kV/cm)(g/cm^2)/MeV                                      
+    const double alpha = 0.93;//parameter from ArgoNeuT experiment at 0.481kV/cm          
+    const double Wion = 23.6e-6;//parameter from ArgoNeuT experiment at 0.481kV/cm        
+    const double Efield = 0.50;//kV/cm protoDUNE electric filed      
+
+    const double calibration_constant=6.155e-3;
+    const double normalisation_factor=0.983;
+    TFile calibFile;
+    TH1F* X_correction_hist;
+};
 
 void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
 {
@@ -34,15 +56,22 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
   cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calo calibration file: "<< caloCalibFileName.Data() << " and SCE calib file: "<< sceCalibFileName << " and FLF SCE calib file: "<< sceCalibFileNameFLF<< endl;
 
+  ChargeCorrectorAjib ajibCorrector("/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root");
+
   bool isMC;
   std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
+  std::vector<float>* zWiredQdx=0; TBranch* b_zWiredQdx;
   std::vector<float>* zWirePitch=0; TBranch* b_zWirePitch;
+  std::vector<float>* zWireX=0; TBranch* b_zWireX;
+  std::vector<float>* zWireY=0; TBranch* b_zWireY;
   std::vector<float>* zWireZ=0; TBranch* b_zWireZ;
   std::vector<float>* zWireWireZ=0; TBranch* b_zWireWireZ;
   std::vector<float>* zWireTrueEnergy=0; TBranch* b_zWireTrueEnergy;
   std::vector<float>* PFBeamPrimdEdxs=0; TBranch* b_PFBeamPrimdEdxs;
   std::vector<Int_t>* PFBeamPrimZWires=0; TBranch* b_PFBeamPrimZWires;
   std::vector<float>* PFBeamPrimPitches=0; TBranch* b_PFBeamPrimPitches;
+  std::vector<float>* PFBeamPrimXs=0; TBranch* b_PFBeamPrimXs;
+  std::vector<float>* PFBeamPrimYs=0; TBranch* b_PFBeamPrimYs;
   std::vector<float>* PFBeamPrimZs=0; TBranch* b_PFBeamPrimZs;
   Float_t PFBeamPrimStartZ;
   Float_t PFBeamPrimEndZ;
@@ -53,13 +82,18 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->Add(inputFileName);
   tree->SetBranchAddress("isMC",&isMC);
   tree->SetBranchAddress("zWiredEdx",&zWiredEdx,&b_zWiredEdx);
+  tree->SetBranchAddress("zWiredQdx",&zWiredQdx,&b_zWiredQdx);
   tree->SetBranchAddress("zWirePitch",&zWirePitch,&b_zWirePitch);
+  tree->SetBranchAddress("zWireX",&zWireX,&b_zWireX);
+  tree->SetBranchAddress("zWireY",&zWireY,&b_zWireY);
   tree->SetBranchAddress("zWireZ",&zWireZ,&b_zWireZ);
   tree->SetBranchAddress("zWireWireZ",&zWireWireZ,&b_zWireWireZ);
   tree->SetBranchAddress("zWireTrueEnergy",&zWireTrueEnergy,&b_zWireTrueEnergy);
   tree->SetBranchAddress("PFBeamPrimdEdxs",&PFBeamPrimdEdxs,&b_PFBeamPrimdEdxs);
   tree->SetBranchAddress("PFBeamPrimZWires",&PFBeamPrimZWires,&b_PFBeamPrimZWires);
   tree->SetBranchAddress("PFBeamPrimPitches",&PFBeamPrimPitches,&b_PFBeamPrimPitches);
+  tree->SetBranchAddress("PFBeamPrimXs",&PFBeamPrimXs,&b_PFBeamPrimXs);
+  tree->SetBranchAddress("PFBeamPrimYs",&PFBeamPrimYs,&b_PFBeamPrimYs);
   tree->SetBranchAddress("PFBeamPrimZs",&PFBeamPrimZs,&b_PFBeamPrimZs);
   tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
   tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
@@ -76,8 +110,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
   TTree* friendTree = new TTree("friend","");
   std::vector<float> zWiredEdx_corr(480*3);
+  std::vector<float> zWiredEdx_ajib(480*3);
   std::vector<float> zWiredEdx_caloScaleUp(480*3);
   std::vector<float> zWiredEdx_caloScaleDown(480*3);
+  std::vector<float> zWiredQdx_ajib(480*3);
   std::vector<float> zWireZ_corr(480*3);
   std::vector<float> zWireZ_corrFLF(480*3);
   std::vector<float> zWirePartKin_corr(480*3);
@@ -87,6 +123,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float> zWirePartKin_beamScaleUp(480*3);
   std::vector<float> zWirePartKin_beamScaleDown(480*3);
   std::vector<float> PFBeamPrimdEdxs_corr(480*3);
+  std::vector<float> PFBeamPrimdEdxs_ajib(480*3);
+  std::vector<float> PFBeamPrimdQdxs_ajib(480*3);
   std::vector<float> PFBeamPrimKins_corr(480*3);
   std::vector<float> PFBeamPrimKinsProton_corr(480*3);
   std::vector<float> PFBeamPrimZs_corr(480*3);
@@ -109,8 +147,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Float_t PFBeamPrimEnergySum_corr;
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
+  friendTree->Branch("zWiredEdx_ajib",&zWiredEdx_ajib);
   friendTree->Branch("zWiredEdx_caloScaleUp",&zWiredEdx_caloScaleUp);
   friendTree->Branch("zWiredEdx_caloScaleDown",&zWiredEdx_caloScaleDown);
+  friendTree->Branch("zWiredQdx_ajib",&zWiredQdx_ajib);
   friendTree->Branch("zWireZ_corr",&zWireZ_corr);
   friendTree->Branch("zWireZ_corrFLF",&zWireZ_corrFLF);
   friendTree->Branch("zWirePartKin_corr",&zWirePartKin_corr);
@@ -120,6 +160,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("zWirePartKin_beamScaleUp",&zWirePartKin_beamScaleUp);
   friendTree->Branch("zWirePartKin_beamScaleDown",&zWirePartKin_beamScaleDown);
   friendTree->Branch("PFBeamPrimdEdxs_corr",&PFBeamPrimdEdxs_corr);
+  friendTree->Branch("PFBeamPrimdEdxs_ajib",&PFBeamPrimdEdxs_ajib);
+  friendTree->Branch("PFBeamPrimdQdxs_ajib",&PFBeamPrimdQdxs_ajib);
   friendTree->Branch("PFBeamPrimKins_corr",&PFBeamPrimKins_corr);
   friendTree->Branch("PFBeamPrimKinsProton_corr",&PFBeamPrimKinsProton_corr);
   friendTree->Branch("PFBeamPrimZs_corr",&PFBeamPrimZs_corr);
@@ -238,8 +280,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     for (size_t iZWire=0; iZWire<480*3; iZWire++)
     {
       zWiredEdx_corr[iZWire] = DEFAULTNEG;
+      zWiredEdx_ajib[iZWire] = DEFAULTNEG;
       zWiredEdx_caloScaleUp[iZWire] = DEFAULTNEG;
       zWiredEdx_caloScaleDown[iZWire] = DEFAULTNEG;
+      zWiredQdx_ajib[iZWire] = DEFAULTNEG;
       zWireZ_corr[iZWire] = DEFAULTNEG;
       zWireZ_corrFLF[iZWire] = DEFAULTNEG;
       zWirePartKin_corr[iZWire] = DEFAULTNEG;
@@ -250,6 +294,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       zWirePartKin_beamScaleDown[iZWire] = DEFAULTNEG;
     }
     PFBeamPrimdEdxs_corr.clear();
+    PFBeamPrimdEdxs_ajib.clear();
+    PFBeamPrimdQdxs_ajib.clear();
     PFBeamPrimKins_corr.clear();
     PFBeamPrimKinsProton_corr.clear();
     PFBeamPrimZs_corr.clear();
@@ -365,9 +411,19 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         const auto& dEdx = zWiredEdx->at(iZWire);
         if(dEdx >= 0)
         {
+          const float dQdx_ajib = ajibCorrector.calibrateCharge(zWiredQdx->at(iZWire),
+                                                    zWireX->at(iZWire),
+                                                    zWireY->at(iZWire),
+                                                    zWireZ->at(iZWire)
+                                                        );
+          const float dEdx_ajib = ajibCorrector.boxChargeToEnergy(dQdx_ajib);
+          //std::cout << "iZWire: " << iZWire << " dQdx: " << zWiredQdx->at(iZWire) << " dQdx_ajib: " << dQdx_ajib 
+          //          << " dEdx: " << zWiredEdx->at(iZWire) << " dEdx_ajib: " << dEdx_ajib << std::endl;
           zWiredEdx_corr[iZWire] = caloCalibMap.at(iZWire)*dEdx;
+          zWiredEdx_ajib[iZWire] = dEdx_ajib;
           zWiredEdx_caloScaleUp[iZWire] = 1.1*dEdx;
           zWiredEdx_caloScaleDown[iZWire] = 0.9*dEdx;
+          zWiredQdx_ajib[iZWire] = dQdx_ajib;
           zWireZ_corr[iZWire] = zWireZ->at(iZWire) + sceCalibMap.at(iZWire);
           zWireZ_corrFLF[iZWire] = zWireZ->at(iZWire) + sceCalibMapFLF.at(iZWire);
           zWireLastHitWire = iZWire;
@@ -447,25 +503,37 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         {
           PFBeamPrimKins_corr.push_back(kinWCInTPC-PFBeamPrimEnergySum_corr);
           PFBeamPrimKinsProton_corr.push_back(kinWCInTPCProton-PFBeamPrimEnergySum_corr);
-          float dEdx = PFBeamPrimdEdxs->at(iHit);
+          const float dEdx = PFBeamPrimdEdxs->at(iHit);
+          const float dQdx_ajib = ajibCorrector.calibrateCharge(dEdx,
+                                                    PFBeamPrimXs->at(iHit),
+                                                    PFBeamPrimYs->at(iHit),
+                                                    PFBeamPrimZs->at(iHit)
+                                                        );
+          const float dEdx_ajib = ajibCorrector.boxChargeToEnergy(dQdx_ajib);
+          float dEdx_corr = DEFAULTNEG;
           //cout << "dEdx: " << dEdx << " iWire: " << iWire;
           if(dEdx > 0.)
           {
             //cout << " calib:  " << caloCalibMap.at(iWire);
-            dEdx *= caloCalibMap.at(iWire);
-            //cout << " dEdx:  " << dEdx;
-            PFBeamPrimEnergySum_corr += dEdx * PFBeamPrimPitches->at(iHit);
+            dEdx_corr = dEdx * caloCalibMap.at(iWire);
+            //cout << " dEdx_corr:  " << dEdx_corr;
+            PFBeamPrimEnergySum_corr += dEdx_corr * PFBeamPrimPitches->at(iHit);
           }
           //cout << endl;
-          PFBeamPrimdEdxs_corr.push_back(dEdx);
+          PFBeamPrimdEdxs_corr.push_back(dEdx_corr);
+          PFBeamPrimdEdxs_ajib.push_back(dEdx_ajib);
+          PFBeamPrimdQdxs_ajib.push_back(dQdx_ajib);
           PFBeamPrimZs_corr.push_back(PFBeamPrimZs->at(iHit)+sceCalibMap.at(iWire));
           PFBeamPrimZs_corrFLF.push_back(PFBeamPrimZs->at(iHit)+sceCalibMapFLF.at(iWire));
+          PFBeamPrimdQdxs_ajib.push_back(dQdx_ajib);
         } // if iWire >= 0
         else
         {
           PFBeamPrimKins_corr.push_back(DEFAULTNEG);
           PFBeamPrimKinsProton_corr.push_back(DEFAULTNEG);
           PFBeamPrimdEdxs_corr.push_back(DEFAULTNEG);
+          PFBeamPrimdEdxs_ajib.push_back(DEFAULTNEG);
+          PFBeamPrimdQdxs_ajib.push_back(DEFAULTNEG);
           PFBeamPrimZs_corr.push_back(DEFAULTNEG);
           PFBeamPrimZs_corrFLF.push_back(DEFAULTNEG);
         }
@@ -482,4 +550,34 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Write();
   outFile->Close();
 
+}
+
+////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
+
+ChargeCorrectorAjib::ChargeCorrectorAjib(TString calibFn)
+    : calibFile("/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root")
+{
+     X_correction_hist = (TH1F*) calibFile.Get("dqdx_X_correction_hist");
+}
+
+float ChargeCorrectorAjib::boxChargeToEnergy(float dqdx)
+{
+    return (exp(dqdx*(betap/(Rho*Efield)*Wion))-alpha)/(betap/(Rho*Efield)); 
+}
+
+float ChargeCorrectorAjib::calibrateCharge(float dqdx,float x, float /*y*/, float /*z*/)
+{
+    size_t iBin = X_correction_hist->FindBin(x);
+    float result = dqdx*normalisation_factor*X_correction_hist->GetBinContent(iBin);
+    result /= calibration_constant;
+    return result;
+}
+
+float ChargeCorrectorAjib::calibrateddEdx(float dqdx, float x, float y, float z)
+{
+    float calibQ = calibrateCharge(dqdx,x,y,z);
+    float result = boxChargeToEnergy(calibQ);
+    return result;
 }
