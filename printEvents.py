@@ -5,7 +5,7 @@ from helpers import *
 root.gROOT.SetBatch(True)
 import os.path
 
-if __name__ == "__main__":
+def runNoArgs():
 
   #varNames = ["beamMom","TOF","CKov0Status","CKov1Status","BITrigger","BITriggerMatched","BIActiveTrigger","triggerIsBeam"]
   #varNames = ["beamMom","TOF","CKov0Status","CKov1Status"]
@@ -102,3 +102,46 @@ if __name__ == "__main__":
   }
   print "MCC11 FLF 1 GeV v4.11 -- True Other Stopping"
   printEvents("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",printFileBasename=True)
+
+if __name__ == "__main__":
+  import argparse
+
+  print "start"
+  parser = argparse.ArgumentParser(description='Print ROOT TTree info')
+  parser.add_argument('-f','--file',
+                      help='file name tree is in')
+  parser.add_argument('-t','--treeName',
+                      default="PiAbsSelector/tree",
+                      help='tree name within file, default: "PiAbsSelector/tree"')
+  parser.add_argument('-v','--variables',
+                      help='variable string for ROOT TTree::Scan')
+  parser.add_argument('-c','--cuts',
+                      default="",
+                      help='cut string for ROOT TTree::Scan, default: ""')
+  parser.add_argument('--friendFile',
+                      help='filename friend tree is in')
+  parser.add_argument('--friendTreeName',
+                      default="friend",
+                      help='friend tree name within file, default: "friend"')
+
+  
+  args = parser.parse_args()
+  print args
+  if bool(args.file) ^ bool(args.variables):
+    print "Error: You must either use none of or both of: --file and --variables"
+    sys.exit(1)
+  doingArgs = False
+  if args.file:
+    cuts = ""
+    if args.cuts:
+      cuts = args.cuts
+    f = root.TFile(args.file)
+    tree = f.Get(args.treeName)
+    if args.friendFile:
+      tree.AddFriend(args.friendTreeName,args.friendFile)
+    tree.Scan(args.variables,args.cuts)
+  else:
+    #runNoArgs()
+    print "would run normal stuff"
+
+  print "end"
