@@ -38,29 +38,29 @@ if __name__ == "__main__":
   #caption = "MCC10 2 & 7 GeV 3m SCE"
 
   fileConfigsData = [
-    #{
-    #  'fn': "piAbsSelector_run5387_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5387_v4.10.root"],
-    #  'name': "run5387",
-    #  'title': "Run 5387: 1 GeV/c",
-    #  'caption': "Run 5387: 1 GeV/c",
-    #  'isData': True,
-    #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+primaryTrackCutsData, # for pions
-    #  #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+primaryTrackCutsData, # for protons
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5432_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5432_v4.10.root"],
-    #  'name': "run5432",
-    #  'title': "Run 5432: 2 GeV/c",
-    #  'caption': "Run 5432: 2 GeV/c",
-    #  'isData': True,
-    #  'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+primaryTrackCutsData, # for pions
-    #  #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+primaryTrackCutsData, # for protons
-    #},
     {
-      'fn': "test5145.root",
-      'addFriend': ["friend","friendTree_test5145.root"],
+      'fn': "piAbsSelector_run5387_d9d59922.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5387_d9d59922.root"],
+      'name': "run5387",
+      'title': "Run 5387: 1 GeV/c",
+      'caption': "Run 5387: 1 GeV/c",
+      'isData': True,
+      'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+primaryTrackCutsData, # for protons
+    },
+    {
+      'fn': "piAbsSelector_run5432_d9d59922.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5432_d9d59922.root"],
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
+      'isData': True,
+      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+primaryTrackCutsData, # for pions
+      #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+primaryTrackCutsData, # for protons
+    },
+    {
+      'fn': "piAbsSelector_run5145_d9d59922.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
       'name': "run5145",
       'title': "Run 5145: 7 GeV/c",
       'caption': "Run 5145: 7 GeV/c",
@@ -70,8 +70,8 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     },
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
     #  'name': "run5145_evtLt15000",
     #  'title': "Run 5145: 7 GeV/c, Event < 15000",
     #  'caption': "Run 5145: 7 GeV/c, Event < 15000",
@@ -81,8 +81,8 @@ if __name__ == "__main__":
     #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     #},
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
     #  'name': "run5145_evtGeq15000",
     #  'title': "Run 5145: 7 GeV/c, Event #geq 15000",
     #  'caption': "Run 5145: 7 GeV/c, Event #geq 15000",
@@ -92,8 +92,8 @@ if __name__ == "__main__":
     #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     #},
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
     #  'name': "run5145_evtLt2000",
     #  'title': "Run 5145: 7 GeV/c, Event < 2000",
     #  'caption': "Run 5145: 7 GeV/c, Event < 2000",
@@ -103,8 +103,8 @@ if __name__ == "__main__":
     #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     #},
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
     #  'name': "run5145_evtGeq37000",
     #  'title': "Run 5145: 7 GeV/c, Event #geq 37000",
     #  'caption': "Run 5145: 7 GeV/c, Event #geq 37000",
@@ -114,8 +114,8 @@ if __name__ == "__main__":
     #  #'cuts': "*(CKov1Status == 0 && CKov0Status == 0)*"+primaryTrackCutsData, # for protons
     #},
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
-    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_v4.10.root"],
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
+    #  'addFriend': ["friend","friendTree_piAbsSelector_run5145_d9d59922.root"],
     #  'name': "run5145_noCuts",
     #  'title': "Run 5145: 7 GeV/c, No Cuts",
     #  'caption': "Run 5145: 7 GeV/c, No Cuts",
@@ -125,7 +125,7 @@ if __name__ == "__main__":
   fileConfigsAllData = [
     {
       'fn': [
-                "piAbsSelector_run5145_v4.10.root",
+                "piAbsSelector_run5145_d9d59922.root",
                 #"piAbsSelector_run5387.root",
                 #"piAbsSelector_run5430.root",
                 #"piAbsSelector_run5758.root",
@@ -145,7 +145,7 @@ if __name__ == "__main__":
   ]
   fileConfigsMC = [
 #    {
-#      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.12.root",
 #      'name': "mcc11_3ms_2GeV",
 #      'title': "MCC11 No SCE 1 GeV/c",
 #      'caption': "MCC11 No SCE 1 GeV/c",
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.12.root",
 #      'name': "mcc11_sce_2GeV",
 #      'title': "MCC11 SCE 1 GeV/c",
 #      'caption': "MCC11 SCE 1 GeV/c",
@@ -161,7 +161,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.12.root",
 #      'name': "mcc11_flf_2GeV",
 #      'title': "MCC11 FLF SCE 1 GeV/c",
 #      'caption': "MCC11 FLF SCE 1 GeV/c",
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.12.root",
 #      'name': "mcc11_3ms_2GeV",
 #      'title': "MCC11 No SCE 2 GeV/c",
 #      'caption': "MCC11 No SCE 2 GeV/c",
@@ -177,7 +177,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.12.root",
 #      'name': "mcc11_sce_2GeV",
 #      'title': "MCC11 SCE 2 GeV/c",
 #      'caption': "MCC11 SCE 2 GeV/c",
@@ -185,7 +185,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.12.root",
 #      'name': "mcc11_flf_2GeV",
 #      'title': "MCC11 FLF SCE 2 GeV/c",
 #      'caption': "MCC11 FLF SCE 2 GeV/c",
@@ -193,7 +193,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_3ms_7p0GeV_v4.12.root",
 #      'name': "mcc11_3ms_7GeV",
 #      'title': "MCC11 No SCE SCE 7 GeV/c",
 #      'caption': "MCC11 No SCE 7 GeV/c",
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.12.root",
 #      'name': "mcc11_sce_7GeV",
 #      'title': "MCC11 SCE 7 GeV/c",
 #      'caption': "MCC11 SCE 7 GeV/c",
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 #      "cuts": "*"+cutsMC
 #    },
 #    {
-#      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.11.root",
+#      'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.12.root",
 #      'name': "mcc11_flf_7GeV",
 #      'title': "MCC11 FLF SCE 7 GeV/c",
 #      'caption': "MCC11 FLF SCE 7 GeV/c",
@@ -346,6 +346,14 @@ if __name__ == "__main__":
       'var': "zWiredQdx",
       'cuts': "1",
     },
+    {
+      'name': "SillyTest3",
+      'xtitle': "dQ/dx",
+      'ytitle': "Events / bin",
+      'binning': [300,0,15000],
+      'var': "zWiredQdx_ajib",
+      'cuts': "1",
+    },
   ]
 
   for histConfig in histConfigs:
@@ -408,7 +416,7 @@ if __name__ == "__main__":
       'name': "dQdxAjibVWireNum",
       'xtitle': "Z Wire Number",
       'ytitle': "dQ/dx [ADC #times tick/cm]",
-      'binning': wireBinning+[600,0,1000],
+      'binning': wireBinning+[600,0,100000],
       'var': "zWiredQdx_ajib:Iteration$",
       'cuts': "1",
       'logz': True,
@@ -564,11 +572,11 @@ if __name__ == "__main__":
     },
     {
       'name': "dQdxCorrVWireNum",
-      'title': "Ajib Calibrated dQ/dx",
+      'title': "Ajib Calibrated dQ/dx #times 10^{-2}",
       'ytitle': "Hits / Bin",
       'xtitle': "dQ/dx [ADC #times tick / cm]",
       'binning': [200,0,1000],
-      'var': "zWiredQdx_ajib",
+      'var': "zWiredQdx_ajib*1e-2",
       'cuts': "1",
       'color' : COLORLIST[2],
     },
