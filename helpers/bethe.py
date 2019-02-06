@@ -1,3 +1,5 @@
+#!/usr/bin/evn python
+
 import math
 import numpy
 from matplotlib import pyplot as plt
@@ -23,7 +25,7 @@ class MuonTable(object):
         r = line[10*8+1:10*8+11]
         T = float(T)
         dEdx = float(dEdx)*self.rho
-        r = float(r)*self.rho
+        r = float(r)/self.rho
         self.Ts.append(T)
         self.dEdxs.append(dEdx)
         self.ranges.append(r)
