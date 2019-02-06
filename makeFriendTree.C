@@ -8,6 +8,7 @@
 #include <TH1F.h>
 #include <TCanvas.h>
 #include <TMath.h>
+#include <Math/Interpolator.h>
 //#include <TF1.h>
 //#include <TRandom3.h>
 
@@ -48,6 +49,17 @@ class ChargeCorrectorAjib
     const double normalisation_factor=0.983;
     TFile calibFile;
     TH1F* X_correction_hist;
+};
+
+class MuonTable
+{
+  public:
+    MuonTable(TString infilename="muE_liquid_argon.txt",float rho=1.396 /*g/cm^3*/);
+    float dEdx(float ke);
+    float range(float ke);
+  private:
+    ROOT::Math::Interpolator dEdxInterp;
+    ROOT::Math::Interpolator rangeInterp;
 };
 
 void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
@@ -580,4 +592,46 @@ float ChargeCorrectorAjib::calibrateddEdx(float dqdx, float x, float y, float z)
     float calibQ = calibrateCharge(dqdx,x,y,z);
     float result = boxChargeToEnergy(calibQ);
     return result;
+}
+
+MuonTable::MuonTable(TString infilename, float rho /*g/cm^3*/)
+{
+  std::vector<double> kins;
+  std::vector<double> dEdxs;
+  std::vector<double> ranges;
+
+  std::string line;
+
+  std::fstream inFile(infilename.Data(),ios_base::in);
+  while (inFile.good())
+  {
+    std::getline(inFile,line,'\n');
+    if(line.size() == 0) continue;
+    if(line[0] == '#') continue;
+    if(line.size() < (10*8+11)) 
+    {
+        std::cerr << "Error: mu table file line too short\n";
+        return;
+    }
+    const auto& T = std::stod(line.substr(10*0+1,10*0+11));
+    const auto& dEdx = std::stod(line.substr(10*7+1,10*7+11));
+    const auto& r = std::stod(line.substr(10*8+1,10*8+11));
+    
+    kins.push_back(T);
+    dEdxs.push_back(dEdx*rho);
+    ranges.push_back(r/rho);
+  }
+  inFile.close();
+  dEdxInterp.SetData(kins,dEdxs);
+  rangeInterp.SetData(kins,ranges);
+}
+
+float MuonTable::dEdx(float kin /*MeV*/) // returns MeV/cm
+{
+  return dEdxInterp.Eval(kin);
+}
+
+float MuonTable::range(float kin /*MeV*/) // returns cm
+{
+  return rangeInterp.Eval(kin);
 }
