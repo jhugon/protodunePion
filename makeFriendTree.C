@@ -107,6 +107,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float>* PFBeamPrimZs=0; TBranch* b_PFBeamPrimZs;
   Float_t PFBeamPrimStartZ;
   Float_t PFBeamPrimEndZ;
+  Float_t PFBeamPrimTrkLen;
   Float_t pWC;
 
   // infile chain
@@ -129,6 +130,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("PFBeamPrimZs",&PFBeamPrimZs,&b_PFBeamPrimZs);
   tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
   tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
+  tree->SetBranchAddress("PFBeamPrimTrkLen",&PFBeamPrimTrkLen);
   tree->SetBranchAddress("pWC",&pWC);
   //tree->Print();
 
@@ -177,6 +179,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Float_t PFBeamPrimKinInteract_corr;
   Float_t PFBeamPrimKinInteractProton_corr;
   Float_t PFBeamPrimEnergySum_corr;
+  Float_t PFBeamPrimEnergySumCSDAMu; // MeV kinetic energy
+  Float_t PFBeamPrimEnergySumCSDAProton; // MeV kinetic energy
+  Float_t pWCCSDARangeMu; // cm
+  Float_t pWCCSDARangeProton; // cm
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
   friendTree->Branch("zWiredEdx_ajib",&zWiredEdx_ajib);
@@ -214,6 +220,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("PFBeamPrimKinInteract_corr",&PFBeamPrimKinInteract_corr,"PFBeamPrimKinInteract_corr/F");
   friendTree->Branch("PFBeamPrimKinInteractProton_corr",&PFBeamPrimKinInteractProton_corr,"PFBeamPrimKinInteractProton_corr/F");
   friendTree->Branch("PFBeamPrimEnergySum_corr",&PFBeamPrimEnergySum_corr,"PFBeamPrimEnergySum_corr/F");
+  friendTree->Branch("PFBeamPrimEnergySumCSDAMu",&PFBeamPrimEnergySumCSDAMu,"PFBeamPrimEnergySumCSDAMu/F");
+  friendTree->Branch("PFBeamPrimEnergySumCSDAProton",&PFBeamPrimEnergySumCSDAProton,"PFBeamPrimEnergySumCSDAProton/F");
+  friendTree->Branch("pWCCSDARangeMu",&pWCCSDARangeMu,"pWCCSDARangeMu/F");
+  friendTree->Branch("pWCCSDARangeProton",&pWCCSDARangeProton,"pWCCSDARangeProton/F");
 
   ///////////////////////////////
   ///////////////////////////////
@@ -349,6 +359,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     PFBeamPrimKinInteract_corr = DEFAULTNEG;
     PFBeamPrimKinInteractProton_corr = DEFAULTNEG;
     PFBeamPrimEnergySum_corr = DEFAULTNEG;
+    PFBeamPrimEnergySumCSDAMu = DEFAULTNEG;
+    PFBeamPrimEnergySumCSDAProton = DEFAULTNEG;
+    pWCCSDARangeMu = DEFAULTNEG;
+    pWCCSDARangeProton = DEFAULTNEG;
 
     // Either got pWC from beam or from primaryParticle, so now is the time to do this
     float eWC = sqrt(pWC*pWC+MCHARGEDPION*MCHARGEDPION); // assume charged pion in MeV
@@ -359,6 +373,18 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     float eWCProton = sqrt(pWC*pWC+MPROTON*MPROTON);
     float kinWCProton = eWCProton - MPROTON;
     float kinWCInTPCProton = kinWCProton - KINLOSTBEFORETPCPROTON;
+
+    if (pWC > 0.)
+    {
+      pWCCSDARangeMu = muonTable.range(kinWC);
+      pWCCSDARangeProton = protonTable.range(kinWCProton);
+    }
+
+    if (PFBeamPrimTrkLen > 0.)
+    {
+      PFBeamPrimEnergySumCSDAMu = muonTable.keFromRange(PFBeamPrimTrkLen);
+      PFBeamPrimEnergySumCSDAProton = protonTable.keFromRange(PFBeamPrimTrkLen);
+    }
 
     // Find which wire is the start and end point to correct Z
     if(zWireWireZ)
