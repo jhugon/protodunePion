@@ -6,6 +6,7 @@
 #include <TTree.h>
 #include <TH2F.h>
 #include <TH1F.h>
+#include <TGraph.h>
 #include <TCanvas.h>
 #include <TMath.h>
 #include <Math/Interpolator.h>
@@ -16,6 +17,7 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <cctype>
 
 #ifdef __MAKECINT__
 #pragma link C++ class vector<float>+;
@@ -55,11 +57,20 @@ class MuonTable
 {
   public:
     MuonTable(TString infilename="muE_liquid_argon.txt",float rho=1.396 /*g/cm^3*/);
-    float dEdx(float ke);
-    float range(float ke);
+    float dEdx(float ke /*MeV*/); // returns MeV/cm
+    float range(float ke /*MeV*/); // returns cm
+    float keFromRange(float r /*cm*/); // returns MeV
   private:
+    float minKin;
+    float maxKin;
+    float minRange;
+    float maxRange;
+    std::vector<double> kins;
+    std::vector<double> dEdxs;
+    std::vector<double> ranges;
     ROOT::Math::Interpolator dEdxInterp;
     ROOT::Math::Interpolator rangeInterp;
+    ROOT::Math::Interpolator keFromRangeInterp;
 };
 
 void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
@@ -69,6 +80,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calo calibration file: "<< caloCalibFileName.Data() << " and SCE calib file: "<< sceCalibFileName << " and FLF SCE calib file: "<< sceCalibFileNameFLF<< endl;
 
   ChargeCorrectorAjib ajibCorrector("/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root");
+  MuonTable muonTable;
 
   bool isMC;
   std::vector<float>* zWiredEdx=0; TBranch* b_zWiredEdx;
@@ -596,24 +608,25 @@ float ChargeCorrectorAjib::calibrateddEdx(float dqdx, float x, float y, float z)
 
 MuonTable::MuonTable(TString infilename, float rho /*g/cm^3*/)
 {
-  std::vector<double> kins;
-  std::vector<double> dEdxs;
-  std::vector<double> ranges;
-
   std::string line;
 
   std::fstream inFile(infilename.Data(),ios_base::in);
   while (inFile.good())
   {
     std::getline(inFile,line,'\n');
-    if(line.size() == 0) continue;
-    if(line[0] == '#') continue;
+    if(line.size() < 110) continue;
+    if(!std::isdigit(line[2])) continue; // ensure a data line
+    if(!std::isdigit(line[86])) continue; // to catch muon critical energy line
     if(line.size() < (10*8+11)) 
     {
         std::cerr << "Error: mu table file line too short\n";
         return;
     }
+    //std::cout << line.substr(10*0+1,10*0+11) << std::endl;
+    //std::cout << line.substr(10*7+1,10*7+11) << std::endl;
+    //std::cout << line.substr(10*8+1,10*8+11) << std::endl;
     const auto& T = std::stod(line.substr(10*0+1,10*0+11));
+    if (T < 1.1) continue;
     const auto& dEdx = std::stod(line.substr(10*7+1,10*7+11));
     const auto& r = std::stod(line.substr(10*8+1,10*8+11));
     
@@ -622,16 +635,107 @@ MuonTable::MuonTable(TString infilename, float rho /*g/cm^3*/)
     ranges.push_back(r/rho);
   }
   inFile.close();
+
   dEdxInterp.SetData(kins,dEdxs);
   rangeInterp.SetData(kins,ranges);
+  keFromRangeInterp.SetData(ranges,kins);
+
+  // Graph
+  if (false)
+  {
+    TGraph dEdxsGraph;
+    TGraph rangesGraph;
+    TGraph keFromRangesGraph;
+    dEdxsGraph.SetMarkerStyle(20);
+    rangesGraph.SetMarkerStyle(20);
+    keFromRangesGraph.SetMarkerStyle(20);
+    dEdxsGraph.SetMarkerSize(1);
+    rangesGraph.SetMarkerSize(1);
+    keFromRangesGraph.SetMarkerSize(1);
+    for(size_t iPoint = 0; iPoint < kins.size(); iPoint++)
+    {
+      const auto& T = kins.at(iPoint);
+      dEdxsGraph.SetPoint(iPoint,T,dEdxs.at(iPoint));
+      rangesGraph.SetPoint(iPoint,T,ranges.at(iPoint));
+      keFromRangesGraph.SetPoint(iPoint,ranges.at(iPoint),T);
+      //std::cout << "    " << T
+      //          << "    " << dEdxs.at(iPoint)
+      //          << "    " << ranges.at(iPoint)
+      //          << std::endl;
+    }
+    TGraph dEdxsInterpGraph;
+    TGraph rangesInterpGraph;
+    TGraph keFromRangesInterpGraph;
+    dEdxsInterpGraph.SetLineColor(kBlue);
+    rangesInterpGraph.SetLineColor(kBlue);
+    keFromRangesInterpGraph.SetLineColor(kBlue);
+    for(size_t iPoint = 0; iPoint < 4000; iPoint++)
+    {
+      const double& T = iPoint;
+      dEdxsInterpGraph.SetPoint(iPoint,T,dEdx(T));
+      rangesInterpGraph.SetPoint(iPoint,T,range(T));
+      const double& csdaRange = ((double) iPoint)*0.25;
+      keFromRangesInterpGraph.SetPoint(iPoint,csdaRange,keFromRange(csdaRange));
+    }
+    TCanvas c("c");
+    //TH2F axisHist("axisHist","",1,0.01,4e3,1,0.01,30);
+    TH2F axisHist("axisHist","",1,0.01,30,1,0.01,100);
+    axisHist.GetXaxis()->SetTitle("Kinetic Energy [MeV]");
+    axisHist.GetYaxis()->SetTitle("Average dE/dx [MeV/cm]");
+    axisHist.Draw();
+    dEdxsInterpGraph.Draw("L");
+    dEdxsGraph.Draw("P");
+    c.SaveAs("dEdxInterp.png");
+    c.SaveAs("dEdxInterp.pdf");
+    c.Clear();
+    //TH2F axisHist2("axisHist2","",1,0.01,2e3,1,0.01,1e3);
+    TH2F axisHist2("axisHist2","",1,0.01,30,1,0.01,30);
+    axisHist2.GetXaxis()->SetTitle("Kinetic Energy [MeV]");
+    axisHist2.GetYaxis()->SetTitle("CSDA Range [cm]");
+    axisHist2.Draw();
+    rangesInterpGraph.Draw("L");
+    rangesGraph.Draw("P");
+    c.SaveAs("rangeInterp.png");
+    c.SaveAs("rangeInterp.pdf");
+    c.Clear();
+    //TH2F axisHist3("axisHist3","",1,0.01,1e3,1,0.01,2e3);
+    TH2F axisHist3("axisHist3","",1,0.01,8,1,0.01,100);
+    axisHist3.GetXaxis()->SetTitle("CSDA Range [cm]");
+    axisHist3.GetYaxis()->SetTitle("Kinetic Energy [MeV]");
+    axisHist3.Draw();
+    keFromRangesInterpGraph.Draw("L");
+    keFromRangesGraph.Draw("P");
+    c.SaveAs("keFromRangeInterp.png");
+    c.SaveAs("keFromRangeInterp.pdf");
+    c.Clear();
+  }
 }
 
 float MuonTable::dEdx(float kin /*MeV*/) // returns MeV/cm
 {
-  return dEdxInterp.Eval(kin);
+  if (kin <= kins.front())
+    return dEdxs.front();
+  else if (kin >= kins.back())
+    return dEdxs.back();
+  else
+    return dEdxInterp.Eval(kin);
 }
 
 float MuonTable::range(float kin /*MeV*/) // returns cm
 {
-  return rangeInterp.Eval(kin);
+  if (kin <= kins.front())
+    return ranges.front();
+  else if (kin >= kins.back())
+    return ranges.back();
+  else
+    return rangeInterp.Eval(kin);
+}
+float MuonTable::keFromRange(float r /*cm*/) // returns MeV
+{
+  if (r <= ranges.front())
+    return kins.front();
+  else if (r >= ranges.back())
+    return kins.back();
+  else
+    return keFromRangeInterp.Eval(r);
 }
