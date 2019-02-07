@@ -10,23 +10,19 @@
   TString sceCalibFnMC = "CalibrationSCE_PythonSmooth_deltaWireTrueZVWireNum_mcc11_sce_2GeV.txt";
   TString sceCalibFnMCFLF = "CalibrationSCE_PythonSmooth_deltaWireTrueZVWireNum_mcc11_flf_7GeV.txt";
 
-  /*
-  makeFriendTree("piAbsSelector_run5145_v4.10.root","friendTree_piAbsSelector_run5145_v4.10.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
-  makeFriendTree("piAbsSelector_run5387_v4.10.root","friendTree_piAbsSelector_run5387_v4.10.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
-  makeFriendTree("piAbsSelector_run5432_v4.10.root","friendTree_piAbsSelector_run5432_v4.10.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+  makeFriendTree("piAbsSelector_run5145_d9d59922.root","friendTree_piAbsSelector_run5145_d9d59922.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+  makeFriendTree("piAbsSelector_run5387_d9d59922.root","friendTree_piAbsSelector_run5387_d9d59922.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+  makeFriendTree("piAbsSelector_run5432_d9d59922.root","friendTree_piAbsSelector_run5432_d9d59922.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
 
-  makeFriendTree("piAbsSelector_mcc11_flf_7p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_flf_7p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_sce_7p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_sce_7p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_3ms_7p0GeV_v4.11.root","","","",maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_flf_7p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_flf_7p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_sce_7p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_sce_7p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_3ms_7p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_3ms_7p0GeV_v4.12.root","","","",maxEvents);
 
-  makeFriendTree("piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_sce_2p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_sce_2p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root","","","",maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_flf_2p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_flf_2p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_sce_2p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_sce_2p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_3ms_2p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_3ms_2p0GeV_v4.12.root","","","",maxEvents);
 
-  makeFriendTree("piAbsSelector_mcc11_flf_1p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_flf_1p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_sce_1p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_sce_1p0GeV_v4.11.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
-  makeFriendTree("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","","","",maxEvents);
-  */
-
-  makeFriendTree("test5145.root","friendTree_test5145.root",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_flf_1p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_flf_1p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_sce_1p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_sce_1p0GeV_v4.12.root","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents);
+  makeFriendTree("piAbsSelector_mcc11_3ms_1p0GeV_v4.12.root","friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.12.root","","","",maxEvents);
 }

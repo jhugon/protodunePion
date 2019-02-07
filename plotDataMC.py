@@ -36,7 +36,7 @@ if __name__ == "__main__":
   #NMAX=100
   fileConfigs = [
     #{
-    #  'fn': "piAbsSelector_run5145_v4.10.root",
+    #  'fn': "piAbsSelector_run5145_d9d59922.root",
     #  'name': "run5145",
     #  'title': "Run 5145: 7 GeV/c",
     #  'caption': "Run 5145: 7 GeV/c",
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     #  'cuts': "*(CKov1Status == 1 && CKov0Status == 1)*"+cutGoodBeamline,
     #},
     #{
-    #  'fn': "piAbsSelector_run5387_v4.10.root",
+    #  'fn': "piAbsSelector_run5387_d9d59922.root",
     #  'name': "run5387",
     #  'title': "Run 5387: 1 GeV/c",
     #  'caption': "Run 5387: 1 GeV/c",
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     #  #'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline, # for protons
     #},
     {
-      'fn': "piAbsSelector_run5432_v4.10.root",
+      'fn': "piAbsSelector_run5432_d9d59922.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -64,7 +64,7 @@ if __name__ == "__main__":
       #'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline, # for protons
     },
     #{
-    #  'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",
+    #  'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.12.root",
     #  'name': "mcc11_3ms_1GeV",
     #  'title': "MCC11 1 GeV/c No SCE",
     #  'caption': "MCC11 1 GeV/c No SCE",
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     #  'scaleFactor': 0.4213848152960832,
     #},
     #{
-    #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.11.root",
+    #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.12.root",
     #  'name': "mcc11_flf_1GeV",
     #  'title': "MCC11 1 GeV/c FLF",
     #  'caption': "MCC11 1 GeV/c FLF",
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     #  'scaleFactor': 8.254545454545454,
     #},
     #{
-    #  'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.11.root",
+    #  'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.12.root",
     #  'name': "mcc11_3ms_2GeV",
     #  'title': "MCC11 2 GeV/c No SCE",
     #  'caption': "MCC11 2 GeV/c No SCE",
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     #  'scaleFactor': 1,
     #},
     {
-      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.11.root",
+      'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.12.root",
       'name': "mcc11_flf_2GeV",
       'title': "MCC11 2 GeV/c FLF",
       'caption': "MCC11 2 GeV/c FLF",
