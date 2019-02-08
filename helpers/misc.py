@@ -1116,7 +1116,7 @@ TRUECATEGORYFEWERCONFIGS = [
    },
    {
      'title': "#pi Decay",
-     'cuts':"trueCategory==9 || trueCategory==10",
+     'cuts':"trueCategory==9 || trueCategory==10 || trueCategory==16",
      'color': root.kOrange-3,
    },
    {
@@ -1147,7 +1147,7 @@ TRUECATEGORYFEWERCONFIGS = [
    },
    {
      'title': "Unknown",
-     'cuts':"trueCategory==0 || trueCategory==16 || trueCategory == 15",
+     'cuts':"trueCategory==0 || trueCategory == 15",
      'color': root.kGray+1,
    },
 ]
@@ -1170,7 +1170,7 @@ TRUECATEGORYPOORMATCHCONFIGS = [
    },
    {
      'title': "#pi Decay",
-     'cuts':"trueCategory==9 || trueCategory==10",
+     'cuts':"trueCategory==9 || trueCategory==10 || trueCategory==16",
    },
    {
      'title': "#pi Interacted Outside TPC",
@@ -1182,10 +1182,40 @@ TRUECATEGORYPOORMATCHCONFIGS = [
    },
    {
      'title': "Unknown",
-     'cuts':"trueCategory==0 || trueCategory==16 || trueCategory == 15",
+     'cuts':"trueCategory==0 || trueCategory == 15",
    },
 ]
 
 for iCat in range(len(TRUECATEGORYPOORMATCHCONFIGS)):
     TRUECATEGORYPOORMATCHCONFIGS[iCat]['color'] = COLORLIST[iCat]
+
+TRUECATEGORYPROTONCONFIGS = [
+   {
+     'title': "Proton Inelastic--Good Reco",
+     'cuts':"(truePrimaryPDG==2212 && trueEndZ > 0. && PFBeamPrimTrueTrackID == truePrimaryTrackID)*(trueEndProcess == 10)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)",
+   },
+   {
+     'title': "Proton Stopped--Good Reco",
+     'cuts':"(truePrimaryPDG==2212 && trueEndZ > 0. && PFBeamPrimTrueTrackID == truePrimaryTrackID)*(trueEndProcess == 17 || trueEndProcess == 14)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))<20)",
+   },
+   {
+     'title': "Proton Bad Reco/True Primary Track End Match",
+     'cuts':"(truePrimaryPDG==2212 && trueEndZ > 0. && PFBeamPrimTrueTrackID == truePrimaryTrackID)*(PFBeamPrimTrueTrackID == truePrimaryTrackID)*(sqrt(pow(PFBeamPrimEndX-trueEndX,2)+pow(PFBeamPrimEndY-trueEndY,2)+pow(PFBeamPrimEndZ-trueEndZ,2))>=20)",
+   },
+   {
+     'title': "Proton Bad Track/True Primary Track Match",
+     'cuts':"(truePrimaryPDG==2212 && trueEndZ > 0. && PFBeamPrimTrueTrackID != truePrimaryTrackID)",
+   },
+   {
+     'title': "Proton Interacted or Stopped Before TPC",
+     'cuts':"(truePrimaryPDG==2212 && trueEndZ < 0.)",
+   },
+   {
+     'title': "Non-proton Primary",
+     'cuts':"(truePrimaryPDG!=2212)",
+   },
+]
+
+for iCat in range(len(TRUECATEGORYPROTONCONFIGS)):
+    TRUECATEGORYPROTONCONFIGS[iCat]['color'] = COLORLIST[iCat]
 
