@@ -33,7 +33,7 @@ const auto KINLOSTBEFORETPCPROTON = 0.0; //MeV; from LArIAT pion total cross sec
 class ChargeCorrectorAjib
 {
   public:
-    ChargeCorrectorAjib(TString calibFn);
+    ChargeCorrectorAjib(TString calibFn, double calibConst, double normFact);
     // Get calibrated dE/dx for dQ/dx and position
     float calibrateddEdx(float dqdx, float x, float y, float z);
     // Given a dQ/dx returns a dE/dx corrected using modified box model
@@ -47,8 +47,8 @@ class ChargeCorrectorAjib
     const double Wion = 23.6e-6;//parameter from ArgoNeuT experiment at 0.481kV/cm        
     const double Efield = 0.50;//kV/cm protoDUNE electric filed      
 
-    const double calibration_constant=6.155e-3;
-    const double normalisation_factor=0.983;
+    const double calibration_constant;
+    const double normalisation_factor;
     TFile calibFile;
     TH1F* X_correction_hist;
 };
@@ -80,13 +80,27 @@ class PStarTable : public MuonTable
     PStarTable(TString infilename,float rho=1.396 /*g/cm^3*/);
 };
 
-void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString inputTreeName="PiAbsSelector/tree")
+void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCalibFileName, TString sceCalibFileName, TString sceCalibFileNameFLF, unsigned maxEvents, TString ajibCorrFn="/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root", double ajibCalibConst=6.155e-3, double ajibNormFact=0.983, TString inputTreeName="PiAbsSelector/tree")
 {
   using namespace std;
 
-  cout << "makeFriendTree for "<< inputFileName.Data() << " in file " << outputFileName.Data() <<" using calo calibration file: "<< caloCalibFileName.Data() << " and SCE calib file: "<< sceCalibFileName << " and FLF SCE calib file: "<< sceCalibFileNameFLF<< endl;
+  cout << "makeFriendTree for "<< inputFileName.Data() 
+        << endl
+        << " in file " << outputFileName.Data() 
+        << endl
+        <<" using calo calibration file: "<< caloCalibFileName.Data() 
+        << endl
+        << " SCE calib file: "<< sceCalibFileName 
+        << endl
+        << " FLF SCE calib file: "<< sceCalibFileNameFLF
+        << endl
+        << " Ajib correction file: "<< ajibCorrFn
+        << endl
+        << " Ajib calibration const: "<< ajibCalibConst
+        << " Ajib normfactor: "<< ajibNormFact
+        << endl;
 
-  ChargeCorrectorAjib ajibCorrector("/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root");
+  ChargeCorrectorAjib ajibCorrector(ajibCorrFn,ajibCalibConst,ajibNormFact);
   MuonTable muonTable("muE_liquid_argon.txt");
   PStarTable protonTable("pstar_argon.txt");
 
@@ -478,19 +492,19 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         const auto& dEdx = zWiredEdx->at(iZWire);
         if(dEdx >= 0)
         {
+          zWiredEdx_corr[iZWire] = caloCalibMap.at(iZWire)*dEdx;
+          zWiredEdx_caloScaleUp[iZWire] = 1.1*dEdx;
+          zWiredEdx_caloScaleDown[iZWire] = 0.9*dEdx;
           const float dQdx_ajib = ajibCorrector.calibrateCharge(zWiredQdx->at(iZWire),
                                                     zWireX->at(iZWire),
                                                     zWireY->at(iZWire),
                                                     zWireZ->at(iZWire)
                                                         );
           const float dEdx_ajib = ajibCorrector.boxChargeToEnergy(dQdx_ajib);
+          zWiredEdx_ajib[iZWire] = dEdx_ajib;
+          zWiredQdx_ajib[iZWire] = dQdx_ajib;
           //std::cout << "iZWire: " << iZWire << " dQdx: " << zWiredQdx->at(iZWire) << " dQdx_ajib: " << dQdx_ajib 
           //          << " dEdx: " << zWiredEdx->at(iZWire) << " dEdx_ajib: " << dEdx_ajib << std::endl;
-          zWiredEdx_corr[iZWire] = caloCalibMap.at(iZWire)*dEdx;
-          zWiredEdx_ajib[iZWire] = dEdx_ajib;
-          zWiredEdx_caloScaleUp[iZWire] = 1.1*dEdx;
-          zWiredEdx_caloScaleDown[iZWire] = 0.9*dEdx;
-          zWiredQdx_ajib[iZWire] = dQdx_ajib;
           zWireZ_corr[iZWire] = zWireZ->at(iZWire) + sceCalibMap.at(iZWire);
           zWireZ_corrFLF[iZWire] = zWireZ->at(iZWire) + sceCalibMapFLF.at(iZWire);
           zWireLastHitWire = iZWire;
@@ -512,7 +526,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       } // for iZWire
     } // if zWiredEdx
     // Now redo kin and energy sum and stuff
-    if(zWirePitch)
+    if(zWirePitch && zWireFirstHitWire >= 0)
     {
       zWireEnergySum = 0.;
       zWireEnergySum_corr = 0.;
@@ -630,8 +644,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 ////////////////////////////////////////
 ////////////////////////////////////////
 
-ChargeCorrectorAjib::ChargeCorrectorAjib(TString calibFn)
-    : calibFile("/cshare/vol2/users/jhugon/apaudel_calib/v71100/run_5387_Xcalibration.root")
+ChargeCorrectorAjib::ChargeCorrectorAjib(TString calibFn, double calibConst, double normFact)
+    : calibFile(calibFn), calibration_constant(calibConst), normalisation_factor(normFact)
 {
      X_correction_hist = (TH1F*) calibFile.Get("dqdx_X_correction_hist");
 }
