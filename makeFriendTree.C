@@ -152,6 +152,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float> zWireZ_corrFLF(480*3);
   std::vector<float> zWirePartKin_corr(480*3);
   std::vector<float> zWirePartKinProton_corr(480*3);
+  std::vector<float> zWirePartKin_ajib(480*3);
+  std::vector<float> zWirePartKinProton_ajib(480*3);
   std::vector<float> zWirePartKin_caloScaleUp(480*3);
   std::vector<float> zWirePartKin_caloScaleDown(480*3);
   std::vector<float> zWirePartKin_beamScaleUp(480*3);
@@ -165,6 +167,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float> PFBeamPrimZs_corrFLF(480*3);
   Float_t zWireEnergySum;
   Float_t zWireEnergySum_corr;
+  Float_t zWireEnergySum_ajib;
   Float_t zWireEnergySum_caloScaleUp;
   Float_t zWireEnergySum_caloScaleDown;
   Int_t zWireFirstHitWire;
@@ -193,6 +196,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("zWireZ_corrFLF",&zWireZ_corrFLF);
   friendTree->Branch("zWirePartKin_corr",&zWirePartKin_corr);
   friendTree->Branch("zWirePartKinProton_corr",&zWirePartKinProton_corr);
+  friendTree->Branch("zWirePartKin_ajib",&zWirePartKin_ajib);
+  friendTree->Branch("zWirePartKinProton_ajib",&zWirePartKinProton_ajib);
   friendTree->Branch("zWirePartKin_caloScaleUp",&zWirePartKin_caloScaleUp);
   friendTree->Branch("zWirePartKin_caloScaleDown",&zWirePartKin_caloScaleDown);
   friendTree->Branch("zWirePartKin_beamScaleUp",&zWirePartKin_beamScaleUp);
@@ -206,6 +211,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("PFBeamPrimZs_corrFLF",&PFBeamPrimZs_corrFLF);
   friendTree->Branch("zWireEnergySum",&zWireEnergySum,"zWireEnergySum/F");
   friendTree->Branch("zWireEnergySum_corr",&zWireEnergySum_corr,"zWireEnergySum_corr/F");
+  friendTree->Branch("zWireEnergySum_ajib",&zWireEnergySum_ajib,"zWireEnergySum_ajib/F");
   friendTree->Branch("zWireEnergySum_caloScaleUp",&zWireEnergySum_caloScaleUp,"zWireEnergySum_caloScaleUp/F");
   friendTree->Branch("zWireEnergySum_caloScaleDown",&zWireEnergySum_caloScaleDown,"zWireEnergySum_caloScaleDown/F");
   friendTree->Branch("zWireFirstHitWire",&zWireFirstHitWire,"zWireFirstHitWire/I");
@@ -330,6 +336,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
       zWireZ_corrFLF[iZWire] = DEFAULTNEG;
       zWirePartKin_corr[iZWire] = DEFAULTNEG;
       zWirePartKinProton_corr[iZWire] = DEFAULTNEG;
+      zWirePartKin_ajib[iZWire] = DEFAULTNEG;
+      zWirePartKinProton_ajib[iZWire] = DEFAULTNEG;
       zWirePartKin_caloScaleUp[iZWire] = DEFAULTNEG;
       zWirePartKin_caloScaleDown[iZWire] = DEFAULTNEG;
       zWirePartKin_beamScaleUp[iZWire] = DEFAULTNEG;
@@ -345,6 +353,7 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 
     zWireEnergySum = DEFAULTNEG;
     zWireEnergySum_corr = DEFAULTNEG;
+    zWireEnergySum_ajib = DEFAULTNEG;
     zWireEnergySum_caloScaleUp = DEFAULTNEG;
     zWireEnergySum_caloScaleDown = DEFAULTNEG;
     zWireFirstHitWire = DEFAULTNEG;
@@ -507,12 +516,15 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     {
       zWireEnergySum = 0.;
       zWireEnergySum_corr = 0.;
+      zWireEnergySum_ajib = 0.;
       zWireEnergySum_caloScaleUp = 0.;
       zWireEnergySum_caloScaleDown = 0.;
       for (long iZWire=0; iZWire <= zWireLastHitWire; iZWire++)
       {    
         zWirePartKin_corr.at(iZWire) = kinWCInTPC - zWireEnergySum_corr;
         zWirePartKinProton_corr.at(iZWire) = kinWCInTPCProton - zWireEnergySum_corr;
+        zWirePartKin_ajib.at(iZWire) = kinWCInTPC - zWireEnergySum_ajib;
+        zWirePartKinProton_ajib.at(iZWire) = kinWCInTPCProton - zWireEnergySum_ajib;
         zWirePartKin_caloScaleUp.at(iZWire) = kinWCInTPC - zWireEnergySum_caloScaleUp;
         zWirePartKin_caloScaleDown.at(iZWire) = kinWCInTPC - zWireEnergySum_caloScaleDown;
         zWirePartKin_beamScaleUp.at(iZWire) = kinWCInTPC*1.1 - zWireEnergySum;
@@ -521,6 +533,10 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
         if(zWiredEdx_corr.at(iZWire) >= 0.)
         {    
           zWireEnergySum_corr += zWiredEdx_corr.at(iZWire) * pitch;
+        }    
+        if(zWiredEdx_ajib.at(iZWire) >= 0.)
+        {    
+          zWireEnergySum_ajib += zWiredEdx_ajib.at(iZWire) * pitch;
         }    
         if(zWiredEdx->at(iZWire) >= 0.)
         {    

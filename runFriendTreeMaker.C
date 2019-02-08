@@ -2,7 +2,7 @@
   gROOT->ProcessLine(".L makeFriendTree.C++");
 
   unsigned maxEvents = 100000000;
-  maxEvents = 10;
+  //maxEvents = 10;
 
   TString caloCalibFn = "CalibrationFactors_run5145.txt";
   TString sceCalibFn = "CalibrationSCE_PythonSmooth_deltaWireTrueZVWireNum_mcc11_sce_2GeV_scaleData.txt";
