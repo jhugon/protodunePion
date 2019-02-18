@@ -7,8 +7,9 @@ import copy
 import sys
 
 m2SF=1000.
-tofOffset=59.6
-tofDistance = 28.6
+#tofOffset=59.6
+tofOffset=0.
+tofDistance = 28.575
 lightTime = tofDistance/2.99e8*1e9
 momSF=1.0
 
@@ -118,9 +119,10 @@ if __name__ == "__main__":
       'name': "beamMom",
       'xtitle': "Beam Momentum [GeV/c]",
       'ytitle': "Beam Momenta / bin",
-      'binning': [120,0,12],
+      #'binning': [120,0,12],
+      'binning': [40,0,2],
       'var': "beamMom*{}".format(momSF),
-      'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
+      #'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
       'cuts': "1",
     },
     {
@@ -180,24 +182,24 @@ if __name__ == "__main__":
       'var': "TOFChan",
       'cuts': "1",
     },
-    #{
-    #  'name': "CKov0Status",
-    #  'xtitle': "Cherenkov 0 Status",
-    #  'ytitle': "Events / bin",
-    #  #'binning': [3,-1.5,1.5],
-    #  'binning': [2,-0.5,1.5],
-    #  'var': "CKov0Status",
-    #  'cuts': "1",
-    #},
-    #{
-    #  'name': "CKov1Status",
-    #  'xtitle': "Cherenkov 1 Status",
-    #  'ytitle': "Events / bin",
-    #  #'binning': [3,-1.5,1.5],
-    #  'binning': [2,-0.5,1.5],
-    #  'var': "CKov1Status",
-    #  'cuts': "1",
-    #},
+    {
+      'name': "CKov0Status",
+      'xtitle': "Cherenkov 0 Status",
+      'ytitle': "Events / bin",
+      #'binning': [3,-1.5,1.5],
+      'binning': [2,-0.5,1.5],
+      'var': "CKov0Status",
+      'cuts': "1",
+    },
+    {
+      'name': "CKov1Status",
+      'xtitle': "Cherenkov 1 Status",
+      'ytitle': "Events / bin",
+      #'binning': [3,-1.5,1.5],
+      'binning': [2,-0.5,1.5],
+      'var': "CKov1Status",
+      'cuts': "1",
+    },
     {
       'name': "CKov0Pressure",
       'xtitle': "Cherenkov 0 Pressure",
@@ -225,7 +227,7 @@ if __name__ == "__main__":
       'logy': False,
       'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
       #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+      'preliminaryString': "Assuming d = {:.3f} m, TOF = Raw TOF - {:.3f} ns".format(tofDistance,tofOffset)
     },
     #{
     #  'name': "beamlineMassSquared_zoom0_onlyCKov0",
@@ -239,7 +241,7 @@ if __name__ == "__main__":
     #  'logy': False,
     #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
     #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #  'preliminaryString': "Assuming d = {:.3f} m, TOF = Raw TOF - {:.3f} ns".format(tofDistance,tofOffset)
     #},
     #{
     #  'name': "beamlineMassSquared_zoom0",
@@ -252,7 +254,7 @@ if __name__ == "__main__":
     #  'logy': False,
     #  'drawvlines':[0.511**2/m2SF,105.65**2/m2SF,139.6**2/m2SF,493.677**2/m2SF,938.272046**2/m2SF,1875.6**2/m2SF],
     #  #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-    #  'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+    #  'preliminaryString': "Assuming d = {:.3f} m, TOF = Raw TOF - {:.3f} ns".format(tofDistance,tofOffset)
     #},
     {
       'name': "beamlineMass",
@@ -265,7 +267,7 @@ if __name__ == "__main__":
       'logy': False,
       'drawvlines':[0.511,105.65,139.6,493.677,938.272046,1875.6],
       #'preliminaryString': "Assuming d/c = {:.1f} ns, Momentum Scaled by {:.2f}".format(lightTime,momSF)
-      'preliminaryString': "Assuming d = {:.1f} m, TOF = Raw TOF - {:.1f} ns".format(tofDistance,tofOffset)
+      'preliminaryString': "Assuming d = {:.3f} m, TOF = Raw TOF - {:.3f} ns".format(tofDistance,tofOffset)
     },
 #    {
 #      'name': "PFNBeamSlices",
@@ -420,14 +422,14 @@ if __name__ == "__main__":
     #  'color': root.kBlack,
     #  'cuts': "*"+cutGoodBeamline,
     #},
-    {
-      'fn': "piAbsSelector_run5145_v3.root",
-      'name': "run5145",
-      'title': "Run 5145: 7 GeV/c",
-      'caption': "Run 5145: 7 GeV/c",
-      'color': root.kOrange-3,
-      'cuts': "*"+cutGoodBeamline,
-    },
+#    {
+#      'fn': "piAbsSelector_run5145_v3.root",
+#      'name': "run5145",
+#      'title': "Run 5145: 7 GeV/c",
+#      'caption': "Run 5145: 7 GeV/c",
+#      'color': root.kOrange-3,
+#      'cuts': "*"+cutGoodBeamline,
+#    },
 #    {
 #      'fn': "piAbsSelector_run5174.root",
 #      'name': "run5174",
@@ -485,21 +487,37 @@ if __name__ == "__main__":
 #      'cuts': "*"+cutGoodBeamline,
 #    },
     {
-      'fn': "piAbsSelector_run5387_v3.root",
-      'name': "run5387",
-      'title': "Run 5387: 1 GeV/c",
-      'caption': "Run 5387: 1 GeV/c",
+      'fn': "piAbsSelector_run5387_d9d59922.root",
+      'name': "run5387_oldBI",
+      'title': "Run 5387: 1 GeV/c Old BI",
+      'caption': "Run 5387: 1 GeV/c Old BI",
       'color': root.kBlue-7,
       'cuts': "*"+cutGoodBeamline,
     },
     {
-      'fn': "piAbsSelector_run5432_v3.root",
-      'name': "run5432",
-      'title': "Run 5432: 2 GeV/c",
-      'caption': "Run 5432: 2 GeV/c",
-      'color': root.kGreen+3,
+      'fn': "piAbsSelector_run5387_444ac9a5.root",
+      'name': "run5387_newBI",
+      'title': "Run 5387: 1 GeV/c New BI",
+      'caption': "Run 5387: 1 GeV/c New BI",
+      'color': root.kBlue-7,
       'cuts': "*"+cutGoodBeamline,
     },
+    {
+      'fn': "piAbsSelector_run5387_v5_444ac9a5.root",
+      'name': "run5387_newBI_allEvts",
+      'title': "Run 5387: 1 GeV/c New BI All Evts",
+      'caption': "Run 5387: 1 GeV/c New BI All Evts",
+      'color': root.kBlue-7,
+      'cuts': "*"+cutGoodBeamline,
+    },
+#    {
+#      'fn': "piAbsSelector_run5432_v3.root",
+#      'name': "run5432",
+#      'title': "Run 5432: 2 GeV/c",
+#      'caption': "Run 5432: 2 GeV/c",
+#      'color': root.kGreen+3,
+#      'cuts': "*"+cutGoodBeamline,
+#    },
     #{
     #  'fn': "PiAbs_redoBeamEvent_run5826.root",
     #  'name': "run5826_redo",
@@ -680,7 +698,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -693,7 +711,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -726,7 +744,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 1 && CKov1Status == 1)",
       'funcs': functions,
       'caption': "Both Cherenkov Detectors Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -740,7 +758,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 0 && CKov1Status == 0)",
       'funcs': functions,
       'caption': "Neither Cherenkov Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -753,7 +771,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -767,7 +785,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 1 && CKov1Status == 1)",
       'funcs': functions,
       'caption': "Both Cherenkov Detectors Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -781,7 +799,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 1 && CKov1Status == 0)",
       'funcs': functions,
       'caption': "Only Cherenkov 0 Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -795,7 +813,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 0 && CKov1Status == 1)",
       'funcs': functions,
       'caption': "Only Cherenkov 1 Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -809,7 +827,7 @@ if __name__ == "__main__":
       'cuts': "(CKov0Status == 0 && CKov1Status == 0)",
       'funcs': functions,
       'caption': "Neither Cherenkov Fired",
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -822,7 +840,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "1",
       #'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'logz': True,
@@ -835,7 +853,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "(TOFChan == 0)",
       #'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'captionright3': "TOF Channel 0",
@@ -849,7 +867,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "(TOFChan == 1)",
       #'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'captionright3': "TOF Channel 1",
@@ -863,7 +881,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "(TOFChan == 2)",
       #'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'captionright3': "TOF Channel 2",
@@ -877,7 +895,7 @@ if __name__ == "__main__":
       'var': "TOF-{}:beamMom*{}".format(tofOffset,momSF),
       'cuts': "(TOFChan == 3)",
       #'funcs': functions,
-      'captionright1': "Lines Assume d = {:.1f} m".format(tofDistance),
+      'captionright1': "Lines Assume d = {:.3f} m".format(tofDistance),
       'captionright2': "Momentum Scaled by {:.2f}".format(momSF),
       'captionright3': "TOF = Raw TOF - {:.2f} ns".format(tofOffset),
       'captionright3': "TOF Channel 3",
@@ -1030,12 +1048,12 @@ if __name__ == "__main__":
     #  'cuts': "CKov0Status == -1 && CKov1Status == -1",
     #},
   ]
-  #for i, histConfig in enumerate(histConfigs):
-  #  histConfig['color'] = COLORLIST[i]
-  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",nMax=NMAX)
-  #for histConfig in histConfigs:
-  #  histConfig['logy'] = True
-  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
+  for i, histConfig in enumerate(histConfigs):
+    histConfig['color'] = COLORLIST[i]
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",nMax=NMAX)
+  for histConfig in histConfigs:
+    histConfig['logy'] = True
+  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_TOF_KCovCuts_",outSuffix="_logyHist",nMax=NMAX)
 
   histConfigs= [
     {
