@@ -97,6 +97,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
           mcStack.Add(mcHist)
       if printIntegral and not (mcStack is None):
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
+      fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -106,6 +107,8 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       mcStack.Draw("histsame")
       for dataHist in dataHists:
         dataHist.Draw("esame")
+      for fitFunc in fitFuncs:
+        fitFunc.Draw("csame")
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [fileConfig['title'] for fileConfig in fileConfigMCs]
       legOptions = ["lep"]*len(fileConfigDatas)+["F"]*len(fileConfigMCs)
       leg = drawNormalLegend(dataHists+mcHists,labels,legOptions,wide=True)
@@ -209,6 +212,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
           nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
         if printIntegral and not (mcStack is None):
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
+        fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
         axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -220,6 +224,8 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         mcStack.Draw("histsame")
         for dataHist in dataHists:
           dataHist.Draw("esame")
+        for fitFunc in fitFuncs:
+          fitFunc.Draw("csame")
         labels = [fileConfig['title'] for fileConfig in fileConfigDatas]
         legOptions = ["lep"]*len(fileConfigDatas)
         labelHists = dataHists
@@ -343,6 +349,7 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
           mcStack.Add(mcHist)
       if printIntegral and not (mcStack is None):
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
+      fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -352,7 +359,11 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       mcStack.Draw("histsame")
       for dataHist in dataHists:
         dataHist.Draw("esame")
-
+      for fitFunc in fitFuncs:
+        #fitFunc.SetLineColor(root.kMagenta)
+        #fitFunc.SetLineWidth(20)
+        fitFunc.Draw("csame")
+        print "Drawing fitFunc", fitFunc
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [catConfig['title'] for catConfig in catConfigs]
       legOptions = ["lep"]*len(dataHists)+["F"]*len(catConfigs)
       leg = drawNormalLegend(dataHists+catHists,labels,legOptions,wide=True)

@@ -629,6 +629,50 @@ def normToBinWidth(hist):
       hist.SetBinError(i,binError/binWidth)
     return hist
 
+def fitAndDrawHists(hists,histConfig):
+  """
+  fits the histogram if and how the options in histConfig and fileConfig say
+
+  histConfig['fitFunc']: if present then fit to the (clone) of the given fit function or use the string, e.g. gausn
+  """
+  fitFunc = None
+  fitOpt = "ILSMENV"
+  fitDefParams = None
+  fitOnlyFWHM = None
+  if "fitFunc" in histConfig: fitFunc = histConfig["fitFunc"]
+  if "fitOpt" in histConfig: fitOpt = histConfig["fitOpt"]
+  if "fitDefParams" in histConfig: fitDefParams = histConfig["fitDefParams"]
+  if "fitOnlyFWHM" in histConfig: fitOnlyFWHM = histConfig["fitOnlyFWHM"]
+  result = []
+  if fitFunc:
+    for hist in hists:
+      xmin = hist.GetXaxis().GetBinLowEdge(0)
+      xmax = hist.GetXaxis().GetBinUpEdge(hist.GetNbinsX())
+      if fitOnlyFWHM:
+        fracHalfMax = 0.5
+        if type(fitOnlyFWHM) is float:
+          fracHalfMax = fitOnlyFWHM
+        print "fracHalfMax",fracHalfMax
+        xmin, xmax = getHistFracMaxVals(hist,fracHalfMax)
+        print "Fit range: ",xmin, xmax
+      thisFitFunc = None
+      if type(fitFunc) is bool:
+        thisFitFunc = root.TF1(uuid.uuid1().hex,"gausn(0)",xmin,xmax)
+      elif type(fitFunc) is str:
+        thisFitFunc = root.TF1(uuid.uuid1().hex,fitFunc,xmin,xmax)
+      elif type(fitFunc) is root.TF1:
+        thisFitFunc = fitFunc.Copy(uuid.uuid1().hex)
+      else:
+        raise Exception("Don't know type of 'fitFunc': ",fitFunc)
+      if fitDefParams:
+        for iParam in range(len(fitDefParams)):
+          thisFitFunc.SetParameter(iParam,fitDefParams[iParam])
+      thisFitFunc.SetLineColor(hist.GetLineColor())
+      fitResult = hist.Fit(fitFunc,fitOpt)
+      fitResult.Print()
+      result.append(thisFitFunc)
+  return result
+
 class HistFile(dict):
 
   def __init__(self,filename):

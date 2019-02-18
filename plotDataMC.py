@@ -29,7 +29,7 @@ if __name__ == "__main__":
   primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut#+rejectThroughgoingCut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-  weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
+  weightStr = "1"+primaryTrackCuts+stoppingProtonCut
 
   #nData = 224281.0
   logy = False
@@ -109,8 +109,8 @@ if __name__ == "__main__":
       #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       'cuts': "*(truePrimaryPDG == 2212)", # for protons
       #'scaleFactor': 6.128342245989304, # for pions
-      'scaleFactor': 3.8878923766816142, # for protons no stopping cut
-      #'scaleFactor': 4.637362637362638, # for protons stopping cut
+      #'scaleFactor': 3.8878923766816142, # for protons no stopping cut
+      'scaleFactor': 13.313953488372093, # for protons stopping cut
       #'scaleFactor': 6.346153846153846*0.7926829268292683, # for pions stopping cut
     },
     #{
@@ -907,6 +907,10 @@ if __name__ == "__main__":
       'cuts': weightStr,
       #'normalize': True,
       'logy': logy,
+      'fitFunc': "gaus",
+      #'fitDefParams': [200,0.9,0.1],
+      #'fitOnlyFWHM': 0.4,
+      'printIntegral': True,
     },
     {
       'name': "RatioPFBeamPrimEnergySumCSDAMuAndzWireEnergySum_ajib",
@@ -1221,23 +1225,24 @@ if __name__ == "__main__":
     #if histConfigs[i]['name'] != "pWC":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton_corr":
-    if (not ("Ratio" in histConfigs[i]['name'])) and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
-        and (not ("EnergySum" in histConfigs[i]['name'])) \
-        and (not ("kinWC" in histConfigs[i]['name'])) \
-        and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
-        and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
-        and histConfigs[i]['name'] != "zWiredEdx_ajib" \
-        and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
-        and histConfigs[i]['name'] != "zWirePartKinInteract" \
-        and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
-        and (histConfigs[i]['name'] != "pWC") \
-        and (histConfigs[i]['name'] != "TOF") \
-        and (histConfigs[i]['name'] != "PFBeamPrimXs") \
-        and (histConfigs[i]['name'] != "PFBeamPrimYs") \
-        and (histConfigs[i]['name'] != "PFBeamPrimZs") \
-        and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
-        and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
-        and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
+    if histConfigs[i]['name'] != "RatiozWireEnergySum_ajibAndKinWCProton":
+#    if (not ("Ratio" in histConfigs[i]['name'])) and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
+#        and (not ("EnergySum" in histConfigs[i]['name'])) \
+#        and (not ("kinWC" in histConfigs[i]['name'])) \
+#        and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
+#        and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
+#        and histConfigs[i]['name'] != "zWiredEdx_ajib" \
+#        and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
+#        and histConfigs[i]['name'] != "zWirePartKinInteract" \
+#        and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
+#        and (histConfigs[i]['name'] != "pWC") \
+#        and (histConfigs[i]['name'] != "TOF") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimXs") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimYs") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimZs") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
+#        and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
     #if (not ("zWirePartKin" in histConfigs[i]['name'])) or histConfigs[i]["name"] == "zWirePartKin":
     #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
       histConfigs.pop(i)
@@ -1521,4 +1526,4 @@ if __name__ == "__main__":
     },
   ]
 
-  plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
+  #plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)

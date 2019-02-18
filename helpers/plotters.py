@@ -96,6 +96,7 @@ def plotManyHistsOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
     axisHist = makeStdAxisHist(hists,logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
     axisHist.Draw()
     lines = drawVHLinesForPlot(axisHist,histConfigs)
+    fitFuncs = []
     for h in reversed(hists):
       if "efficiencyDenomCuts" in histConfig and type(histConfig["efficiencyDenomCuts"]) == str:
         h.Draw("PZ0same")
@@ -104,6 +105,7 @@ def plotManyHistsOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
         h.Draw("Esame")
       else:
         h.Draw("histsame")
+      fitFuncs.append(fitAndDrawHists(h,histConfig))
     labels = [histConfig['title'] for histConfig in histConfigs]
     for iHist in range(len(hists)):
       histConfig = histConfigs[iHist]
@@ -297,6 +299,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
       canvas.SetLogx(logx)
       canvas.SetLogz(logz)
       prof = None
+      fitFuncs = []
       if doProfileX:
         if "profileStdDev" in histConfig and histConfig["profileStdDev"]:
           prof = hist.ProfileX(hist.GetName()+"_pfx",1,-1,'s')
@@ -349,6 +352,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
           hist.Draw("Esame")
         else:
           hist.Draw("histsame")
+        fitFuncs.append(fitAndDrawHists(hist,histConfig))
       if writeImages and writeImageFile and writeImageHist:
         lines = drawVHLinesForPlot(axisHist,histConfig)
         for func in funcs:
@@ -482,6 +486,7 @@ def plotManyFilesOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",ou
         h.Draw("PZ0same")
       else:
         h.Draw("histsame")
+    fitFuncs = fitAndDrawHists(hist,histConfig)
     labels = [fileConfig['title'] for fileConfig in fileConfigs]
     if "showMedian" in histConfig and histConfig["showMedian"]:
         for iHist in range(len(hists)):
@@ -570,11 +575,13 @@ def plotManyFilesOneNMinusOnePlot(fileConfigs,cutConfigs,canvas,treename,outPref
         lines = drawVHLinesForPlot(axisHist,histConfig)
         for cutSpan in cutSpans:
           vspans.append(drawVSpan(axisHist,cutSpan[0],cutSpan[1]))
+        fitFuncs = []
         for h in reversed(hists):
           if "efficiencyDenomCuts" in histConfig and type(histConfig["efficiencyDenomCuts"]) == str:
             h.Draw("PZ0same")
           else:
             h.Draw("histsame")
+          fitFuncs.append(fitAndDrawHists(h,histConfig))
         labels = [fileConfig['title'] for fileConfig in fileConfigs]
         leg = drawNormalLegend(hists,labels,wide=True)
         drawAnnotationsForPlots(canvas,axisHist,fileConfigs,histConfig)
