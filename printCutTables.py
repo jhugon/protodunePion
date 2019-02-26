@@ -45,36 +45,21 @@ if __name__ == "__main__":
   ]
 
   fileConfigsData = [
-    #{
-    #  'fn': "PiAbsSelector.root",
-    #  'name': "test",
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5141.root",
-    #  'name': "run5141",
-    #  'title': "Run 5141 7 GeV/c",
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5145.root",
-    #  'name': "run5145",
-    #  'title': "Run 5145 7 GeV/c",
-    #},
-#    {
-#      'fn': "piAbsSelector_run5174.root",
-#      'name': "run5174",
-#      'title': "Run 5174 7 GeV/c",
-#      'caption': "Run 5174 7 GeV/c",
-#    },
-    #{
-    #  'fn': "piAbsSelector_run5387.root",
-    #  'name': "run5387",
-    #  'title': "Run 5387 1 GeV/c",
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5430.root",
-    #  'name': "run5430",
-    #  'title': "Run 5430 2 GeV/c",
-    #},
+    {
+      'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
+      'name': "run5387",
+      'title': "Run 5387 1 GeV/c",
+    },
+    {
+      'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
+      'name': "run5432",
+      'title': "Run 5432 2 GeV/c",
+    },
+    {
+      'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
+      'name': "run5145",
+      'title': "Run 5145 7 GeV/c",
+    },
     #{
     #  'fn': "piAbsSelector_run5758.root",
     #  'name': "run5758",
@@ -95,51 +80,6 @@ if __name__ == "__main__":
     #  'name': "run5834",
     #  'title': "Run 5834 0.3 GeV/c",
     #},
-#    {
-#      'fn': "PiAbs_redoBeamEvent_run5387_new.root",
-#      'name': "run5387_redo_new",
-#      'title': "Run 5387: 1 GeV/c Nov 28",
-#    },
-#    {
-#      'fn': "piAbsSelector_run5387_v3.root",
-#      'name': "run5387_v3",
-#      'title': "Run 5387: 1 GeV/c Dec 4",
-#    },
-#    {
-#      'fn': "PiAbs_redoBeamEvent_run5430_new.root",
-#      'name': "run5430_redo_new",
-#      'title': "Run 5430: 2 GeV/c Nov 28",
-#    },
-#    {
-#      'fn': "piAbsSelector_run5432_v3.root",
-#      'name': "run5432_v3",
-#      'title': "Run 5432: 2 GeV/c Dec 4",
-#    },
-#    {
-#      'fn': "piAbsSelector_run5145_v3.root",
-#      'name': "run5145_v3",
-#      'title': "Run 5145: 7 GeV/c Dec 4",
-#    },
-#    {
-#      'fn': "PiAbs_redoBeamEvent_run5826_new.root",
-#      'name': "run5826_redo_new",
-#      'title': "Run 5826: 0.5 GeV/c Nov 28",
-#    },
-#    {
-#      'fn': "PiAbs_redoBeamEvent_run5834_new.root",
-#      'name': "run5834_redo_new",
-#      'title': "Run 5834: 0.3 GeV/c Nov 28",
-#    },
-    {
-      'fn': "piAbsSelector_run5432_v4.7.root",
-      'name': "run5432_v4.7",
-      'title': "Run 5432: 2 GeV/c Dec 13",
-    },
-    {
-      'fn': "piAbsSelector_run5145_v4.7.root",
-      'name': "run5145_v4.7",
-      'title': "Run 5145: 7 GeV/c Dec 13",
-    },
   ]
 
   #PrintCutTable(fileConfigsData,cutConfigs,"PiAbsSelector/tree",nMax=NMAX)
@@ -236,25 +176,25 @@ if __name__ == "__main__":
     },
     "2": {
         "p": "CKov1Status == 0",
-        "k": "1", # no setup for this
+        "k": "0", # no setup for this
         "pi": "CKov1Status == 0",
         "e": "CKov1Status == 1",
     },
     "1": {
         "p": "CKov1Status == 0",
-        "k": "1", # no setup for this
+        "k": "0", # no setup for this
         "pi": "CKov1Status == 0",
         "e": "CKov1Status == 1",
     },
     "0.5": {
         "p": "CKov1Status == 0",
-        "k": "1", # no setup for this
+        "k": "0", # no setup for this
         "pi": "CKov1Status == 0",
         "e": "CKov1Status == 1",
     },
     "0.3": {
         "p": "CKov1Status == 0",
-        "k": "1", # no setup for this
+        "k": "0", # no setup for this
         "pi": "CKov1Status == 0",
         "e": "CKov1Status == 1",
     },
@@ -281,28 +221,28 @@ if __name__ == "__main__":
     result += ")"
     return result
 
-  print "\n\n"
-  print "Good Beamline:"
-  PrintCutTable(fileConfigsData,cutConfigsGoodBeamline,"PiAbsSelector/tree",nMax=NMAX,errors=True)
+#  print "\n\n"
+#  print "Good Beamline:"
+#  PrintCutTable(fileConfigsData,cutConfigsGoodBeamline,"PiAbsSelector/tree",nMax=NMAX,errors=True)
 
-  print "\n\n"
-  print "Pion Selection:"
-  cutConfigsPion = [
-    #{"name": "All","cut": "1"},
-    cutGoodBeamline,
-    {"name": "All Beam-side APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"},
-#    {"name": "All APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20 && nGoodFEMBs[1]==20 && nGoodFEMBs[3]==20 && nGoodFEMBs[5]==20))"},
-    {"name": "Cherenkov Pion","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
-    {"name": "TOF Pion","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
-    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
-    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
-    {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
-    {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
-    {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
-    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"},
-    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"},
-  ]
-  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX,errors=True)
+#  print "\n\n"
+#  print "Pion Selection:"
+#  cutConfigsPion = [
+#    #{"name": "All","cut": "1"},
+#    cutGoodBeamline,
+#    {"name": "All Beam-side APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"},
+##    {"name": "All APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20 && nGoodFEMBs[1]==20 && nGoodFEMBs[3]==20 && nGoodFEMBs[5]==20))"},
+#    {"name": "Cherenkov Pion","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
+#    {"name": "TOF Pion","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
+#    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
+#    {"name": "Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
+#    {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
+#    {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
+#    {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
+#    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"},
+#    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"},
+#  ]
+#  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX,errors=True)
 
 #  print "\n\n"
 #  print "Electron Selection:"
@@ -339,3 +279,39 @@ if __name__ == "__main__":
 #    {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
 #  ]
 #  PrintCutTable(fileConfigsData,cutConfigsKaon,"PiAbsSelector/tree",nMax=NMAX)
+
+  cutConfigsBeamElectron = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+    {"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
+    {"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
+  ]
+
+  cutConfigsBeamPion = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+    {"name": "TOF Pion/Muon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
+    {"name": "Cherenkov Pion/Muon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
+  ]
+
+  cutConfigsBeamKaon = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+    {"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
+    {"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
+  ]
+
+  cutConfigsBeamProton = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+    {"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
+    {"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
+  ]
+
+  print "\n\n"
+  print "Beamline Electron Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsBeamElectron,"PiAbsSelector/tree",nMax=NMAX)
+
+  print "\n\n"
+  print "Beamline Pion/Muon Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsBeamPion,"PiAbsSelector/tree",nMax=NMAX)
+
+  print "\n\n"
+  print "Beamline Kaon Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsBeamKaon,"PiAbsSelector/tree",nMax=NMAX)
+
+  print "\n\n"
+  print "Beamline Proton Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsBeamProton,"PiAbsSelector/tree",nMax=NMAX)
