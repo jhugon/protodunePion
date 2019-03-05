@@ -103,10 +103,17 @@ def runNoArgs():
   print "MCC11 FLF 1 GeV v4.11 -- True Other Stopping"
   printEvents("piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,friendTreeName="friend",friendTreeFileName="friendTree_piAbsSelector_mcc11_3ms_1p0GeV_v4.11.root",printFileBasename=True)
 
+  varNames = ["BIElectron","BIMuon","BIPion","BIKaon","BIProton","BIDeuteron"]
+  varNames = [v+"7GeV" for v in varNames] + ["TOF","CKov0Status","CKov1Status"]
+  cuts = {
+    "triggerBits": ["==",12],
+    "BITriggerMatched": ["==",1],
+  }
+  printEvents("/scratch/jhugon/v08_09_00/srcs/dunetpc/dune/LSU/piAbsSelector_run5142.root","PiAbsSelector/tree",varNames,cuts=cuts,nMax=100000,printFileBasename=True)
+
 if __name__ == "__main__":
   import argparse
 
-  print "start"
   parser = argparse.ArgumentParser(description='Print ROOT TTree info')
   parser.add_argument('-f','--file',
                       help='file name tree is in')
@@ -126,7 +133,6 @@ if __name__ == "__main__":
 
   
   args = parser.parse_args()
-  print args
   if bool(args.file) ^ bool(args.variables):
     print "Error: You must either use none of or both of: --file and --variables"
     sys.exit(1)
@@ -141,7 +147,4 @@ if __name__ == "__main__":
       tree.AddFriend(args.friendTreeName,args.friendFile)
     tree.Scan(args.variables,args.cuts)
   else:
-    #runNoArgs()
-    print "would run normal stuff"
-
-  print "end"
+    runNoArgs()

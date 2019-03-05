@@ -46,17 +46,20 @@ if __name__ == "__main__":
 
   fileConfigsData = [
     {
-      'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
+      #'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
+      'fn': "piAbsSelector_run5387_e453e2e5.root", # new BI
       'name': "run5387",
       'title': "Run 5387 1 GeV/c",
     },
     {
-      'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
+      #'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
+      'fn': "piAbsSelector_run5432_e453e2e5.root", # new BI
       'name': "run5432",
       'title': "Run 5432 2 GeV/c",
     },
     {
-      'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
+      #'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
+      'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
       'name': "run5145",
       'title': "Run 5145 7 GeV/c",
     },
@@ -200,6 +203,51 @@ if __name__ == "__main__":
     },
   }
 
+  bigCuts = {
+    "7": {
+        "p": "BIProton7GeV",
+        "pi": "BIPion7GeV",
+        "e": "BIElectron7GeV",
+        "k": "BIKaon7GeV",
+    },
+    "6": {
+        "p": "BIProton6GeV",
+        "pi": "BIPion6GeV",
+        "e": "BIElectron6GeV",
+        "k": "BIKaon6GeV",
+    },
+    "3": {
+        "p": "BIProton3GeV",
+        "pi": "BIPion3GeV",
+        "e": "BIElectron3GeV",
+        "k": "BIKaon3GeV",
+    },
+    "2": {
+        "p": "BIProton2GeV",
+        "pi": "BIPion2GeV",
+        "e": "BIElectron2GeV",
+        "k": "BIKaon2GeV",
+    },
+    "1": {
+        "p": "BIProton1GeV",
+        "pi": "BIPion1GeV",
+        "e": "BIElectron1GeV",
+        "k": "BIKaon1GeV",
+    },
+    "0.5": {
+        "p": "BIProton0p5GeV",
+        "pi": "BIPion0p5GeV",
+        "e": "BIElectron0p5GeV",
+        "k": "BIKaon0p5GeV",
+    },
+    "0.3": {
+        "p": "BIProton0p3GeV",
+        "pi": "BIPion0p3GeV",
+        "e": "BIElectron0p3GeV",
+        "k": "BIKaon0p3GeV",
+    },
+  }
+
   def getCutForAllRuns(fileConfigs,cutDict,particle):
     result = "( isMC"
     for iFile, fileConfig in enumerate(fileConfigs):
@@ -281,23 +329,27 @@ if __name__ == "__main__":
 #  PrintCutTable(fileConfigsData,cutConfigsKaon,"PiAbsSelector/tree",nMax=NMAX)
 
   cutConfigsBeamElectron = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
-    {"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
+    {"name": "Official BI Electron","cut": getCutForAllRuns(fileConfigsData,bigCuts,'e')},
+    #{"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
+    #{"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
   ]
 
   cutConfigsBeamPion = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "TOF Pion/Muon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
-    {"name": "Cherenkov Pion/Muon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
+    {"name": "Official BI Pion/Muon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'pi')},
+    #{"name": "TOF Pion/Muon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
+    #{"name": "Cherenkov Pion/Muon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
   ]
 
   cutConfigsBeamKaon = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
-    {"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
+    {"name": "Official BI Kaon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'k')},
+    #{"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
+    #{"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
   ]
 
   cutConfigsBeamProton = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
-    {"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
+    {"name": "Official BI Proton","cut": getCutForAllRuns(fileConfigsData,bigCuts,'p')},
+    #{"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
+    #{"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
   ]
 
   print "\n\n"
