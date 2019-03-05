@@ -350,6 +350,9 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       if printIntegral and not (mcStack is None):
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
       fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
+      if len(fitFuncs) > 0:
+        fitFuncs[0].SetLineStyle(2)
+        fitFuncs[0].SetLineColor(root.kBlack)
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -359,11 +362,16 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       mcStack.Draw("histsame")
       for dataHist in dataHists:
         dataHist.Draw("esame")
+        for func in dataHist.GetListOfFunctions():
+          print "data func: ", func
       for fitFunc in fitFuncs:
-        #fitFunc.SetLineColor(root.kMagenta)
-        #fitFunc.SetLineWidth(20)
         fitFunc.Draw("csame")
         print "Drawing fitFunc", fitFunc
+        for iPar in range(fitFunc.GetNpar()):
+            minLimit = root.Double()
+            maxLimit = root.Double()
+            fitFunc.GetParLimits(iPar,minLimit,maxLimit)
+            print "  ", iPar,  fitFunc.GetParameter(iPar), minLimit, maxLimit
       labels = [fileConfig['title'] for fileConfig in fileConfigDatas] + [catConfig['title'] for catConfig in catConfigs]
       legOptions = ["lep"]*len(dataHists)+["F"]*len(catConfigs)
       leg = drawNormalLegend(dataHists+catHists,labels,legOptions,wide=True)

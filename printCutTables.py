@@ -13,6 +13,8 @@ momSF=1.0
 
 if __name__ == "__main__":
 
+  c = root.TCanvas()
+
   NMAX=10000000000
   #NMAX=10
 
@@ -27,6 +29,31 @@ if __name__ == "__main__":
     {"name": "Exactly 1 Beam Tracks","cut": "nBeamTracks == 1"},
     {"name": "Exactly 1 Beam Momenta","cut": "nBeamMom == 1"},
   ]
+
+  cutConfigsGoodBeamlineOld = [
+    #{"name": "All","cut": "1"},
+    {"name": "Timing Beam Trigger","cut": "triggerIsBeam == 1"},
+    {"name": "Matched Beam Trigger to Timing Trigger","cut": "BITriggerMatchedOld > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "CTB BI Info Valid","cut": "BITriggerOld >= 0"}, # valid BI info in CTB
+    {"name": "TOF Info Valid","cut": "BITriggerOld > 0"}, # TOF coincidence according to CTB
+    {"name": "> 0 Beam Tracks","cut": "nBeamTracksOld > 0"},
+    {"name": "> 0 Beam Momenta","cut": "nBeamMomOld > 0"},
+    {"name": "Exactly 1 Beam Tracks","cut": "nBeamTracksOld == 1"},
+    {"name": "Exactly 1 Beam Momenta","cut": "nBeamMomOld == 1"},
+  ]
+
+  cutConfigsGoodBeamlineNew = [
+    #{"name": "All","cut": "1"},
+    {"name": "Timing Beam Trigger","cut": "triggerIsBeam == 1"},
+    {"name": "Matched Beam Trigger to Timing Trigger","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "> 0 Beam Tracks","cut": "nBeamTracks > 0"},
+    {"name": "> 0 Beam Momenta","cut": "nBeamMom > 0"},
+    {"name": "Exactly 1 Beam Tracks","cut": "nBeamTracks == 1"},
+    {"name": "Exactly 1 Beam Momenta","cut": "nBeamMom == 1"},
+  ]
+
+  cutGoodBeamlineOld = "(isMC || (triggerIsBeam == 1 && BITriggerMatchedOld > 0 && BITriggerOld > 0 && nBeamTracksOld == 1 && nBeamMomOld == 1))"
+  cutGoodBeamlineNew = "(isMC || (triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"
 
   cutGoodBeamline = {"name":"Silver Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0))"}
   cutGoodBeamline = {"name":"Golden Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"}
@@ -47,19 +74,22 @@ if __name__ == "__main__":
   fileConfigsData = [
     {
       #'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
-      'fn': "piAbsSelector_run5387_e453e2e5.root", # new BI
+      #'fn': "piAbsSelector_run5387_e453e2e5.root", # new BI
+      'fn': "piAbs_run5387_1GeV_testOldNewBeamEvent_v1.root",
       'name': "run5387",
       'title': "Run 5387 1 GeV/c",
     },
     {
       #'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
-      'fn': "piAbsSelector_run5432_e453e2e5.root", # new BI
+      #'fn': "piAbsSelector_run5432_e453e2e5.root", # new BI
+      'fn': "piAbs_run5432_2GeV_testOldNewBeamEvent_v1.root",
       'name': "run5432",
       'title': "Run 5432 2 GeV/c",
     },
     {
       #'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
-      'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
+      #'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
+      'fn': "piAbs_run5145_7GeV_testOldNewBeamEvent_v1.root",
       'name': "run5145",
       'title': "Run 5145 7 GeV/c",
     },
@@ -248,7 +278,7 @@ if __name__ == "__main__":
     },
   }
 
-  def getCutForAllRuns(fileConfigs,cutDict,particle):
+  def getCutForAllRuns(fileConfigs,cutDict,particle,appendOld=False):
     result = "( isMC"
     for iFile, fileConfig in enumerate(fileConfigs):
       momStr = ""
@@ -264,6 +294,8 @@ if __name__ == "__main__":
       else:
         raise Exception("Couldn't find run number in title string: "+fileConfig['title'])
       thisCut = cutDict[momStr][particle]
+      if appendOld:
+        thisCut += "Old"
       thisCut = "(runNumber == {} && {})".format(runStr,thisCut)
       result += " || ("+thisCut+")"
     result += ")"
@@ -327,43 +359,84 @@ if __name__ == "__main__":
 #    {"name": "Pandora Tracklike","cut": "PFBeamPrimIsTracklike[0]"},
 #  ]
 #  PrintCutTable(fileConfigsData,cutConfigsKaon,"PiAbsSelector/tree",nMax=NMAX)
+#
+#  cutConfigsBeamElectron = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+#    {"name": "Official BI Electron","cut": getCutForAllRuns(fileConfigsData,bigCuts,'e')},
+#    #{"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
+#    #{"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
+#  ]
+#
+#  cutConfigsBeamPion = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+#    {"name": "Official BI Pion/Muon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'pi')},
+#    #{"name": "TOF Pion/Muon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
+#    #{"name": "Cherenkov Pion/Muon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
+#  ]
+#
+#  cutConfigsBeamKaon = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+#    {"name": "Official BI Kaon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'k')},
+#    #{"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
+#    #{"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
+#  ]
+#
+#  cutConfigsBeamProton = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
+#    {"name": "Official BI Proton","cut": getCutForAllRuns(fileConfigsData,bigCuts,'p')},
+#    #{"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
+#    #{"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
+#  ]
+#
+#  print "\n\n"
+#  print "New Beamline Electron Selection:"
+#  PrintCutTable(fileConfigsData,cutConfigsBeamElectron,"PiAbsSelector/tree",nMax=NMAX)
+#
+#  print "\n\n"
+#  print "New Beamline Pion/Muon Selection:"
+#  PrintCutTable(fileConfigsData,cutConfigsBeamPion,"PiAbsSelector/tree",nMax=NMAX)
+#
+#  print "\n\n"
+#  print "New Beamline Kaon Selection:"
+#  PrintCutTable(fileConfigsData,cutConfigsBeamKaon,"PiAbsSelector/tree",nMax=NMAX)
+#
+#  print "\n\n"
+#  print "New Beamline Proton Selection:"
+#  PrintCutTable(fileConfigsData,cutConfigsBeamProton,"PiAbsSelector/tree",nMax=NMAX)
 
-  cutConfigsBeamElectron = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "Official BI Electron","cut": getCutForAllRuns(fileConfigsData,bigCuts,'e')},
-    #{"name": "TOF Electron","cut": getCutForAllRuns(fileConfigsData,tofCuts,'e')},
-    #{"name": "Cherenkov Electron","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'e')},
+  ###########################################################################################
+  ###########################################################################################
+  ###########################################################################################
+
+  print "\n\n"
+  print "Old Beamline Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineOld,"PiAbsSelector/tree",nMax=NMAX)
+
+  print "\n\n"
+  print "New Beamline Selection:"
+  PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineNew,"PiAbsSelector/tree",nMax=NMAX)
+
+  ###########################################################################################
+  ###########################################################################################
+  ###########################################################################################
+
+  catConfigsSpeciesOld = [
+    {"name": "Good BI Event","cut": cutGoodBeamlineOld},
+    {"name": "BI Electron","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'e',appendOld=True)+" && "+cutGoodBeamlineOld+")"},
+    {"name": "BI Pion","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'pi',appendOld=True)+" && "+cutGoodBeamlineOld+")"},
+    {"name": "BI Kaon","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'k',appendOld=True)+" && "+cutGoodBeamlineOld+")"},
+    {"name": "BI Proton","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'p',appendOld=True)+" && "+cutGoodBeamlineOld+")"},
   ]
 
-  cutConfigsBeamPion = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "Official BI Pion/Muon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'pi')},
-    #{"name": "TOF Pion/Muon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'pi')},
-    #{"name": "Cherenkov Pion/Muon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'pi')},
-  ]
-
-  cutConfigsBeamKaon = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "Official BI Kaon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'k')},
-    #{"name": "TOF Kaon","cut": getCutForAllRuns(fileConfigsData,tofCuts,'k')},
-    #{"name": "Cherenkov Kaon","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'k')},
-  ]
-
-  cutConfigsBeamProton = [{"name": "All","cut": "1"}]+cutConfigsGoodBeamline+[
-    {"name": "Official BI Proton","cut": getCutForAllRuns(fileConfigsData,bigCuts,'p')},
-    #{"name": "TOF Proton","cut": getCutForAllRuns(fileConfigsData,tofCuts,'p')},
-    #{"name": "Cherenkov Proton","cut": getCutForAllRuns(fileConfigsData,cherenkovCuts,'p')},
+  catConfigsSpeciesNew = [
+    {"name": "Good BI Event","cut": cutGoodBeamlineNew},
+    {"name": "BI Electron","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'e')+" && "+cutGoodBeamlineNew+")"},
+    {"name": "BI Pion","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'pi')+" && "+cutGoodBeamlineNew+")"},
+    {"name": "BI Kaon","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'k')+" && "+cutGoodBeamlineNew+")"},
+    {"name": "BI Proton","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'p')+" && "+cutGoodBeamlineNew+")"},
   ]
 
   print "\n\n"
-  print "Beamline Electron Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsBeamElectron,"PiAbsSelector/tree",nMax=NMAX)
+  print "Old Beamline Categories:"
+  PrintPercentTable(fileConfigsData,catConfigsSpeciesOld,"PiAbsSelector/tree",nMax=NMAX)
 
   print "\n\n"
-  print "Beamline Pion/Muon Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsBeamPion,"PiAbsSelector/tree",nMax=NMAX)
+  print "New Beamline Categories:"
+  PrintPercentTable(fileConfigsData,catConfigsSpeciesNew,"PiAbsSelector/tree",nMax=NMAX)
 
-  print "\n\n"
-  print "Beamline Kaon Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsBeamKaon,"PiAbsSelector/tree",nMax=NMAX)
-
-  print "\n\n"
-  print "Beamline Proton Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsBeamProton,"PiAbsSelector/tree",nMax=NMAX)

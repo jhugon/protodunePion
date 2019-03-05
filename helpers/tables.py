@@ -361,3 +361,23 @@ class PrintCutTable:
             result[iRow].append("NaN")
     return result
 
+
+class PrintPercentTable(PrintCutTable):
+
+  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint):
+    """
+    similar to PrintCutTable, but just prints the percentages of the whole (first cutConfig) that each category 
+    (remaining cut configs) is
+    """
+
+    fileNames = self.getFileNames(fileConfigs)
+    cutNames = self.getCutNames(cutConfigs)
+    for fileConfig in fileConfigs:
+      loadTree(fileConfig,treename)
+    countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
+    countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
+    print "Individual Cuts"
+    printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    print "Individual Cuts Percentage of Top Row"
+    printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+

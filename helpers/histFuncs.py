@@ -636,7 +636,7 @@ def fitAndDrawHists(hists,histConfig):
   histConfig['fitFunc']: if present then fit to the (clone) of the given fit function or use the string, e.g. gausn
   """
   fitFunc = None
-  fitOpt = "ILSMENV"
+  fitOpt = "ILSMEN"
   fitDefParams = None
   fitOnlyFWHM = None
   if "fitFunc" in histConfig: fitFunc = histConfig["fitFunc"]
@@ -668,8 +668,20 @@ def fitAndDrawHists(hists,histConfig):
         for iParam in range(len(fitDefParams)):
           thisFitFunc.SetParameter(iParam,fitDefParams[iParam])
       thisFitFunc.SetLineColor(hist.GetLineColor())
+
+      minLimit = root.Double()
+      maxLimit = root.Double()
+      thisFitFunc.GetParLimits(2,minLimit,maxLimit)
+      print "sigma limits: ", minLimit, maxLimit
+      #thisFitFunc.FixParameter(2,0.05)
+      thisFitFunc.SetParLimits(2,0.02,0.06)
       fitResult = hist.Fit(fitFunc,fitOpt)
       fitResult.Print()
+      thisFitFunc.GetParLimits(2,minLimit,maxLimit)
+      print "sigma limits: ", minLimit, maxLimit
+      assert(fitResult.NPar() == thisFitFunc.GetNpar())
+      for iPar in range(fitResult.NPar()):
+        thisFitFunc.SetParameter(iPar,fitResult.Parameter(iPar))
       result.append(thisFitFunc)
   return result
 

@@ -908,8 +908,9 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
       'fitFunc': "gaus",
-      #'fitDefParams': [200,0.9,0.1],
-      #'fitOnlyFWHM': 0.4,
+      'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
+      #'fitDefParams': [250,0.9,0.005],
+      'fitOnlyFWHM': 0.4,
       'printIntegral': True,
     },
     {
