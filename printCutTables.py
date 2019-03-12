@@ -32,24 +32,24 @@ if __name__ == "__main__":
 
   cutConfigsGoodBeamlineOld = [
     #{"name": "All","cut": "1"},
-    {"name": "Timing Beam Trigger","cut": "triggerIsBeam == 1"},
-    {"name": "Matched Beam Trigger to Timing Trigger","cut": "BITriggerMatchedOld > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
-    {"name": "CTB BI Info Valid","cut": "BITriggerOld >= 0"}, # valid BI info in CTB
-    {"name": "TOF Info Valid","cut": "BITriggerOld > 0"}, # TOF coincidence according to CTB
-    {"name": "> 0 Beam Tracks","cut": "nBeamTracksOld > 0"},
-    {"name": "> 0 Beam Momenta","cut": "nBeamMomOld > 0"},
-    {"name": "Exactly 1 Beam Tracks","cut": "nBeamTracksOld == 1"},
-    {"name": "Exactly 1 Beam Momenta","cut": "nBeamMomOld == 1"},
+    {"name": "Timing Beam Trigger","cut": "isMC || triggerIsBeam == 1"},
+    {"name": "Matched Beam Trigger to Timing Trigger","cut": "isMC || BITriggerMatchedOld > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "CTB BI Info Valid","cut": "isMC || BITriggerOld >= 0"}, # valid BI info in CTB
+    {"name": "TOF Info Valid","cut": "isMC || BITriggerOld > 0"}, # TOF coincidence according to CTB
+    {"name": "> 0 Beam Tracks","cut": "isMC || nBeamTracksOld > 0"},
+    {"name": "> 0 Beam Momenta","cut": "isMC || nBeamMomOld > 0"},
+    {"name": "Exactly 1 Beam Tracks","cut": "isMC || nBeamTracksOld == 1"},
+    {"name": "Exactly 1 Beam Momenta","cut": "isMC || nBeamMomOld == 1"},
   ]
 
   cutConfigsGoodBeamlineNew = [
     #{"name": "All","cut": "1"},
-    {"name": "Timing Beam Trigger","cut": "triggerIsBeam == 1"},
-    {"name": "Matched Beam Trigger to Timing Trigger","cut": "BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
-    {"name": "> 0 Beam Tracks","cut": "nBeamTracks > 0"},
-    {"name": "> 0 Beam Momenta","cut": "nBeamMom > 0"},
-    {"name": "Exactly 1 Beam Tracks","cut": "nBeamTracks == 1"},
-    {"name": "Exactly 1 Beam Momenta","cut": "nBeamMom == 1"},
+    {"name": "Timing Beam Trigger","cut": "isMC || triggerIsBeam == 1"},
+    {"name": "Matched Beam Trigger to Timing Trigger","cut": "isMC || BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
+    {"name": "> 0 Beam Tracks","cut": "isMC || nBeamTracks > 0"},
+    {"name": "> 0 Beam Momenta","cut": "isMC || nBeamMom > 0"},
+    {"name": "Exactly 1 Beam Tracks","cut": "isMC || nBeamTracks == 1"},
+    {"name": "Exactly 1 Beam Momenta","cut": "isMC || nBeamMom == 1"},
   ]
 
   cutGoodBeamlineOld = "(isMC || (triggerIsBeam == 1 && BITriggerMatchedOld > 0 && BITriggerOld > 0 && nBeamTracksOld == 1 && nBeamMomOld == 1))"
@@ -59,21 +59,21 @@ if __name__ == "__main__":
   cutGoodBeamline = {"name":"Golden Beamline Event", "cut":"(isMC || (triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1))"}
 
   fileConfigsMC = [
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_1p0GeV_v4.12.root",
-    #  'name': "mcc11_sce_1p0GeV_v4.12",
-    #  'title': "MCC 11 1 GeV/c SCE",
-    #},
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_2p0GeV_v4.12.root",
-    #  'name': "mcc11_sce_2p0GeV_v4.12",
-    #  'title': "MCC 11 2 GeV/c SCE",
-    #},
-    #{
-    #  'fn': "piAbsSelector_mcc11_sce_7p0GeV_v4.12.root",
-    #  'name': "mcc11_sce_7p0GeV_v4.12",
-    #  'title': "MCC 11 7 GeV/c SCE",
-    #},
+    {
+      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v6.1_08b55104.root",
+      'name': "mcc11_sce_1p0GeV",
+      'title': "MCC 11 1 GeV/c SCE",
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v6.1_08b55104.root",
+      'name': "mcc11_sce_2p0GeV",
+      'title': "MCC 11 2 GeV/c SCE",
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v6.1_08b55104.root",
+      'name': "mcc11_sce_7p0GeV",
+      'title': "MCC 11 7 GeV/c SCE",
+    },
   ]
 
   fileConfigsData = [
@@ -81,7 +81,7 @@ if __name__ == "__main__":
       #'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
       #'fn': "piAbsSelector_run5387_e453e2e5.root", # new BI
       #'fn': "piAbs_run5387_1GeV_testOldNewBeamEvent_v3.root",
-      'fn': "piAbsSelector_run5387_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5387_v6_b49a88cb.root",
       'name': "run5387",
       'title': "Run 5387 1 GeV/c",
     },
@@ -89,27 +89,27 @@ if __name__ == "__main__":
       #'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
       #'fn': "piAbsSelector_run5432_e453e2e5.root", # new BI
       #'fn': "piAbs_run5432_2GeV_testOldNewBeamEvent_v3.root",
-      'fn': "piAbsSelector_run5432_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5432_v6_b49a88cb.root",
       'name': "run5432",
       'title': "Run 5432 2 GeV/c",
     },
     {
-      'fn': "piAbsSelector_run5770_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5786_v6_b49a88cb.root",
+      'name': "run5786",
+      'title': "Run 5786 3 GeV/c",
+    },
+    {
+      'fn': "piAbsSelector_data_run5770_v6_b49a88cb.root",
       'name': "run5770",
-      'title': "Run 5770 3 GeV/c",
+      'title': "Run 5770 6 GeV/c",
     },
     {
       #'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
       #'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
-      'fn': "piAbs_run5145_7GeV_testOldNewBeamEvent_v3.root",
+      'fn': "piAbsSelector_data_run5145_v6_b49a88cb.root",
       'name': "run5145",
       'title': "Run 5145 7 GeV/c",
     },
-    #{
-    #  'fn': "piAbsSelector_run5758.root",
-    #  'name': "run5758",
-    #  'title': "Run 5758 6 GeV/c",
-    #},
     #{
     #  'fn': "piAbsSelector_run5826.root",
     #  'name': "run5826",
@@ -456,7 +456,7 @@ if __name__ == "__main__":
     {"name": "Official BI Pion/Muon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'pi')},
     {"name": "All Beam-side APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"},
 #    {"name": "All APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20 && nGoodFEMBs[1]==20 && nGoodFEMBs[3]==20 && nGoodFEMBs[5]==20))"},
-#    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
+    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
     {"name": "1 Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
     {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
     {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
@@ -476,8 +476,8 @@ if __name__ == "__main__":
 
   print "\n\n"
   print "Pion Selection (Old BI):"
-  PrintCutTable(fileConfigsData,cutConfigsBeamPionOld,"PiAbsSelector/tree",nMax=NMAX)
+  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionOld,"PiAbsSelector/tree",nMax=NMAX)
 
   print "\n\n"
   print "Pion Selection (New BI):"
-  PrintCutTable(fileConfigsData,cutConfigsBeamPionNew,"PiAbsSelector/tree",nMax=NMAX)
+  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionNew,"PiAbsSelector/tree",nMax=NMAX)
