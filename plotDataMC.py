@@ -57,7 +57,8 @@ if __name__ == "__main__":
     #  'cuts': "*(BIProton7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     #},
     {
-      'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
+      #'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
+      'fn': "piAbsSelector_run5387_v6.1_08b55104_local.root",
       'name': "run5387",
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c",
@@ -109,7 +110,8 @@ if __name__ == "__main__":
       #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       'cuts': "*(truePrimaryPDG == 2212)", # for protons
       #'scaleFactor': 6.128342245989304, # for pions
-      'scaleFactor': 16.120192307692307, # for protons no stopping cut
+      #'scaleFactor': 16.120192307692307, # for protons no stopping cut
+      'scaleFactor': 6.06329085641953, # for protons no stopping cut local
       #'scaleFactor': 14.162790697674419, # for protons stopping cut
       #'scaleFactor': 6.346153846153846*0.7926829268292683, # for pions stopping cut
     },

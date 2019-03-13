@@ -13,12 +13,163 @@ tofDistance = 28.575
 lightTime = tofDistance/2.99e8*1e9
 momSF=1.0
 
-cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0)"
-#cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+#cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0)"
+cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+
+momentumBins = [80,0,8]
+momentumBins = [50,0,2.5]
+keBins = momentumBins
+keInteractBins = [200,-10,10]
+keInteractBins = [100,-2.5,2.5]
+
+cutGoodBeamline = "(BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
+
+deltaXTrackBICut = "*((isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30)))"
+deltaYTrackBICut = "*((isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27)))"
+rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
+primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut#+rejectThroughgoingCut
+stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
+stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
+weightStr = "1"+primaryTrackCuts+stoppingProtonCut
+
+#nData = 224281.0
+logy = False
+
 
 if __name__ == "__main__":
 
   histConfigs = [
+    {
+      'name': "PFBeamPrimEnergySumCSDAProton",
+      'xtitle': "Primary KE from CSDA (Proton) [GeV]",
+      'ytitle': "Events / bin",
+      'binning': keBins,
+      'var': "PFBeamPrimEnergySumCSDAProton/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
+      'name': "zWireEnergySum_ajib",
+      'xtitle': "Primary Calo Energy Sum [GeV]",
+      'ytitle': "Events / bin",
+      'binning': keBins,
+      'var': "zWireEnergySum_ajib/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
+      'name': "kinWC",
+      'xtitle': "KE from BI (Muon) [GeV]",
+      'ytitle': "Events / bin",
+      'binning': keBins,
+      'var': "kinWC/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
+      'name': "kinWCProton",
+      'xtitle': "KE from BI (Proton) [GeV]",
+      'ytitle': "Events / bin",
+      'binning': keBins,
+      'var': "kinWCProton/1000.",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
+      'name': "zWirePartKinInteract_ajib",
+      'xtitle': "Primary PF Track End Kinetic Energy [GeV]",
+      'ytitle': "Events / bin",
+      'binning': keInteractBins,
+      'var': "zWirePartKin_ajib[zWireLastHitWire]/1000.",
+      'cuts': "zWireLastHitWire >= 0 && "+weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCMu",
+      'xtitle': "KE^{range} / KE^{beam} (Assuming Muons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "PFBeamPrimEnergySumCSDAMu/kinWC",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCProton",
+      'xtitle': "KE^{range} / KE^{beam} (Assuming Protons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "PFBeamPrimEnergySumCSDAProton/kinWCProton",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "RatiozWireEnergySum_ajibAndKinWCMu",
+      'xtitle': "KE^{calo} / KE^{beam} (Assuming Muons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "zWireEnergySum_ajib/kinWC",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "RatiozWireEnergySumAndKinWCProton",
+      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "zWireEnergySum/kinWCProton",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      #'printIntegral': True,
+    },
+    {
+      'name': "RatiozWireEnergySum_ajibAndKinWCProton",
+      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "zWireEnergySum_ajib/kinWCProton",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      #'fitFunc': "gaus",
+      #'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
+      #'fitDefParams': [250,0.9,0.005],
+      #'fitOnlyFWHM': 0.4,
+      'printIntegral': True,
+    },
+    {
+      'name': "RatioPFBeamPrimEnergySumCSDAMuAndzWireEnergySum_ajib",
+      'xtitle': "KE^{range} / KE^{calo} (Assuming Muons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "PFBeamPrimEnergySumCSDAMu/zWireEnergySum_ajib",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
+      'name': "RatioPFBeamPrimEnergySumCSDAProtonAndzWireEnergySum_ajib",
+      'xtitle': "KE^{range} / KE^{calo} (Assuming Protons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "PFBeamPrimEnergySumCSDAProton/zWireEnergySum_ajib",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
 #    {
 #      'name': "beamTrackXFrontTPC",
 #      'xtitle': "X of Beam Track Projection to TPC Front [cm]",
@@ -84,22 +235,22 @@ if __name__ == "__main__":
 #      'printIntegral': True,
 #      'cuts': "1",
 #    },
-    {
-      'name': "nBeamTracks",
-      'xtitle': "Number of Beam Tracks",
-      'ytitle': "Events / bin",
-      'binning': [21,-0.5,20.5],
-      'var': "nBeamTracks",
-      'cuts': "1",
-    },
-    {
-      'name': "nBeamMom",
-      'xtitle': "Number of Beam Momenta",
-      'ytitle': "Events / bin",
-      'binning': [21,-0.5,20.5],
-      'var': "nBeamMom",
-      'cuts': "1",
-    },
+#    {
+#      'name': "nBeamTracks",
+#      'xtitle': "Number of Beam Tracks",
+#      'ytitle': "Events / bin",
+#      'binning': [21,-0.5,20.5],
+#      'var': "nBeamTracks",
+#      'cuts': "1",
+#    },
+#    {
+#      'name': "nBeamMom",
+#      'xtitle': "Number of Beam Momenta",
+#      'ytitle': "Events / bin",
+#      'binning': [21,-0.5,20.5],
+#      'var': "nBeamMom",
+#      'cuts': "1",
+#    },
 #    {
 #      'name': "nBeamEvents",
 #      'xtitle': "Number of Beam Events",
@@ -433,14 +584,14 @@ if __name__ == "__main__":
     #  'color': root.kBlack,
     #  'cuts': "*"+cutGoodBeamline,
     #},
-    {
-      'fn': "piAbs_run5145_7GeV_testOldNewBeamEvent_v3.root",
-      'name': "run5145",
-      'title': "Run 5145: 7 GeV/c",
-      'caption': "Run 5145: 7 GeV/c",
-      'color': root.kOrange-3,
-      'cuts': "*"+cutGoodBeamline+"*BIPion7GeV",
-    },
+    #{
+    #  'fn': "piAbs_run5145_7GeV_testOldNewBeamEvent_v3.root",
+    #  'name': "run5145",
+    #  'title': "Run 5145: 7 GeV/c",
+    #  'caption': "Run 5145: 7 GeV/c",
+    #  'color': root.kOrange-3,
+    #  'cuts': "*"+cutGoodBeamline+"*BIPion7GeV",
+    #},
 #    {
 #      'fn': "piAbsSelector_run5174.root",
 #      'name': "run5174",
@@ -450,12 +601,28 @@ if __name__ == "__main__":
 #      'cuts': "*"+cutGoodBeamline,
 #    },
     {
-      'fn': "piAbs_run5387_1GeV_testOldNewBeamEvent_v3.root",
-      'name': "run5387",
-      'title': "Run 5387: 1 GeV/c",
-      'caption': "Run 5387: 1 GeV/c",
+      'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
+      'name': "run5387newAll",
+      'title': "Run 5387: 1 GeV/c New All",
+      'caption': "Run 5387: 1 GeV/c New All",
       'color': root.kBlue-7,
-      'cuts': "*"+cutGoodBeamline+"*BIPion1GeV",
+      'cuts': "*"+cutGoodBeamline+"*BIProton1GeV",
+    },
+    {
+      'fn': "piAbsSelector_run5387_v6.1_08b55104_local.root",
+      'name': "run5387new",
+      'title': "Run 5387: 1 GeV/c New",
+      'caption': "Run 5387: 1 GeV/c New",
+      'color': root.kBlue-7,
+      'cuts': "*"+cutGoodBeamline+"*BIProton1GeV",
+    },
+    {
+      'fn': "piAbsSelector_run5387_d9d59922.root",
+      'name': "run5387old",
+      'title': "Run 5387: 1 GeV/c Old",
+      'caption': "Run 5387: 1 GeV/c Old",
+      'color': root.kBlue-7,
+      'cuts': "*"+cutGoodBeamline+"*(CKov1Status == 0 && TOF > 170.)",
     },
 #    #{
 #    #  'fn': "piAbsSelector_run5758.root",
@@ -489,14 +656,14 @@ if __name__ == "__main__":
 #      'color': root.kBlue-7,
 #      'cuts': "*"+cutGoodBeamline,
 #    },
-    {
-      'fn': "piAbs_run5432_2GeV_testOldNewBeamEvent_v3.root",
-      'name': "run5432",
-      'title': "Run 5432: 2 GeV/c",
-      'caption': "Run 5432: 2 GeV/c",
-      'color': root.kGreen+3,
-      'cuts': "*"+cutGoodBeamline+"*BIPion1GeV",
-    },
+    #{
+    #  'fn': "piAbs_run5432_2GeV_testOldNewBeamEvent_v3.root",
+    #  'name': "run5432",
+    #  'title': "Run 5432: 2 GeV/c",
+    #  'caption': "Run 5432: 2 GeV/c",
+    #  'color': root.kGreen+3,
+    #  'cuts': "*"+cutGoodBeamline+"*BIPion1GeV",
+    #},
     #{
     #  'fn': "PiAbs_redoBeamEvent_run5826.root",
     #  'name': "run5826_redo",
@@ -516,6 +683,7 @@ if __name__ == "__main__":
   ]
   for i, fileConfig in enumerate(fileConfigsData):
     fileConfig['color'] = COLORLIST[i]
+    fileConfig["addFriend"] = ["friend","friendTree_"+fileConfig["fn"]]
   fileConfigsAllData = [
     {
       'fn': [
