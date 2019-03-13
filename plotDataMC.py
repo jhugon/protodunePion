@@ -20,7 +20,7 @@ if __name__ == "__main__":
   ###
   ###
   #cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0)"
-  cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+  cutGoodBeamline = "(BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
   cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
 
   deltaXTrackBICut = "*((isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30)))"
@@ -29,7 +29,7 @@ if __name__ == "__main__":
   primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut#+rejectThroughgoingCut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-  weightStr = "1"+primaryTrackCuts+stoppingProtonCut
+  weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
 
   #nData = 224281.0
   logy = False
@@ -54,17 +54,17 @@ if __name__ == "__main__":
     #  'title': "Run 5145: 7 GeV/c",
     #  'caption': "Run 5145: 7 GeV/c",
     #  'isData': True,
-    #  'cuts': "*(CKov1Status == 1 && CKov0Status == 1)*"+cutGoodBeamline+cutGoodFEMBs,
+    #  'cuts': "*(BIProton7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     #},
     {
-      'fn': "piAbsSelector_run5387_v5_444ac9a5.root",
+      'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
       'name': "run5387",
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c",
       'isData': True,
       #'cuts': "*"+cutGoodBeamline+cutGoodFEMBs,
-      #'cuts': "*(CKov1Status == 0 && TOF < 110.)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-      'cuts': "*(CKov1Status == 0 && TOF > 110.)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+      #'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+      'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
     },
     #{
     #  'fn': "piAbsSelector_run5432_d9d59922.root",
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     #  'caption': "Run 5432: 2 GeV/c",
     #  'isData': True,
     #  #'cuts': "*"+cutGoodBeamline+cutGoodFEMBs,
-    #  #'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-    #  'cuts': "*(CKov1Status == 0 && TOF > 160.)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    #  #'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    #  'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
     #},
     #{
     #  'fn': "piAbsSelector_mcc11_3ms_1p0GeV_v4.12.root",
@@ -109,8 +109,8 @@ if __name__ == "__main__":
       #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       'cuts': "*(truePrimaryPDG == 2212)", # for protons
       #'scaleFactor': 6.128342245989304, # for pions
-      #'scaleFactor': 3.8878923766816142, # for protons no stopping cut
-      'scaleFactor': 13.313953488372093, # for protons stopping cut
+      'scaleFactor': 16.120192307692307, # for protons no stopping cut
+      #'scaleFactor': 14.162790697674419, # for protons stopping cut
       #'scaleFactor': 6.346153846153846*0.7926829268292683, # for pions stopping cut
     },
     #{
@@ -899,6 +899,17 @@ if __name__ == "__main__":
       'logy': logy,
     },
     {
+      'name': "RatiozWireEnergySumAndKinWCProton",
+      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
+      'ytitle': "Events / bin",
+      'binning': [100,0,2],
+      'var': "zWireEnergySum/kinWCProton",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      #'printIntegral': True,
+    },
+    {
       'name': "RatiozWireEnergySum_ajibAndKinWCProton",
       'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
       'ytitle': "Events / bin",
@@ -907,10 +918,10 @@ if __name__ == "__main__":
       'cuts': weightStr,
       #'normalize': True,
       'logy': logy,
-      'fitFunc': "gaus",
-      'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
+      #'fitFunc': "gaus",
+      #'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
       #'fitDefParams': [250,0.9,0.005],
-      'fitOnlyFWHM': 0.4,
+      #'fitOnlyFWHM': 0.4,
       'printIntegral': True,
     },
     {
@@ -1226,26 +1237,28 @@ if __name__ == "__main__":
     #if histConfigs[i]['name'] != "pWC":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton_corr":
-    if histConfigs[i]['name'] != "RatiozWireEnergySum_ajibAndKinWCProton":
-#    if (not ("Ratio" in histConfigs[i]['name'])) and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
-#        and (not ("EnergySum" in histConfigs[i]['name'])) \
-#        and (not ("kinWC" in histConfigs[i]['name'])) \
-#        and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
-#        and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
-#        and histConfigs[i]['name'] != "zWiredEdx_ajib" \
-#        and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
-#        and histConfigs[i]['name'] != "zWirePartKinInteract" \
-#        and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
-#        and (histConfigs[i]['name'] != "pWC") \
-#        and (histConfigs[i]['name'] != "TOF") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimXs") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimYs") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimZs") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
-#        and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
+    #if histConfigs[i]['name'] != "RatiozWireEnergySum_ajibAndKinWCProton":
+    if (not ("Ratio" in histConfigs[i]['name'])) and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
+        and (not ("EnergySum" in histConfigs[i]['name'])) \
+        and (not ("kinWC" in histConfigs[i]['name'])) \
+        and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
+        and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
+        and histConfigs[i]['name'] != "zWiredEdx_ajib" \
+        and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
+        and histConfigs[i]['name'] != "zWirePartKinInteract" \
+        and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
+        and (histConfigs[i]['name'] != "pWC") \
+        and (histConfigs[i]['name'] != "TOF"): #\
+        #and (histConfigs[i]['name'] != "PFBeamPrimXs") \
+        #and (histConfigs[i]['name'] != "PFBeamPrimYs") \
+        #and (histConfigs[i]['name'] != "PFBeamPrimZs") \
+        #and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
+        #and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
+        #and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
     #if (not ("zWirePartKin" in histConfigs[i]['name'])) or histConfigs[i]["name"] == "zWirePartKin":
     #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
+    #if (not ("Ratio" in histConfigs[i]['name'])) and histConfigs[i]['name'] != "pWC":
+    #if histConfigs[i]['name'] != "kinWCProton":
       histConfigs.pop(i)
 
   if True:
