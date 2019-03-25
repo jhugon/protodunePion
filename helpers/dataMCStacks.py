@@ -70,6 +70,9 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       dataHists = []
       for fileConfig in fileConfigDatas:
         hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
+        if "color" in fileConfig:
+          hist.SetLineColor(fileConfig['color'])
+          hist.SetMarkerColor(fileConfig['color'])
         dataHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
@@ -97,7 +100,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
           mcStack.Add(mcHist)
       if printIntegral and not (mcStack is None):
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
-      fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
+      fitFuncs = fitAndDrawHists([mcSumHist]+dataHists,histConfig)
       canvas.SetLogy(logy)
       canvas.SetLogx(logx)
       axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -179,6 +182,9 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
         dataHists = []
         for iFile, fileConfig in enumerate(fileConfigDatas):
           hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False,isStack=True)
+          if "color" in fileConfig:
+            hist.SetLineColor(fileConfig['color'])
+            hist.SetMarkerColor(fileConfig['color'])
           dataHists.append(hist)
           if table and iHistConfig == 0:
             nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
@@ -212,7 +218,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
           nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
         if printIntegral and not (mcStack is None):
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
-        fitFuncs = fitAndDrawHists([mcSumHist,dataHist],histConfig)
+        fitFuncs = fitAndDrawHists([mcSumHist,dataHists],histConfig)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
         axisHist = makeStdAxisHist(dataHists+[mcSumHist],logy=logy,freeTopSpace=0.35,xlim=xlim,ylim=ylim)
@@ -313,6 +319,9 @@ def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treenam
       dataHists = []
       for fileConfig in fileConfigDatas:
         dataHist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
+        if "color" in fileConfig:
+          dataHist.SetLineColor(fileConfig['color'])
+          dataHist.SetMarkerColor(fileConfig['color'])
         dataHists.append(dataHist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],dataHist.Integral()))

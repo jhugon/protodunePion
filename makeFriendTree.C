@@ -84,6 +84,12 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
 {
   using namespace std;
 
+  if (outputFileName.Length() == 0)
+  {
+    outputFileName += "friendTree_";
+    outputFileName += inputFileName;
+  }
+
   cout << "makeFriendTree for "<< inputFileName.Data() 
         << endl
         << " in file " << outputFileName.Data() 

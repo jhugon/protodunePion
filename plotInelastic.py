@@ -6,102 +6,42 @@ root.gROOT.SetBatch(True)
 import copy
 import sys
 
-m2SF=1000.
-tofOffset=59.6
-tofDistance = 28.6
-lightTime = tofDistance/2.99e8*1e9
-momSF=1.0
-
-doNMinusOne = True
-doNoCuts = True
-doSCE = True
-
-#cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom  > 0)"
-cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom  == 1)"
-
-if __name__ == "__main__":
+def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
+  doNMinusOne = True
+  doNoCuts = True
+  doSCE = False
+  doLogy = True
 
   cutConfigs = [
     {
       'histConfigs':
         [
           {
-            'name': "PFBeamPrimXFrontTPC",
-            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
+            'name': "nGoodFEMBs",
+            'xtitle': "N Good FEMBs for Beam-side APAs",
             'ytitle': "Events / bin",
-            'binning': [50,-100,100],
-            'var': "PFBeamPrimXFrontTPC",
-          },
-          {
-            'name': "PFBeamPrimXFrontTPC_wide",
-            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "Events / bin",
-            'binning': [150,-600,600],
-            'var': "PFBeamPrimXFrontTPC",
+            'binning': [61,-0.5,60.5],
+            'var': "nGoodFEMBs[0] + nGoodFEMBs[2] + nGoodFEMBs[4]",
           },
        ],
-      #'cut': "PFBeamPrimXFrontTPC > -40 && PFBeamPrimXFrontTPC < 20",
-      'cut': "1",
+      'cut': "isMC || (nGoodFEMBs[0] == 20 && nGoodFEMBs[2] == 20 && nGoodFEMBs[4] == 20)",
     },
     {
-      'histConfigs':
-        [
-          {
-            'name': "nGoodFEMBsAPA0",
-            'xtitle': "N Good FEMBs for APA 0",
-            'ytitle': "Events / bin",
-            'binning': [21,-0.5,20.5],
-            'var': "nGoodFEMBs[0]",
-          },
-       ],
-      'cut': "isMC || (nGoodFEMBs[0] == 20)",
+      'name': "PFNBeamSlices",
+      'xtitle': "Number of PF Beam Slices",
+      'ytitle': "Events / bin",
+      'binning': [9,-0.5,8.5],
+      'var': "PFNBeamSlices",
+      'cut': "PFNBeamSlices == 1",
+      'printIntegral': True,
     },
     {
-      'histConfigs':
-        [
-          {
-            'name': "nGoodFEMBsAPA2",
-            'xtitle': "N Good FEMBs for APA 2",
-            'ytitle': "Events / bin",
-            'binning': [21,-0.5,20.5],
-            'var': "nGoodFEMBs[2]",
-          },
-       ],
-      'cut': "isMC || (nGoodFEMBs[2] == 20)",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "nGoodFEMBsAPA4",
-            'xtitle': "N Good FEMBs for APA 4",
-            'ytitle': "Events / bin",
-            'binning': [21,-0.5,20.5],
-            'var': "nGoodFEMBs[4]",
-          },
-       ],
-      'cut': "isMC || (nGoodFEMBs[4] == 20)",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimYFrontTPC",
-            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "Events / bin",
-            'binning': [50,300,600],
-            'var': "PFBeamPrimYFrontTPC",
-          },
-          {
-            'name': "PFBeamPrimYFrontTPC_wide",
-            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
-            'ytitle': "Events / bin",
-            'binning': [300,-500,1500],
-            'var': "PFBeamPrimYFrontTPC",
-          },
-       ],
-      #'cut': "PFBeamPrimYFrontTPC > 400 && PFBeamPrimYFrontTPC < 470"
-      'cut': "1",
+      'name': "PFBeamPrimIsTracklike",
+      'xtitle': "PF Beam Primary is Track-like",
+      'ytitle': "Tracks / bin",
+      'binning': [2,-0.5,1.5],
+      'var': "PFBeamPrimIsTracklike",
+      'cut': "PFBeamPrimIsTracklike == 1",
     },
     {
       'histConfigs':
@@ -121,7 +61,8 @@ if __name__ == "__main__":
             'var': "PFBeamPrimXFrontTPC - xWC",
           },
        ],
-      'cut': "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))",
+      #'cut': "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))",
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -141,7 +82,48 @@ if __name__ == "__main__":
             'var': "PFBeamPrimYFrontTPC - yWC",
           },
        ],
-      'cut': "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))",
+      #'cut': "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))",
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "DeltaXPFBeamPrimStartBI",
+            'xtitle': "#Delta X PF Track Start & BI Track [cm]",
+            'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimStartX - xWC",
+          },
+          {
+            'name': "DeltaXPFBeamPrimStartBI_wide",
+            'xtitle': "#Delta X PF Track Start & BI Track [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-100,100],
+            'var': "PFBeamPrimStartX - xWC",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "DeltaYPFBeamPrimStartBI",
+            'xtitle': "#Delta Y PF Track Start & BI Track [cm]",
+            'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimStartY - yWC",
+          },
+          {
+            'name': "DeltaYPFBeamPrimStartBI_wide",
+            'xtitle': "#Delta Y PF Track Start & BI Track [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-100,100],
+            'var': "PFBeamPrimStartY - yWC",
+          },
+       ],
+      'cut': "1",
     },
     {
       'histConfigs':
@@ -164,6 +146,29 @@ if __name__ == "__main__":
           },
        ],
       #'cut': "PFBeamPrimAngleToBeamTrk < 30.*pi/180.",
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimEndAngleToBeamTrk",
+            'xtitle': "Angle Between BI & Primary PF Track End [Deg]",
+            'ytitle': "Events / bin",
+            'binning': [80,0,40],
+            'var': "PFBeamPrimEndAngleToBeamTrk*180/pi",
+            #'cutSpans': [[30.,None]],
+          },
+          {
+            'name': "PFBeamPrimEndAngleToBeamTrk_wide",
+            'xtitle': "Angle Between BI & Primary PF Track End [Deg]",
+            'ytitle': "Events / bin",
+            'binning': [180,0,180],
+            'var': "PFBeamPrimEndAngleToBeamTrk*180/pi",
+            #'cutSpans': [[30.,None]],
+          },
+       ],
+      #'cut': "PFBeamPrimEndAngleToBeamTrk < 30.*pi/180.",
       'cut': "1",
     },
     {
@@ -239,46 +244,46 @@ if __name__ == "__main__":
        ],
       'cut': "PFBeamPrimStartZ<50",
     },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimStartZ_corr",
-            'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [100,-5,60],
-            'var': "PFBeamPrimStartZ_corr",
-          },
-          {
-            'name': "PFBeamPrimStartZ_corr_wide",
-            'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [400,-10,705],
-            'var': "PFBeamPrimStartZ_corr",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimStartZ_corrFLF",
-            'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [100,-5,60],
-            'var': "PFBeamPrimStartZ_corrFLF",
-          },
-          {
-            'name': "PFBeamPrimStartZ_corrFLF_wide",
-            'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [400,-10,705],
-            'var': "PFBeamPrimStartZ_corrFLF",
-          },
-       ],
-      'cut': "1",
-    },
+    #{
+    #  'histConfigs':
+    #    [
+    #      {
+    #        'name': "PFBeamPrimStartZ_corr",
+    #        'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
+    #        'ytitle': "Events / bin",
+    #        'binning': [100,-5,60],
+    #        'var': "PFBeamPrimStartZ_corr",
+    #      },
+    #      {
+    #        'name': "PFBeamPrimStartZ_corr_wide",
+    #        'xtitle': "TPC Track Start Z (SCE Corrected) [cm]",
+    #        'ytitle': "Events / bin",
+    #        'binning': [400,-10,705],
+    #        'var': "PFBeamPrimStartZ_corr",
+    #      },
+    #   ],
+    #  'cut': "1",
+    #},
+    #{
+    #  'histConfigs':
+    #    [
+    #      {
+    #        'name': "PFBeamPrimStartZ_corrFLF",
+    #        'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
+    #        'ytitle': "Events / bin",
+    #        'binning': [100,-5,60],
+    #        'var': "PFBeamPrimStartZ_corrFLF",
+    #      },
+    #      {
+    #        'name': "PFBeamPrimStartZ_corrFLF_wide",
+    #        'xtitle': "TPC Track Start Z (FLF SCE Corrected) [cm]",
+    #        'ytitle': "Events / bin",
+    #        'binning': [400,-10,705],
+    #        'var': "PFBeamPrimStartZ_corrFLF",
+    #      },
+    #   ],
+    #  'cut': "1",
+    #},
     {
       'histConfigs':
         [
@@ -337,48 +342,48 @@ if __name__ == "__main__":
             'var': "PFBeamPrimEndZ",
           },
        ],
-      'cut': "PFBeamPrimEndZ<650 && PGBeamPrimEndZ>25",
+      'cut': "PFBeamPrimEndZ<650 && PFBeamPrimEndZ>25",
     },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimEndZ_corrFLF",
-            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [55,600,705],
-            'var': "PFBeamPrimEndZ_corrFLF",
-          },
-          {
-            'name': "PFBeamPrimEndZ_corrFLF_wide",
-            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [143,-10,705],
-            'var': "PFBeamPrimEndZ_corrFLF",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimEndZ_corr",
-            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [55,600,705],
-            'var': "PFBeamPrimEndZ_corr",
-          },
-          {
-            'name': "PFBeamPrimEndZ_corr_wide",
-            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
-            'ytitle': "Events / bin",
-            'binning': [143,-10,705],
-            'var': "PFBeamPrimEndZ_corr",
-          },
-       ],
-      'cut': "1",
-    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimEndZ_corrFLF",
+#            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [55,600,705],
+#            'var': "PFBeamPrimEndZ_corrFLF",
+#          },
+#          {
+#            'name': "PFBeamPrimEndZ_corrFLF_wide",
+#            'xtitle': "TPC Track End Z (FLF SCE Corrected) [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [143,-10,705],
+#            'var': "PFBeamPrimEndZ_corrFLF",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimEndZ_corr",
+#            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [55,600,705],
+#            'var': "PFBeamPrimEndZ_corr",
+#          },
+#          {
+#            'name': "PFBeamPrimEndZ_corr_wide",
+#            'xtitle': "TPC Track End Z (SCE Corrected) [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [143,-10,705],
+#            'var': "PFBeamPrimEndZ_corr",
+#          },
+#       ],
+#      'cut': "1",
+#    },
     {
       'histConfigs':
         [
@@ -493,22 +498,6 @@ if __name__ == "__main__":
 #      'var': "PFBeamPrimTrkLen",
 #      'cut': "1",
 #    },
-    {
-      'name': "PFBeamPrimIsTracklike",
-      'xtitle': "PF Beam Primary is Track-like",
-      'ytitle': "Tracks / bin",
-      'binning': [2,-0.5,1.5],
-      'var': "PFBeamPrimIsTracklike",
-      'cut': "PFBeamPrimIsTracklike == 1",
-    },
-    {
-      'name': "PFNBeamSlices",
-      'xtitle': "Number of PF Beam Slices",
-      'ytitle': "Events / bin",
-      'binning': [9,-0.5,8.5],
-      'var': "PFNBeamSlices",
-      'cut': "PFNBeamSlices == 1",
-    },
 #    {
 #      'name': "PFBeamPrimNDaughters",
 #      'xtitle': "Number of PF Secondaries",
@@ -549,45 +538,50 @@ if __name__ == "__main__":
 #      'var': "trueSecondToEndKin/1000.",
 #      'cut': "1",
 #    },
-  ]
-  c = root.TCanvas()
-  NMAX=10000000000
-  #NMAX=100
-  #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
-  #caption = "MCC10, 2 GeV SCE"
-  #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
-  #fn = "PiAbs_mcc11.root"
-  #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
-  #caption = "Beam Data, MCC10 2 & 7 GeV"
-  mcfn = "piAbsSelector_mcc11_flf_2p0GeV_v4.12.root"
-  caption = "2 GeV/c Beam Data & MCC11 FLF"
-  scaleFactor = 1.
-
-  fileConfigsData = [
-    #{
-    #  'fn': "piAbsSelector_run5145_v3.root",
-    #  'name': "run5145",
-    #  'title': "Run 5145: 7 GeV/c",
-    #  'caption': "Run 5145: 7 GeV/c",
-    #  'cuts': "*(CKov1Status == 1 && CKov0Status == 1)*"+cutGoodBeamline,
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5387_v3.root",
-    #  'name': "run5387",
-    #  'title': "Run 5387: 1 GeV/c",
-    #  'caption': "Run 5387: 1 GeV/c",
-    #  'cuts': "*"+cutGoodBeamline,
-    #  'cuts': "*(CKov1Status == 0 && TOF < 170.)*"+cutGoodBeamline,
-    #},
     {
-      'fn': "piAbsSelector_run5432_d9d59922.root",
-      'addFriend': ["friend","friendTree_piAbsSelector_run5432_d9d59922.root"],
-      'name': "run5432",
-      'title': "Run 5432: 2 GeV/c",
-      'caption': "Run 5432: 2 GeV/c",
-      'cuts': "*(CKov1Status == 0 && TOF < 160.)*"+cutGoodBeamline,
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimYFrontTPC",
+            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [50,300,600],
+            'var': "PFBeamPrimYFrontTPC",
+          },
+          {
+            'name': "PFBeamPrimYFrontTPC_wide",
+            'xtitle': "Y of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [300,-500,1500],
+            'var': "PFBeamPrimYFrontTPC",
+          },
+       ],
+      #'cut': "PFBeamPrimYFrontTPC > 400 && PFBeamPrimYFrontTPC < 470"
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "PFBeamPrimXFrontTPC",
+            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [50,-100,100],
+            'var': "PFBeamPrimXFrontTPC",
+          },
+          {
+            'name': "PFBeamPrimXFrontTPC_wide",
+            'xtitle': "X of TPC Track Projection to TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [150,-600,600],
+            'var': "PFBeamPrimXFrontTPC",
+          },
+       ],
+      #'cut': "PFBeamPrimXFrontTPC > -40 && PFBeamPrimXFrontTPC < 20",
+      'cut': "1",
     },
   ]
+
   fileConfigsMC = [
     #{
     #  'fn': mcfn,
@@ -652,12 +646,50 @@ if __name__ == "__main__":
       'color': root.kAzure+10,
       'scaleFactor': scaleFactor,
     },
+    {
+      'fn': mcfn,
+      'name': "mcc11_other",
+      'title': "MCC11 Unknown",
+      'caption': "MCC11 Unknown",
+      'cuts': "*(trueCategory==5)",
+      'color': root.kAzure+10,
+      'scaleFactor': scaleFactor,
+    },
+    #{
+    #  'fn': mcfn,
+    #  'name': "mcc11_e",
+    #  'title': "MCC11 Primary Electron",
+    #  'caption': "MCC11 Primary Electron",
+    #  'cuts': "*(trueCategory==11)",
+    #  'color': root.kAzure+10,
+    #  'scaleFactor': scaleFactor,
+    #},
   ]
+  #fileConfigsMC = [
+  #  {
+  #    'fn': mcfn,
+  #    'name': "mcc11",
+  #    'title': "MCC11",
+  #    'caption': "MCC11",
+  #    'cuts': "*((trueCategory == 13 || trueCategory < 11) && trueCategory > 0 )",
+  #    'color': root.kBlue-7,
+  #    'scaleFactor': scaleFactor,
+  #  },
+  #]
+
+  print "fileConfigsMC"
+  print fileConfigsMC
+  print "fileConfigsData"
+  print fileConfigsData
+
+  for iFC, fc in enumerate(fileConfigsData):
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
   for iFC, fc in enumerate(fileConfigsMC):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
     fc["color"] = COLORLIST[iFC]
 
-  mcscecuts = "*((trueCategory == 13 || trueCategory < 11) && trueCategory != 0 )"
+  mcscecuts = "*((trueCategory == 13 || trueCategory < 11) && trueCategory > 0 )"
+  #mcscecuts = "*((trueCategory == 13 || trueCategory <= 11) && trueCategory > 0 )"
   fileConfigsSCEMC = [
     {
       'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.4.root",
@@ -719,23 +751,126 @@ if __name__ == "__main__":
 
 
   if doNMinusOne:
-    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
+    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_"+sillystr,nMax=NMAX,table=True)
   if doNoCuts:
-    dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="Hist",nMax=NMAX)
+    dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_"+sillystr,nMax=NMAX)
   if doSCE:
-    plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1Hist",nMax=NMAX,table=True)
-  for cutConfig in cutConfigs:
-    if "histConfigs" in cutConfig:
-      for histConfig in cutConfig["histConfigs"]:
-        histConfig['logy'] = True
-    else: 
-      cutConfig['logy'] = True
-  logHistConfigs = []
-  for histConfig in histConfigs:
-    histConfig['logy'] = True
-  if doNMinusOne:
-    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logyHist",nMax=NMAX)
-  if doNoCuts:
-    dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logyHist",nMax=NMAX)
-  if doSCE:
-    plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1_logyHist",nMax=NMAX)
+    plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1_"+sillystr,nMax=NMAX,table=True)
+  if doLogy:
+    for cutConfig in cutConfigs:
+      if "histConfigs" in cutConfig:
+        for histConfig in cutConfig["histConfigs"]:
+          histConfig['logy'] = True
+      else: 
+        cutConfig['logy'] = True
+    logHistConfigs = []
+    for histConfig in histConfigs:
+      histConfig['logy'] = True
+    if doNMinusOne:
+      dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_"+sillystr+"_NM1_logy_"+sillystr,nMax=NMAX)
+    if doNoCuts:
+      dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logy_"+sillystr,nMax=NMAX)
+    if doSCE:
+      plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1_logy_"+sillystr,nMax=NMAX)
+
+if __name__ == "__main__":
+
+  c = root.TCanvas()
+  NMAX=10000000000
+  #NMAX=100
+  #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
+  #caption = "MCC10, 2 GeV SCE"
+  #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
+  #fn = "PiAbs_mcc11.root"
+  #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
+  #caption = "Beam Data, MCC10 2 & 7 GeV"
+  mcfn = "piAbsSelector_mcc11_sce_2p0GeV_v6.1_08b55104.root"
+  caption = "2 GeV/c Beam Data & MCC11 SCE"
+  scaleFactor = 10.325053995680346
+  
+  #cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom  > 0)"
+  cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom  == 1)"
+  cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
+
+  fileConfigsData = [
+    #{
+    #  'fn': "piAbsSelector_run5145_v3.root",
+    #  'name': "run5145",
+    #  'title': "Run 5145: 7 GeV/c",
+    #  'caption': "Run 5145: 7 GeV/c",
+    #  'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5387_v3.root",
+    #  'name': "run5387",
+    #  'title': "Run 5387: 1 GeV/c",
+    #  'caption': "Run 5387: 1 GeV/c",
+    #  'cuts': "*"+cutGoodBeamline,
+    #  'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    #},
+    {
+      'fn': "piAbsSelector_run5432_v6.1_08b55104_local.root",
+      'addFriend': ["friend","friendTree_piAbsSelector_run5432_v6.1_08b55104_local.root"],
+      'name': "run5432",
+      'title': "Run 5432: 2 GeV/c",
+      'caption': "Run 5432: 2 GeV/c",
+      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    },
+  ]
+
+  stuff = []
+
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
+        'name': "run5387",
+        'title': "Run 5387: 1 GeV/c",
+        'caption': "Run 5387: 1 GeV/c",
+        'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      }],
+      "piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
+      #"piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
+      "Run 5387: 1 GeV/c & MCC11 SCE",
+      1.,
+      "run5387_1GeV",
+    )
+  )
+
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
+        'name': "run5432",
+        'title': "Run 5432: 2 GeV/c",
+        'caption': "Run 5432: 2 GeV/c",
+        'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      }],
+      "piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
+      #"piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+      "Run 5432: 2 GeV/c & MCC11 SCE",
+      1.,
+      "run5432_2GeV",
+    )
+  )
+
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+        'name': "run5145",
+        'title': "Run 5145: 7 GeV/c",
+        'caption': "Run 5145: 7 GeV/c",
+        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      }],
+      "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+      "Run 5145: 7 GeV/c & MCC11 SCE",
+      1.,
+      "run5145_7GeV",
+    )
+  )
+
+
+  for fc in stuff:
+    print stuff
+    doPlots(c,NMAX,fc[1],fc[2],fc[3],fc[0],fc[4])
