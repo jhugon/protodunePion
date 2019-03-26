@@ -35,7 +35,8 @@ if __name__ == "__main__":
   logy = False
 
   momentumBins = [80,0,8]
-  momentumBins = [50,0,2.5]
+  #momentumBins = [50,0,2.5]
+  momentumBins = [40,0,2.]
   keBins = momentumBins
   keInteractBins = [200,-10,10]
   keInteractBins = [100,-2.5,2.5]
@@ -48,27 +49,39 @@ if __name__ == "__main__":
   NMAX=10000000000
   #NMAX=100
   fileConfigs = [
-    #{
-    #  'fn': "piAbsSelector_run5145_d9d59922.root",
-    #  'name': "run5145",
-    #  'title': "Run 5145: 7 GeV/c",
-    #  'caption': "Run 5145: 7 GeV/c",
-    #  'isData': True,
-    #  'cuts': "*(BIProton7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    #},
     {
-      #'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
-      'fn': "piAbsSelector_run5387_v6.1_08b55104_local.root",
-      'name': "run5387",
-      'title': "Run 5387: 1 GeV/c",
-      'caption': "Run 5387: 1 GeV/c",
+      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+      'name': "run5145",
+      'title': "Run 5145: 7 GeV/c",
+      'caption': "Run 5145: 7 GeV/c",
       'isData': True,
-      #'cuts': "*"+cutGoodBeamline+cutGoodFEMBs,
-      #'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-      'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+      'cuts': "*(BIProton7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     },
     #{
-    #  'fn': "piAbsSelector_run5432_d9d59922.root",
+    #  'fn': "piAbsSelector_run5387_d9d59922.root",
+    #  #'fn': "piAbsSelector_run5387_v6.1_08b55104_local.root",
+    #  'name': "run5387old",
+    #  'title': "Run 5387: 1 GeV/c Old BI Calibration",
+    #  'caption': "Run 5387: 1 GeV/c Old BI Calibration",
+    #  'isData': True,
+    #  'color': root.kRed-4,
+    #  #'cuts': "*"+cutGoodBeamline+cutGoodFEMBs,
+    #  'cuts': "*(CKov1Status == 0 && TOF > 170.)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_data_run5387_v6p1_08b55104.root",
+    #  #'fn': "piAbsSelector_run5387_v6.1_08b55104_local.root",
+    #  'name': "run5387",
+    #  'title': "Run 5387: 1 GeV/c New BI Calibration",
+    #  'caption': "Run 5387: 1 GeV/c New BI Calibration",
+    #  'isData': True,
+    #  'color': root.kGreen+3,
+    #  #'cuts': "*"+cutGoodBeamline+cutGoodFEMBs,
+    #  #'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    #  'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
     #  'name': "run5432",
     #  'title': "Run 5432: 2 GeV/c",
     #  'caption': "Run 5432: 2 GeV/c",
@@ -100,21 +113,21 @@ if __name__ == "__main__":
     #  #'scaleFactor': 6.128342245989304, # for pions
     #  #'scaleFactor': 3.8878923766816142, # for protons no stopping cut
     #},
-    {
-      'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.12.root",
-      'name': "mcc11_flf_1GeV",
-      'title': "MCC11 1 GeV/c FLF",
-      'caption': "MCC11 1 GeV/c FLF",
-      'color': root.kBlue-7,
-      #'cuts': "",
-      #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      #'scaleFactor': 6.128342245989304, # for pions
-      #'scaleFactor': 16.120192307692307, # for protons no stopping cut
-      'scaleFactor': 6.06329085641953, # for protons no stopping cut local
-      #'scaleFactor': 14.162790697674419, # for protons stopping cut
-      #'scaleFactor': 6.346153846153846*0.7926829268292683, # for pions stopping cut
-    },
+    #{
+    #  'fn': "piAbsSelector_mcc11_flf_1p0GeV_v4.12.root",
+    #  'name': "mcc11_flf_1GeV",
+    #  'title': "MCC11 1 GeV/c FLF",
+    #  'caption': "MCC11 1 GeV/c FLF",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  #'scaleFactor': 6.128342245989304, # for pions
+    #  #'scaleFactor': 16.120192307692307, # for protons no stopping cut
+    #  'scaleFactor': 6.06329085641953, # for protons no stopping cut local
+    #  #'scaleFactor': 14.162790697674419, # for protons stopping cut
+    #  #'scaleFactor': 6.346153846153846*0.7926829268292683, # for pions stopping cut
+    #},
     #{
     #  'fn': "piAbsSelector_mcc11_3ms_2p0GeV_v4.12.root",
     #  'name': "mcc11_3ms_2GeV",
@@ -127,6 +140,17 @@ if __name__ == "__main__":
     #  'scaleFactor': 1,
     #},
     #{
+    #  'fn': "piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
+    #  'name': "mcc11_sce_2GeV",
+    #  'title': "MCC11 2 GeV/c SCE",
+    #  'caption': "MCC11 2 GeV/c SCE",
+    #  'color': root.kBlue-7,
+    #  #'cuts': "",
+    #  #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+    #  'cuts': "*(truePrimaryPDG == 2212)", # for protons
+    #  #'scaleFactor': 5.921757770632369,
+    #},
+    #{
     #  'fn': "piAbsSelector_mcc11_flf_2p0GeV_v4.12.root",
     #  'name': "mcc11_flf_2GeV",
     #  'title': "MCC11 2 GeV/c FLF",
@@ -137,6 +161,15 @@ if __name__ == "__main__":
     #  'cuts': "*(truePrimaryPDG == 2212)", # for protons
     #  #'scaleFactor': 5.921757770632369,
     #},
+    {
+      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+      'name': "mcc11_sce_7GeV",
+      'title': "MCC11 7 GeV/c SCE",
+      'caption': "MCC11 7 GeV/c SCE",
+      'cuts': "",
+      'color': root.kBlue-7,
+      'scaleFactor': 1,
+    },
     #{
     #  'fn': "piAbsSelector_mcc11_flf_7p0GeV_v4.4.root",
     #  'name': "mcc11_flf_7GeV",
@@ -1251,12 +1284,12 @@ if __name__ == "__main__":
         and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
         and (histConfigs[i]['name'] != "pWC") \
         and (histConfigs[i]['name'] != "TOF"): #\
-        #and (histConfigs[i]['name'] != "PFBeamPrimXs") \
-        #and (histConfigs[i]['name'] != "PFBeamPrimYs") \
-        #and (histConfigs[i]['name'] != "PFBeamPrimZs") \
-        #and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
-        #and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
-        #and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimXs") \
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimYs") \
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimZs") \
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
+    #    #and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
     #if (not ("zWirePartKin" in histConfigs[i]['name'])) or histConfigs[i]["name"] == "zWirePartKin":
     #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
     #if (not ("Ratio" in histConfigs[i]['name'])) and histConfigs[i]['name'] != "pWC":
@@ -1267,22 +1300,25 @@ if __name__ == "__main__":
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     fileConfigMCs = copy.deepcopy(fileConfigs)
     fileConfigDatas = []
+    for histConfig in histConfigs:
+      histConfig['normalize'] = True
     for i in reversed(range(len(fileConfigMCs))):
       if 'isData' in fileConfigMCs[i] and fileConfigMCs[i]['isData']:
         fileConfigDatas.append(fileConfigMCs.pop(i))
-    #dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
+    dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",nMax=NMAX)
     print fileConfigDatas, fileConfigMCs
-    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
-                  outPrefix="DataMC_",nMax=NMAX,
-                  catConfigs=catConfigs
-               )
-    for histConfig in histConfigs:
-      histConfig['logy'] = True
-    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
-                  outPrefix="DataMC_",nMax=NMAX,
-                  outSuffix="_logyHist",
-                  catConfigs=catConfigs
-               )
+    #dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+    #              outPrefix="DataMC_",nMax=NMAX,
+    #              catConfigs=catConfigs
+    #           )
+    #for histConfig in histConfigs:
+    #  histConfig['logy'] = True
+    #  histConfig['normalize'] = False
+    #dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+    #              outPrefix="DataMC_",nMax=NMAX,
+    #              outSuffix="_logyHist",
+    #              catConfigs=catConfigs
+    #           )
 
   #######################################
   ############ 2D Plots #################

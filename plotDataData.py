@@ -18,7 +18,7 @@ cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks ==
 
 momentumBins = [80,0,8]
 momentumBins = [50,0,2.5]
-keBins = momentumBins
+keBins = [40,0.,1.0]
 keInteractBins = [200,-10,10]
 keInteractBins = [100,-2.5,2.5]
 
@@ -31,7 +31,7 @@ rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
 primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut#+rejectThroughgoingCut
 stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
 stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-weightStr = "1"+primaryTrackCuts+stoppingProtonCut
+weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
 
 #nData = 224281.0
 logy = False
@@ -94,82 +94,82 @@ if __name__ == "__main__":
       #'normalize': True,
       'logy': logy,
     },
-    {
-      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCMu",
-      'xtitle': "KE^{range} / KE^{beam} (Assuming Muons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "PFBeamPrimEnergySumCSDAMu/kinWC",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCProton",
-      'xtitle': "KE^{range} / KE^{beam} (Assuming Protons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "PFBeamPrimEnergySumCSDAProton/kinWCProton",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "RatiozWireEnergySum_ajibAndKinWCMu",
-      'xtitle': "KE^{calo} / KE^{beam} (Assuming Muons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "zWireEnergySum_ajib/kinWC",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "RatiozWireEnergySumAndKinWCProton",
-      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "zWireEnergySum/kinWCProton",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-      #'printIntegral': True,
-    },
-    {
-      'name': "RatiozWireEnergySum_ajibAndKinWCProton",
-      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "zWireEnergySum_ajib/kinWCProton",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-      #'fitFunc': "gaus",
-      #'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
-      #'fitDefParams': [250,0.9,0.005],
-      #'fitOnlyFWHM': 0.4,
-      'printIntegral': True,
-    },
-    {
-      'name': "RatioPFBeamPrimEnergySumCSDAMuAndzWireEnergySum_ajib",
-      'xtitle': "KE^{range} / KE^{calo} (Assuming Muons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "PFBeamPrimEnergySumCSDAMu/zWireEnergySum_ajib",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
-    {
-      'name': "RatioPFBeamPrimEnergySumCSDAProtonAndzWireEnergySum_ajib",
-      'xtitle': "KE^{range} / KE^{calo} (Assuming Protons)",
-      'ytitle': "Events / bin",
-      'binning': [100,0,2],
-      'var': "PFBeamPrimEnergySumCSDAProton/zWireEnergySum_ajib",
-      'cuts': weightStr,
-      #'normalize': True,
-      'logy': logy,
-    },
+#    {
+#      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCMu",
+#      'xtitle': "KE^{range} / KE^{beam} (Assuming Muons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "PFBeamPrimEnergySumCSDAMu/kinWC",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#    },
+#    {
+#      'name': "RatioPFBeamPrimEnergySumCSDAAndKinWCProton",
+#      'xtitle': "KE^{range} / KE^{beam} (Assuming Protons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "PFBeamPrimEnergySumCSDAProton/kinWCProton",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#    },
+#    {
+#      'name': "RatiozWireEnergySum_ajibAndKinWCMu",
+#      'xtitle': "KE^{calo} / KE^{beam} (Assuming Muons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "zWireEnergySum_ajib/kinWC",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#    },
+#    {
+#      'name': "RatiozWireEnergySumAndKinWCProton",
+#      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "zWireEnergySum/kinWCProton",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#      #'printIntegral': True,
+#    },
+#    {
+#      'name': "RatiozWireEnergySum_ajibAndKinWCProton",
+#      'xtitle': "KE^{calo} / KE^{beam} (Assuming Protons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "zWireEnergySum_ajib/kinWCProton",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#      #'fitFunc': "gaus",
+#      #'fitFunc': "[0]*exp(-0.5*pow((x-[1])/[2],2))",
+#      #'fitDefParams': [250,0.9,0.005],
+#      #'fitOnlyFWHM': 0.4,
+#      'printIntegral': True,
+#    },
+#    {
+#      'name': "RatioPFBeamPrimEnergySumCSDAMuAndzWireEnergySum_ajib",
+#      'xtitle': "KE^{range} / KE^{calo} (Assuming Muons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "PFBeamPrimEnergySumCSDAMu/zWireEnergySum_ajib",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#    },
+#    {
+#      'name': "RatioPFBeamPrimEnergySumCSDAProtonAndzWireEnergySum_ajib",
+#      'xtitle': "KE^{range} / KE^{calo} (Assuming Protons)",
+#      'ytitle': "Events / bin",
+#      'binning': [100,0,2],
+#      'var': "PFBeamPrimEnergySumCSDAProton/zWireEnergySum_ajib",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      'logy': logy,
+#    },
 #    {
 #      'name': "beamTrackXFrontTPC",
 #      'xtitle': "X of Beam Track Projection to TPC Front [cm]",
@@ -271,21 +271,23 @@ if __name__ == "__main__":
       'name': "beamMom",
       'xtitle': "Beam Momentum [GeV/c]",
       'ytitle': "Beam Momenta / bin",
-      'binning': [100,0,10],
-      #'binning': [40,0,2],
+      #'binning': [100,0,10],
+      'binning': [80,0,2],
       'var': "beamMom*{}".format(momSF),
       #'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
-      'cuts': "1",
+      #'cuts': "1",
+      'cuts': weightStr,
     },
     {
       'name': "beamMom_noAmbig",
       'xtitle': "Beam Momentum [GeV/c]",
       'ytitle': "Beam Momenta / bin",
-      'binning': [100,0,10],
-      #'binning': [40,0,2],
+      #'binning': [100,0,10],
+      'binning': [80,0,2],
       'var': "beamMom*{}".format(momSF),
       #'preliminaryString': "Momentum Scaled by {:.2f}".format(momSF),
       'cuts': "(nBeamMom == 1)",
+      'cuts': weightStr+"*(nBeamMom == 1)",
     },
 #    {
 #      'name': "TOF",
@@ -503,14 +505,15 @@ if __name__ == "__main__":
 #      'var': "PFBeamPrimEndZ[0]",
 #      'cuts': "(PFNBeamSlices > 0)",
 #    },
-#    {
-#      'name': "PFBeamPrimTrkLen",
-#      'xtitle': "Pandora Beam Primary Track Length [cm]",
-#      'ytitle': "Events / bin",
-#      'binning': [200,0,1000],
-#      'var': "PFBeamPrimTrkLen[0]",
-#      'cuts': "(PFNBeamSlices > 0)",
-#    },
+    {
+      'name': "PFBeamPrimTrkLen",
+      'xtitle': "Pandora Beam Primary Track Length [cm]",
+      'ytitle': "Events / bin",
+      'binning': [100,0,200],
+      'var': "PFBeamPrimTrkLen[0]",
+      #'cuts': "(PFNBeamSlices > 0)",
+      'cuts': weightStr,
+    },
 #    {
 #      'name': "PFBeamPrimShwrLen",
 #      'xtitle': "Pandora Beam Primary Shower Length [cm]",
@@ -1076,7 +1079,7 @@ if __name__ == "__main__":
 #      'logz': True,
 #    },
   ]
-  plotOneHistOnePlot(fileConfigsData+fileConfigsMC+fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
+  #plotOneHistOnePlot(fileConfigsData+fileConfigsMC+fileConfigsAllData,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_",nMax=NMAX)
 
   histConfigs= [
     {
@@ -1304,4 +1307,4 @@ if __name__ == "__main__":
   ]
   for i, histConfig in enumerate(histConfigs):
     histConfig['color'] = COLORLIST[i]
-  plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_ByNBeamTracks_",outSuffix="_logyHist",nMax=NMAX)
+  #plotManyHistsOnePlot(fileConfigsData+fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataData_beamMom_ByNBeamTracks_",outSuffix="_logyHist",nMax=NMAX)

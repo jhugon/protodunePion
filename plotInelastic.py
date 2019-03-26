@@ -829,8 +829,8 @@ if __name__ == "__main__":
         'caption': "Run 5387: 1 GeV/c",
         'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
       }],
-      "piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
-      #"piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
+      #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
+      "piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
       "Run 5387: 1 GeV/c & MCC11 SCE",
       1.,
       "run5387_1GeV",
@@ -846,29 +846,29 @@ if __name__ == "__main__":
         'caption': "Run 5432: 2 GeV/c",
         'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
       }],
-      "piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
-      #"piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+      #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
+      "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
       "Run 5432: 2 GeV/c & MCC11 SCE",
       1.,
       "run5432_2GeV",
     )
   )
 
-  stuff.append(
-    (
-      [{
-        'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-        'name': "run5145",
-        'title': "Run 5145: 7 GeV/c",
-        'caption': "Run 5145: 7 GeV/c",
-        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-      }],
-      "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-      "Run 5145: 7 GeV/c & MCC11 SCE",
-      1.,
-      "run5145_7GeV",
-    )
-  )
+  #stuff.append(
+  #  (
+  #    [{
+  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+  #      'name': "run5145",
+  #      'title': "Run 5145: 7 GeV/c",
+  #      'caption': "Run 5145: 7 GeV/c",
+  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #    }],
+  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+  #    "Run 5145: 7 GeV/c & MCC11 SCE",
+  #    1.,
+  #    "run5145_7GeV",
+  #  )
+  #)
 
 
   for fc in stuff:
