@@ -10,6 +10,7 @@
 #include <TCanvas.h>
 #include <TMath.h>
 #include <Math/Interpolator.h>
+#include <TVector3.h>
 //#include <TF1.h>
 //#include <TRandom3.h>
 
@@ -27,8 +28,39 @@
 const auto DEFAULTNEG = -99999999;
 const auto MCHARGEDPION = 139.57018; // MeV/c^2
 const auto MPROTON = 938.2720813; // MeV/c^2
+const auto ZSTARTOFTPC = -0.49375; //cm
 const auto KINLOSTBEFORETPC = 0.0; //MeV; from LArIAT pion total cross section group
 const auto KINLOSTBEFORETPCPROTON = 0.0; //MeV; from LArIAT pion total cross section group
+
+template <class A, class B, class C, class D>
+const TVector3 linePlane(
+            const A& planePoint,
+            const B& planeNormal,
+            const C& linePoint,
+            const D& lineDirection)
+    {
+        const TVector3 pp(planePoint.X(),planePoint.Y(),planePoint.Z());
+        TVector3 pn(planeNormal.X(),planeNormal.Y(),planeNormal.Z());
+        const TVector3 lp(linePoint.X(),linePoint.Y(),linePoint.Z());
+        TVector3 ld(lineDirection.X(),lineDirection.Y(),lineDirection.Z());
+        pn = pn.Unit();
+        ld = ld.Unit();
+        const double normalDotDir = pn.Dot(ld);
+        if (normalDotDir == 0.) return TVector3(-9999999.,-9999999.,-9999999.);
+        const double d = (pp-lp)*pn / (normalDotDir);
+        return (d*ld) + lp; 
+    };
+
+template <class A, class B>
+inline const TVector3 lineZPlane(
+            const double planeZ,
+            const A& linePoint,
+            const B& lineDirection)
+    {
+        const TVector3 planePoint(0.,0.,planeZ);
+        const TVector3 planeNormal(0.,0.,1.);
+        return linePlane(planePoint,planeNormal,linePoint,lineDirection);
+    };
 
 class ChargeCorrectorAjib
 {
@@ -126,7 +158,11 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   std::vector<float>* PFBeamPrimYs=0; TBranch* b_PFBeamPrimYs;
   std::vector<float>* PFBeamPrimZs=0; TBranch* b_PFBeamPrimZs;
   Float_t PFBeamPrimStartZ;
+  Float_t PFBeamPrimEndX;
+  Float_t PFBeamPrimEndY;
   Float_t PFBeamPrimEndZ;
+  Float_t PFBeamPrimEndTheta;
+  Float_t PFBeamPrimEndPhi;
   Float_t PFBeamPrimTrkLen;
   Float_t pWC;
 
@@ -149,7 +185,11 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   tree->SetBranchAddress("PFBeamPrimYs",&PFBeamPrimYs,&b_PFBeamPrimYs);
   tree->SetBranchAddress("PFBeamPrimZs",&PFBeamPrimZs,&b_PFBeamPrimZs);
   tree->SetBranchAddress("PFBeamPrimStartZ",&PFBeamPrimStartZ);
+  tree->SetBranchAddress("PFBeamPrimEndX",&PFBeamPrimEndX);
+  tree->SetBranchAddress("PFBeamPrimEndY",&PFBeamPrimEndY);
   tree->SetBranchAddress("PFBeamPrimEndZ",&PFBeamPrimEndZ);
+  tree->SetBranchAddress("PFBeamPrimEndTheta",&PFBeamPrimEndTheta);
+  tree->SetBranchAddress("PFBeamPrimEndPhi",&PFBeamPrimEndPhi);
   tree->SetBranchAddress("PFBeamPrimTrkLen",&PFBeamPrimTrkLen);
   tree->SetBranchAddress("pWC",&pWC);
   //tree->Print();
@@ -206,6 +246,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   Float_t PFBeamPrimEnergySumCSDAProton; // MeV kinetic energy
   Float_t pWCCSDARangeMu; // cm
   Float_t pWCCSDARangeProton; // cm
+  Float_t PFBeamPrimXFrontTPCTrackEnd; // cm
+  Float_t PFBeamPrimYFrontTPCTrackEnd; // cm
 
   friendTree->Branch("zWiredEdx_corr",&zWiredEdx_corr);
   friendTree->Branch("zWiredEdx_ajib",&zWiredEdx_ajib);
@@ -250,6 +292,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
   friendTree->Branch("PFBeamPrimEnergySumCSDAProton",&PFBeamPrimEnergySumCSDAProton,"PFBeamPrimEnergySumCSDAProton/F");
   friendTree->Branch("pWCCSDARangeMu",&pWCCSDARangeMu,"pWCCSDARangeMu/F");
   friendTree->Branch("pWCCSDARangeProton",&pWCCSDARangeProton,"pWCCSDARangeProton/F");
+  friendTree->Branch("PFBeamPrimXFrontTPCTrackEnd",&PFBeamPrimXFrontTPCTrackEnd,"PFBeamPrimXFrontTPCTrackEnd/F");
+  friendTree->Branch("PFBeamPrimYFrontTPCTrackEnd",&PFBeamPrimYFrontTPCTrackEnd,"PFBeamPrimYFrontTPCTrackEnd/F");
 
   ///////////////////////////////
   ///////////////////////////////
@@ -392,6 +436,8 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     PFBeamPrimEnergySumCSDAProton = DEFAULTNEG;
     pWCCSDARangeMu = DEFAULTNEG;
     pWCCSDARangeProton = DEFAULTNEG;
+    PFBeamPrimXFrontTPCTrackEnd = DEFAULTNEG;
+    PFBeamPrimYFrontTPCTrackEnd = DEFAULTNEG;
 
     // Either got pWC from beam or from primaryParticle, so now is the time to do this
     float eWC = sqrt(pWC*pWC+MCHARGEDPION*MCHARGEDPION); // assume charged pion in MeV
@@ -413,6 +459,17 @@ void makeFriendTree (TString inputFileName,TString outputFileName,TString caloCa
     {
       PFBeamPrimEnergySumCSDAMu = muonTable.keFromRange(PFBeamPrimTrkLen);
       PFBeamPrimEnergySumCSDAProton = protonTable.keFromRange(PFBeamPrimTrkLen);
+    }
+
+    if (PFBeamPrimEndX > -10000 && PFBeamPrimEndTheta > -10000)
+    {
+      TVector3 pos(PFBeamPrimEndX,PFBeamPrimEndY,PFBeamPrimEndZ);
+      TVector3 dir;
+      dir.SetMagThetaPhi(1.,PFBeamPrimEndTheta,PFBeamPrimEndPhi);
+      const auto& pfFrontTPCPointTrackEnd = lineZPlane(ZSTARTOFTPC,pos,dir);
+      PFBeamPrimXFrontTPCTrackEnd = pfFrontTPCPointTrackEnd.X();
+      PFBeamPrimYFrontTPCTrackEnd = pfFrontTPCPointTrackEnd.Y();
+
     }
 
     // Find which wire is the start and end point to correct Z

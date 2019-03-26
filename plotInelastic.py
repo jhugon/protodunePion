@@ -16,13 +16,13 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
     {
       'histConfigs':
         [
-          {
-            'name': "nGoodFEMBs",
-            'xtitle': "N Good FEMBs for Beam-side APAs",
-            'ytitle': "Events / bin",
-            'binning': [61,-0.5,60.5],
-            'var': "nGoodFEMBs[0] + nGoodFEMBs[2] + nGoodFEMBs[4]",
-          },
+          #{
+          #  'name': "nGoodFEMBs",
+          #  'xtitle': "N Good FEMBs for Beam-side APAs",
+          #  'ytitle': "Events / bin",
+          #  'binning': [61,-0.5,60.5],
+          #  'var': "nGoodFEMBs[0] + nGoodFEMBs[2] + nGoodFEMBs[4]",
+          #},
        ],
       'cut': "isMC || (nGoodFEMBs[0] == 20 && nGoodFEMBs[2] == 20 && nGoodFEMBs[4] == 20)",
     },
@@ -89,6 +89,46 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
       'histConfigs':
         [
           {
+            'name': "DeltaXPFBeamPrimBI_fromTrackEnd",
+            'xtitle': "#Delta X PF Track End & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimXFrontTPCTrackEnd - xWC",
+          },
+          {
+            'name': "DeltaXPFBeamPrimBI_fromTrackEnd_wide",
+            'xtitle': "#Delta X PF Track End & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-100,100],
+            'var': "PFBeamPrimXFrontTPCTrackEnd - xWC",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "DeltaYPFBeamPrimBI_fromTrackEnd",
+            'xtitle': "#Delta Y PF Track End & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [150,-25,50],
+            'var': "PFBeamPrimYFrontTPCTrackEnd - yWC",
+          },
+          {
+            'name': "DeltaYPFBeamPrimBI_fromTrackEnd_wide",
+            'xtitle': "#Delta Y PF Track End & BI Track at TPC Front [cm]",
+            'ytitle': "Events / bin",
+            'binning': [100,-100,100],
+            'var': "PFBeamPrimYFrontTPCTrackEnd - yWC",
+          },
+       ],
+      'cut': "1",
+    },
+    {
+      'histConfigs':
+        [
+          {
             'name': "DeltaXPFBeamPrimStartBI",
             'xtitle': "#Delta X PF Track Start & BI Track [cm]",
             'ytitle': "Events / bin",
@@ -103,7 +143,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "PFBeamPrimStartX - xWC",
           },
        ],
-      'cut': "1",
+      'cut': "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -5) && ((PFBeamPrimXFrontTPC-xWC) < 5)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 0) && ((PFBeamPrimXFrontTPC-xWC) < 20))",
     },
     {
       'histConfigs':
@@ -123,7 +163,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "PFBeamPrimStartY - yWC",
           },
        ],
-      'cut': "1",
+      'cut': "(isMC && ((PFBeamPrimYFrontTPC-yWC) > 0) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 10) && ((PFBeamPrimYFrontTPC-yWC) < 30))",
     },
     {
       'histConfigs':
@@ -328,10 +368,17 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
       'histConfigs':
         [
           {
-            'name': "PFBeamPrimEndZ",
+            'name': "PFBeamPrimEndZ_end",
             'xtitle': "TPC Track End Z [cm]",
             'ytitle': "Events / bin",
-            'binning': [55,600,705],
+            'binning': [55,600,710],
+            'var': "PFBeamPrimEndZ",
+          },
+          {
+            'name': "PFBeamPrimEndZ_start",
+            'xtitle': "TPC Track End Z [cm]",
+            'ytitle': "Events / bin",
+            'binning': [55,-10,100],
             'var': "PFBeamPrimEndZ",
           },
           {
@@ -343,6 +390,26 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
           },
        ],
       'cut': "PFBeamPrimEndZ<650 && PFBeamPrimEndZ>25",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "lastHitWireMod480",
+            'xtitle': "Last Hit Z Wire Number Mod 480",
+            'ytitle': "Events / bin",
+            'binning': [30,450,480],
+            'var': "zWireLastHitWire % 480",
+          },
+          {
+            'name': "lastHitWireMod480_wide",
+            'xtitle': "Last Hit Z Wire Number Mod 480",
+            'ytitle': "Events / bin",
+            'binning': [96,0,480],
+            'var': "zWireLastHitWire % 480",
+          },
+       ],
+      'cut': "(zWireLastHitWire % 480) <= 485",
     },
 #    {
 #      'histConfigs':
@@ -767,7 +834,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
     for histConfig in histConfigs:
       histConfig['logy'] = True
     if doNMinusOne:
-      dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_"+sillystr+"_NM1_logy_"+sillystr,nMax=NMAX)
+      dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_logy_"+sillystr,nMax=NMAX)
     if doNoCuts:
       dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_logy_"+sillystr,nMax=NMAX)
     if doSCE:
@@ -777,7 +844,7 @@ if __name__ == "__main__":
 
   c = root.TCanvas()
   NMAX=10000000000
-  #NMAX=100
+  #NMAX=1000
   #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
   #caption = "MCC10, 2 GeV SCE"
   #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
