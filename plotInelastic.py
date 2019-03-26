@@ -832,7 +832,7 @@ if __name__ == "__main__":
       #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
       "piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
       "Run 5387: 1 GeV/c & MCC11 SCE",
-      1.,
+      0.7546099290780142,
       "run5387_1GeV",
     )
   )
@@ -849,7 +849,7 @@ if __name__ == "__main__":
       #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
       "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
       "Run 5432: 2 GeV/c & MCC11 SCE",
-      1.,
+      9.196239717978848,
       "run5432_2GeV",
     )
   )
