@@ -3,8 +3,12 @@
 import ROOT as root
 from helpers import *
 root.gROOT.SetBatch(True)
+import multiprocessing
+import copy
 
-def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
+def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
+  fileConfigs = copy.deepcopy(fileConfigs)
+  catConfigs = copy.deepcopy(catConfigs)
 
   momentumBins = [80,0,8]
   #momentumBins = [50,0,2.5]
@@ -12,6 +16,8 @@ def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
   keBins = momentumBins
   keInteractBins = [200,-10,10]
   keInteractBins = [100,-2.5,2.5]
+
+  c = root.TCanvas()
 
   histConfigs = [
     #{
@@ -1139,23 +1145,24 @@ def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   for i in reversed(range(len(histConfigs))):
-    #if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
+    if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
     #if (histConfigs[i]['name'] != "zWirePitch") and (histConfigs[i]['name'] != "zWirePitch_zoom") and (histConfigs[i]['name'] != "zWiredEdx_zoom"):
     #if (histConfigs[i]['name'] != "zWirePitch_zoom"):
     #if histConfigs[i]['name'] != "pWC":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton":
     #if histConfigs[i]['name'] != "zWirePartKinInteractProton_corr":
     #if histConfigs[i]['name'] != "RatiozWireEnergySum_ajibAndKinWCProton":
-    #if (not ("Ratio" in histConfigs[i]['name'])) and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
+    #if (not ("Ratio" in histConfigs[i]['name'])) \
+    #    and (histConfigs[i]['name'] != "pWC") \
+    #    and (not ("kinWC" in histConfigs[i]['name'])):# \
+    #    and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
     #    and (not ("EnergySum" in histConfigs[i]['name'])) \
-    #    and (not ("kinWC" in histConfigs[i]['name'])) \
     #    and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
     #    and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
     #    and histConfigs[i]['name'] != "zWiredEdx_ajib" \
     #    and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
     #    and histConfigs[i]['name'] != "zWirePartKinInteract" \
     #    and histConfigs[i]['name'] != "zWirePartKinInteract_corr" \
-    #    and (histConfigs[i]['name'] != "pWC") \
     #    and (histConfigs[i]['name'] != "TOF"): #\
     #    #and (histConfigs[i]['name'] != "PFBeamPrimXs") \
     #    #and (histConfigs[i]['name'] != "PFBeamPrimYs") \
@@ -1163,7 +1170,7 @@ def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     #    #and (histConfigs[i]['name'] != "PFBeamPrimXsKEProtonLt0") \
     #    #and (histConfigs[i]['name'] != "PFBeamPrimYsKEProtonLt0") \
     #    #and (histConfigs[i]['name'] != "PFBeamPrimZsKEProtonLt0"):
-    if (not ("lastHitWire" in histConfigs[i]['name'])):
+    #if (not ("lastHitWire" in histConfigs[i]['name'])):
     #if (not ("zWirePartKin" in histConfigs[i]['name'])) or histConfigs[i]["name"] == "zWirePartKin":
     #if not ("PFBeamPrimKinInteract" in histConfigs[i]['name']) and not ("zWirePartKin" in histConfigs[i]['name']):
     #if (not ("Ratio" in histConfigs[i]['name'])) and histConfigs[i]['name'] != "pWC":
@@ -1174,8 +1181,9 @@ def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     #plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",outSuffix="_"+runSetName,nMax=NMAX)
     fileConfigMCs = copy.deepcopy(fileConfigs)
     fileConfigDatas = []
-    #for histConfig in histConfigs:
-    #  histConfig['normalize'] = True
+    for histConfig in histConfigs:
+      histConfig['logy'] = False
+      #histConfig['normalize'] = True
     for i in reversed(range(len(fileConfigMCs))):
       if 'isData' in fileConfigMCs[i] and fileConfigMCs[i]['isData']:
         fileConfigDatas.append(fileConfigMCs.pop(i))
@@ -1452,6 +1460,8 @@ def doDataMCPlots(c,fileConfigs,catConfigs,weightStr,runSetName,NMAX):
 
   #plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",outSuffix="_"+runSetName,nMax=NMAX)
 
+  del c
+
 if __name__ == "__main__":
 
   cuts = ""
@@ -1477,45 +1487,45 @@ if __name__ == "__main__":
   primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+rejectThroughgoingCut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-  weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
+  weightStr = "1"+primaryTrackCuts+stoppingProtonCut
 
   #nData = 224281.0
   logy = False
 
   #catConfigs=TRUECATEGORYFEWERCONFIGS
-  catConfigs=TRUECATEGORYPOORMATCHCONFIGS
-  #catConfigs=TRUECATEGORYPROTONCONFIGS
+  #catConfigs=TRUECATEGORYPOORMATCHCONFIGS
+  catConfigs=TRUECATEGORYPROTONCONFIGS
 
-  c = root.TCanvas()
   NMAX=10000000000
   #NMAX=100
   sillies = []
 
   sillies.append((
     [{
-      'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
+      'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
       'name': "run5387",
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c ",
       'isData': True,
-      'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      #'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     },
     {
-      'fn': "piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
+      'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
       'name': "mcc11_sce_1GeV",
       'title': "MCC11 1 GeV/c SCE",
       'caption': "MCC11 1 GeV/c SCE",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 0.39676616915422885, # for pions
-      #'scaleFactor': 1, # for protons no stopping cut
+      #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      #'scaleFactor': 0.39676616915422885, # for pions
+      'scaleFactor': 1, # for protons stopping cut
     }],
     "run5387_1GeV",
   ))
 
   sillies.append((
     [{
-      'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
+      'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -1530,7 +1540,7 @@ if __name__ == "__main__":
       'caption': "MCC11 2 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 4.663265306122449,
+      #'scaleFactor': 1,
     }],
     "run5432_2GeV",
   ))
@@ -1558,5 +1568,15 @@ if __name__ == "__main__":
   #  "run5145_7GeV",
   #))
 
+  doMP = False
+  pool = None
+  if doMP:
+    pool = multiprocessing.Pool()
   for silly in sillies:
-    doDataMCPlots(c,silly[0],catConfigs,weightStr,silly[1],NMAX)
+    if doMP:
+      pool.apply_async(doDataMCPlots,(silly[0],catConfigs,weightStr,silly[1],NMAX))
+    else:
+      doDataMCPlots(silly[0],catConfigs,weightStr,silly[1],NMAX)
+  if doMP:
+    pool.close()
+    pool.join()

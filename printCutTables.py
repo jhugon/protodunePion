@@ -60,17 +60,27 @@ if __name__ == "__main__":
 
   fileConfigsMC = [
     {
-      'fn': "piAbsSelector_mcc11_sce_1p0GeV_v6.1_08b55104.root",
+      'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
       'name': "mcc11_sce_1p0GeV",
       'title': "MCC 11 1 GeV/c SCE",
     },
     {
-      'fn': "piAbsSelector_mcc11_sce_2p0GeV_v6.1_08b55104.root",
+      'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
       'name': "mcc11_sce_2p0GeV",
       'title': "MCC 11 2 GeV/c SCE",
     },
     {
-      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v6.1_08b55104.root",
+      'fn': "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_3p0GeV",
+      'title': "MCC 11 3 GeV/c SCE",
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_6p0GeV",
+      'title': "MCC 11 6 GeV/c SCE",
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
       'name': "mcc11_sce_7p0GeV",
       'title': "MCC 11 7 GeV/c SCE",
     },
@@ -78,38 +88,37 @@ if __name__ == "__main__":
 
   fileConfigsData = [
     {
-      #'fn': "piAbsSelector_run5387_d9d59922.root", # old BI
-      #'fn': "piAbsSelector_run5387_e453e2e5.root", # new BI
-      #'fn': "piAbs_run5387_1GeV_testOldNewBeamEvent_v3.root",
-      'fn': "piAbsSelector_data_run5387_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
       'name': "run5387",
       'title': "Run 5387 1 GeV/c",
     },
     {
-      #'fn': "piAbsSelector_run5432_d9d59922.root", # old BI
-      #'fn': "piAbsSelector_run5432_e453e2e5.root", # new BI
-      #'fn': "piAbs_run5432_2GeV_testOldNewBeamEvent_v3.root",
-      'fn': "piAbsSelector_data_run5432_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
       'name': "run5432",
       'title': "Run 5432 2 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5786_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
       'name': "run5786",
       'title': "Run 5786 3 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5770_v6_b49a88cb.root",
+      'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
       'name': "run5770",
       'title': "Run 5770 6 GeV/c",
     },
     {
-      #'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
-      #'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
-      'fn': "piAbsSelector_data_run5145_v6_b49a88cb.root",
-      'name': "run5145",
-      'title': "Run 5145 7 GeV/c",
+      'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
+      'name': "run5204",
+      'title': "Run 5204 7 GeV/c",
     },
+    #{
+    #  #'fn': "piAbsSelector_run5145_d9d59922.root", # old BI
+    #  #'fn': "piAbsSelector_run5145_e453e2e5.root", # new BI
+    #  'fn': "piAbsSelector_data_run5145_v6_b49a88cb.root",
+    #  'name': "run5145",
+    #  'title': "Run 5145 7 GeV/c",
+    #},
     #{
     #  'fn': "piAbsSelector_run5826.root",
     #  'name': "run5826",
@@ -121,6 +130,10 @@ if __name__ == "__main__":
     #  'title': "Run 5834 0.3 GeV/c",
     #},
   ]
+  for iFC, fc in enumerate(fileConfigsData):
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+  for iFC, fc in enumerate(fileConfigsMC):
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   #PrintCutTable(fileConfigsData,cutConfigs,"PiAbsSelector/tree",nMax=NMAX)
   #fileConfigsData[0]['tree'].Print()
@@ -411,13 +424,13 @@ if __name__ == "__main__":
   ###########################################################################################
   ###########################################################################################
 
-  print "\n\n"
-  print "Old Beamline Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineOld,"PiAbsSelector/tree",nMax=NMAX)
+  #print "\n\n"
+  #print "Old Beamline Selection:"
+  #PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineOld,"PiAbsSelector/tree",nMax=NMAX)
 
-  print "\n\n"
-  print "New Beamline Selection:"
-  PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineNew,"PiAbsSelector/tree",nMax=NMAX)
+  #print "\n\n"
+  #print "New Beamline Selection:"
+  #PrintCutTable(fileConfigsData,cutConfigsGoodBeamlineNew,"PiAbsSelector/tree",nMax=NMAX)
 
   ###########################################################################################
   ###########################################################################################
@@ -439,13 +452,13 @@ if __name__ == "__main__":
     {"name": "BI Proton","cut": "("+getCutForAllRuns(fileConfigsData,bigCuts,'p')+" && "+cutGoodBeamlineNew+")"},
   ]
 
-  print "\n\n"
-  print "Old Beamline Categories:"
-  PrintPercentTable(fileConfigsData,catConfigsSpeciesOld,"PiAbsSelector/tree",nMax=NMAX)
+  #print "\n\n"
+  #print "Old Beamline Categories:"
+  #PrintPercentTable(fileConfigsData,catConfigsSpeciesOld,"PiAbsSelector/tree",nMax=NMAX)
 
-  print "\n\n"
-  print "New Beamline Categories:"
-  PrintPercentTable(fileConfigsData,catConfigsSpeciesNew,"PiAbsSelector/tree",nMax=NMAX)
+  #print "\n\n"
+  #print "New Beamline Categories:"
+  #PrintPercentTable(fileConfigsData,catConfigsSpeciesNew,"PiAbsSelector/tree",nMax=NMAX)
 
   ###########################################################################################
   ###########################################################################################
@@ -456,13 +469,15 @@ if __name__ == "__main__":
     {"name": "Official BI Pion/Muon","cut": getCutForAllRuns(fileConfigsData,bigCuts,'pi')},
     {"name": "All Beam-side APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20))"},
 #    {"name": "All APAs Good","cut": "(isMC || (nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20 && nGoodFEMBs[1]==20 && nGoodFEMBs[3]==20 && nGoodFEMBs[5]==20))"},
-    {"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
+    #{"name": "MC Truth Pion or Muon","cut": "(!isMC || abs(truePrimaryPDG) == 13 || truePrimaryPDG == 211)"},
+    {"name": "MC Truth Pion or Muon (or Electron)","cut": "(!isMC || abs(truePrimaryPDG) == 13 || abs(truePrimaryPDG) == 211 || (abs(truePrimaryPDG)==11 && trueStartMom > 4.5))"},
     {"name": "1 Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
     {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
     {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
     {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
-    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"},
-    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"},
+    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -5) && ((PFBeamPrimXFrontTPC-xWC) < 5)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 0) && ((PFBeamPrimXFrontTPC-xWC) < 20))"},
+    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > 0) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 10) && ((PFBeamPrimYFrontTPC-yWC) < 30))"},
+    {"name": "PF Primary Doesn't End Last 4 Wires of APA","cut": "(zWireLastHitWire % 480) <= 485"},
   ]
 
   cutConfigsBeamPionOld = copy.deepcopy(cutConfigsBeamPionNew)
@@ -474,9 +489,9 @@ if __name__ == "__main__":
   for x in reversed(cutConfigsGoodBeamlineOld):
     cutConfigsBeamPionOld.insert(1,x)
 
-  print "\n\n"
-  print "Pion Selection (Old BI):"
-  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionOld,"PiAbsSelector/tree",nMax=NMAX)
+  #print "\n\n"
+  #print "Pion Selection (Old BI):"
+  #PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionOld,"PiAbsSelector/tree",nMax=NMAX)
 
   print "\n\n"
   print "Pion Selection (New BI):"

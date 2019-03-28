@@ -5,9 +5,10 @@ from helpers import *
 root.gROOT.SetBatch(True)
 import copy
 import sys
+import multiprocessing
 
-def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
-  doNMinusOne = True
+def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
+  doNMinusOne = False
   doNoCuts = True
   doSCE = False
   doLogy = True
@@ -25,6 +26,28 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
           #},
        ],
       'cut': "isMC || (nGoodFEMBs[0] == 20 && nGoodFEMBs[2] == 20 && nGoodFEMBs[4] == 20)",
+    },
+    {
+      'histConfigs':
+        [
+          {
+            'name': "pBI_low",
+            'xtitle': "Beamline Momentum [GeV/c]",
+            'ytitle': "Events / bin",
+            'binning': [80,0,4],
+            'var': "pWC/1000.",
+            'printIntegral': True,
+          },
+          {
+            'name': "pBI_wide",
+            'xtitle': "Beamline Momentum [GeV/c]",
+            'ytitle': "Events / bin",
+            'binning': [100,0,10],
+            'var': "pWC/1000.",
+            'printIntegral': True,
+          },
+        ],
+      'cut': "1",
     },
     {
       'name': "PFNBeamSlices",
@@ -389,7 +412,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "PFBeamPrimEndZ",
           },
        ],
-      'cut': "PFBeamPrimEndZ<650 && PFBeamPrimEndZ>25",
+      'cut': "PFBeamPrimEndZ<650",
     },
     {
       'histConfigs':
@@ -409,7 +432,8 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "zWireLastHitWire % 480",
           },
        ],
-      'cut': "(zWireLastHitWire % 480) <= 485",
+      #'cut': "(zWireLastHitWire % 480) <= 485",
+      'cut': "1",
     },
 #    {
 #      'histConfigs':
@@ -565,28 +589,20 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
 #      'var': "PFBeamPrimTrkLen",
 #      'cut': "1",
 #    },
-#    {
-#      'name': "PFBeamPrimNDaughters",
-#      'xtitle': "Number of PF Secondaries",
-#      'ytitle': "Events / bin",
-#      'binning': [9,-0.5,8.5],
-#      'var': "PFBeamPrimNDaughters",
-#      'cut': "1",
-#    },
+    {
+      'name': "PFBeamPrimNDaughters",
+      'xtitle': "Number of PF Secondaries",
+      'ytitle': "Events / bin",
+      'binning': [9,-0.5,8.5],
+      'var': "PFBeamPrimNDaughters",
+      'cut': "1",
+    },
 #    {
 #      'name': "kinBI",
 #      'xtitle': "Beamline Kinetic Energy (assume #pi^{+}) [MeV]",
 #      'ytitle': "Events / bin",
 #      'binning': [100,0,10],
 #      'var': "kinWC/1000.",
-#      'cut': "1",
-#    },
-#    {
-#      'name': "pBI",
-#      'xtitle': "Beamline Momentum [GeV/c]",
-#      'ytitle': "Events / bin",
-#      'binning': [100,0,10],
-#      'var': "pWC/1000.",
 #      'cut': "1",
 #    },
 #    {
@@ -713,25 +729,26 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
       'color': root.kAzure+10,
       'scaleFactor': scaleFactor,
     },
-    {
-      'fn': mcfn,
-      'name': "mcc11_other",
-      'title': "MCC11 Unknown",
-      'caption': "MCC11 Unknown",
-      'cuts': "*(trueCategory==5)",
-      'color': root.kAzure+10,
-      'scaleFactor': scaleFactor,
-    },
     #{
     #  'fn': mcfn,
-    #  'name': "mcc11_e",
-    #  'title': "MCC11 Primary Electron",
-    #  'caption': "MCC11 Primary Electron",
-    #  'cuts': "*(trueCategory==11)",
+    #  'name': "mcc11_other",
+    #  'title': "MCC11 Unknown",
+    #  'caption': "MCC11 Unknown",
+    #  'cuts': "*(trueCategory==5)",
     #  'color': root.kAzure+10,
     #  'scaleFactor': scaleFactor,
     #},
   ]
+  if ('6GeV' in sillystr) or ('7GeV' in sillystr):
+    fileConfigsMC.append({
+      'fn': mcfn,
+      'name': "mcc11_e",
+      'title': "MCC11 Primary Electron",
+      'caption': "MCC11 Primary Electron",
+      'cuts': "*(trueCategory==11)",
+      'color': root.kAzure+10,
+      'scaleFactor': scaleFactor,
+    })
   #fileConfigsMC = [
   #  {
   #    'fn': mcfn,
@@ -744,6 +761,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
   #  },
   #]
 
+  fileConfigsData = copy.deepcopy(fileConfigsData)
   print "fileConfigsMC"
   print fileConfigsMC
   print "fileConfigsData"
@@ -816,6 +834,7 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
   except IndexError:
     pass
 
+  c = root.TCanvas()
 
   if doNMinusOne:
     dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_"+sillystr,nMax=NMAX,table=True)
@@ -840,104 +859,129 @@ def doPlots(c,NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
     if doSCE:
       plotManyFilesOneNMinusOnePlot(fileConfigsData+fileConfigsSCEMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="InelasticSCE_",outSuffix="_NM1_logy_"+sillystr,nMax=NMAX)
 
+  del c
+
 if __name__ == "__main__":
 
-  c = root.TCanvas()
   NMAX=10000000000
-  #NMAX=1000
-  #fn = "piAbsSelector_protodune_beam_p2GeV_cosmics_3ms_sce_mcc10_100evts.root"
-  #caption = "MCC10, 2 GeV SCE"
-  #fn = "piAbsSelector_mcc11_protoDUNE_reco_100evts.root"
-  #fn = "PiAbs_mcc11.root"
-  #fn = "PiAbs_mcc10_2and7GeV_3ms_sce.root"
-  #caption = "Beam Data, MCC10 2 & 7 GeV"
-  mcfn = "piAbsSelector_mcc11_sce_2p0GeV_v6.1_08b55104.root"
-  caption = "2 GeV/c Beam Data & MCC11 SCE"
-  scaleFactor = 10.325053995680346
+  #NMAX=100
   
   #cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom  > 0)"
   cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom  == 1)"
   cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
-
-  fileConfigsData = [
-    #{
-    #  'fn': "piAbsSelector_run5145_v3.root",
-    #  'name': "run5145",
-    #  'title': "Run 5145: 7 GeV/c",
-    #  'caption': "Run 5145: 7 GeV/c",
-    #  'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    #},
-    #{
-    #  'fn': "piAbsSelector_run5387_v3.root",
-    #  'name': "run5387",
-    #  'title': "Run 5387: 1 GeV/c",
-    #  'caption': "Run 5387: 1 GeV/c",
-    #  'cuts': "*"+cutGoodBeamline,
-    #  'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    #},
-    {
-      'fn': "piAbsSelector_run5432_v6.1_08b55104_local.root",
-      'addFriend': ["friend","friendTree_piAbsSelector_run5432_v6.1_08b55104_local.root"],
-      'name': "run5432",
-      'title': "Run 5432: 2 GeV/c",
-      'caption': "Run 5432: 2 GeV/c",
-      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-  ]
 
   stuff = []
 
   stuff.append(
     (
       [{
-        'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
+        #'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
+        'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
         'name': "run5387",
         'title': "Run 5387: 1 GeV/c",
         'caption': "Run 5387: 1 GeV/c",
         'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
       }],
       #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
-      "piAbsSelector_mcc11_sce_1GeV_histats_part1_v7a1_55712adf.root",
+      "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
       "Run 5387: 1 GeV/c & MCC11 SCE",
-      0.7546099290780142,
+      1.1400832177531206,
       "run5387_1GeV",
     )
   )
 
-  stuff.append(
-    (
-      [{
-        'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
-        'name': "run5432",
-        'title': "Run 5432: 2 GeV/c",
-        'caption': "Run 5432: 2 GeV/c",
-        'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-      }],
-      #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
-      "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
-      "Run 5432: 2 GeV/c & MCC11 SCE",
-      9.196239717978848,
-      "run5432_2GeV",
-    )
-  )
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
+#        'name': "run5432",
+#        'title': "Run 5432: 2 GeV/c",
+#        'caption': "Run 5432: 2 GeV/c",
+#        'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+#      }],
+#      #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
+#      "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+#      "Run 5432: 2 GeV/c & MCC11 SCE",
+#      9.196239717978848,
+#      "run5432_2GeV",
+#    )
+#  )
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+#        'name': "run5786",
+#        'title': "Run 5786: 3 GeV/c",
+#        'caption': "Run 5786: 3 GeV/c",
+#        'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+#      }],
+#      "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
+#      "Run 5786: 3 GeV/c & MCC11 SCE",
+#      29.92072072072072,
+#      "run5786_3GeV",
+#    )
+#  )
+#
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
+#        'name': "run5770",
+#        'title': "Run 5770: 6 GeV/c",
+#        'caption': "Run 5770: 6 GeV/c",
+#        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+#      }],
+#      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+#      "Run 5770: 6 GeV/c & MCC11 SCE",
+#      5.037104557640751,
+#      "run5770_6GeV",
+#    )
+#  )
+#
+#  #stuff.append(
+#  #  (
+#  #    [{
+#  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+#  #      'name': "run5145",
+#  #      'title': "Run 5145: 7 GeV/c",
+#  #      'caption': "Run 5145: 7 GeV/c",
+#  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+#  #    }],
+#  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+#  #    "Run 5145: 7 GeV/c & MCC11 SCE",
+#  #    1.,
+#  #    "run5145_7GeV",
+#  #  )
+#  #)
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
+#        'name': "run5204",
+#        'title': "Run 5204: 7 GeV/c",
+#        'caption': "Run 5204: 7 GeV/c",
+#        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+#      }],
+#      "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
+#      "Run 5204: 7 GeV/c & MCC11 SCE",
+#      0.7531504287631133,
+#      "run5204_7GeV",
+#    )
+#  )
 
-  #stuff.append(
-  #  (
-  #    [{
-  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-  #      'name': "run5145",
-  #      'title': "Run 5145: 7 GeV/c",
-  #      'caption': "Run 5145: 7 GeV/c",
-  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #    }],
-  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-  #    "Run 5145: 7 GeV/c & MCC11 SCE",
-  #    1.,
-  #    "run5145_7GeV",
-  #  )
-  #)
-
-
+  doMP = False
+  pool = None
+  if doMP:
+    pool = multiprocessing.Pool()
   for fc in stuff:
     print stuff
-    doPlots(c,NMAX,fc[1],fc[2],fc[3],fc[0],fc[4])
+    if doMP:
+      pool.apply_async(doPlots,(NMAX,fc[1],fc[2],fc[3],fc[0],fc[4]))
+    else:
+      doPlots(NMAX,fc[1],fc[2],fc[3],fc[0],fc[4])
+  if doMP:
+    pool.close()
+    pool.join()
