@@ -339,8 +339,8 @@ if __name__ == "__main__":
 #    {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
 #    {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
 #    {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
-#    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30))"},
-#    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27))"},
+#    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -10) && ((PFBeamPrimStartX-xWC) < 10)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 10) && ((PFBeamPrimStartX-xWC) < 30))"},
+#    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartY-yWC) > -10) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 7) && ((PFBeamPrimStartY-yWC) < 27))"},
 #  ]
 #  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsPion,"PiAbsSelector/tree",nMax=NMAX,errors=True)
 
@@ -475,8 +475,8 @@ if __name__ == "__main__":
     {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
     {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
     {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
-    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -5) && ((PFBeamPrimXFrontTPC-xWC) < 5)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 0) && ((PFBeamPrimXFrontTPC-xWC) < 20))"},
-    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimYFrontTPC-yWC) > 0) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 10) && ((PFBeamPrimYFrontTPC-yWC) < 30))"},
+    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20))"},
+    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30))"},
     {"name": "PF Primary Doesn't End Last 4 Wires of APA","cut": "(zWireLastHitWire % 480) <= 485"},
   ]
 

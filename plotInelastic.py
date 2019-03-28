@@ -8,7 +8,7 @@ import sys
 import multiprocessing
 
 def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
-  doNMinusOne = False
+  doNMinusOne = True
   doNoCuts = True
   doSCE = False
   doLogy = True
@@ -17,13 +17,13 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
     {
       'histConfigs':
         [
-          #{
-          #  'name': "nGoodFEMBs",
-          #  'xtitle': "N Good FEMBs for Beam-side APAs",
-          #  'ytitle': "Events / bin",
-          #  'binning': [61,-0.5,60.5],
-          #  'var': "nGoodFEMBs[0] + nGoodFEMBs[2] + nGoodFEMBs[4]",
-          #},
+          {
+            'name': "nGoodFEMBs",
+            'xtitle': "N Good FEMBs for Beam-side APAs",
+            'ytitle': "Events / bin",
+            'binning': [61,-0.5,60.5],
+            'var': "nGoodFEMBs[0] + nGoodFEMBs[2] + nGoodFEMBs[4]",
+          },
        ],
       'cut': "isMC || (nGoodFEMBs[0] == 20 && nGoodFEMBs[2] == 20 && nGoodFEMBs[4] == 20)",
     },
@@ -166,7 +166,7 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "PFBeamPrimStartX - xWC",
           },
        ],
-      'cut': "(isMC && ((PFBeamPrimXFrontTPC-xWC) > -5) && ((PFBeamPrimXFrontTPC-xWC) < 5)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 0) && ((PFBeamPrimXFrontTPC-xWC) < 20))",
+      'cut': "(isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20))",
     },
     {
       'histConfigs':
@@ -186,7 +186,7 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'var': "PFBeamPrimStartY - yWC",
           },
        ],
-      'cut': "(isMC && ((PFBeamPrimYFrontTPC-yWC) > 0) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 10) && ((PFBeamPrimYFrontTPC-yWC) < 30))",
+      'cut': "(isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30))",
     },
     {
       'histConfigs':
@@ -868,7 +868,6 @@ if __name__ == "__main__":
   
   #cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom  > 0)"
   cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom  == 1)"
-  cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
 
   stuff = []
 
@@ -880,7 +879,7 @@ if __name__ == "__main__":
         'name': "run5387",
         'title': "Run 5387: 1 GeV/c",
         'caption': "Run 5387: 1 GeV/c",
-        'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+        'cuts': "*(BIPion1GeV)*"+cutGoodBeamline,
       }],
       #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
       "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
@@ -890,89 +889,89 @@ if __name__ == "__main__":
     )
   )
 
-#  stuff.append(
-#    (
-#      [{
-#        'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
-#        'name': "run5432",
-#        'title': "Run 5432: 2 GeV/c",
-#        'caption': "Run 5432: 2 GeV/c",
-#        'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-#      }],
-#      #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
-#      "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
-#      "Run 5432: 2 GeV/c & MCC11 SCE",
-#      9.196239717978848,
-#      "run5432_2GeV",
-#    )
-#  )
-#
-#  stuff.append(
-#    (
-#      [{
-#        'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
-#        'name': "run5786",
-#        'title': "Run 5786: 3 GeV/c",
-#        'caption': "Run 5786: 3 GeV/c",
-#        'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-#      }],
-#      "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
-#      "Run 5786: 3 GeV/c & MCC11 SCE",
-#      29.92072072072072,
-#      "run5786_3GeV",
-#    )
-#  )
-#
-#
-#  stuff.append(
-#    (
-#      [{
-#        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
-#        'name': "run5770",
-#        'title': "Run 5770: 6 GeV/c",
-#        'caption': "Run 5770: 6 GeV/c",
-#        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-#      }],
-#      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
-#      "Run 5770: 6 GeV/c & MCC11 SCE",
-#      5.037104557640751,
-#      "run5770_6GeV",
-#    )
-#  )
-#
-#  #stuff.append(
-#  #  (
-#  #    [{
-#  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-#  #      'name': "run5145",
-#  #      'title': "Run 5145: 7 GeV/c",
-#  #      'caption': "Run 5145: 7 GeV/c",
-#  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-#  #    }],
-#  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-#  #    "Run 5145: 7 GeV/c & MCC11 SCE",
-#  #    1.,
-#  #    "run5145_7GeV",
-#  #  )
-#  #)
-#
-#  stuff.append(
-#    (
-#      [{
-#        'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
-#        'name': "run5204",
-#        'title': "Run 5204: 7 GeV/c",
-#        'caption': "Run 5204: 7 GeV/c",
-#        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-#      }],
-#      "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
-#      "Run 5204: 7 GeV/c & MCC11 SCE",
-#      0.7531504287631133,
-#      "run5204_7GeV",
-#    )
-#  )
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
+        'name': "run5432",
+        'title': "Run 5432: 2 GeV/c",
+        'caption': "Run 5432: 2 GeV/c",
+        'cuts': "*(BIPion2GeV)*"+cutGoodBeamline,
+      }],
+      #"piAbsSelector_mcc11_sce_2p0GeV_v7.0_55712adf_local.root",
+      "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+      "Run 5432: 2 GeV/c & MCC11 SCE",
+      9.196239717978848,
+      "run5432_2GeV",
+    )
+  )
 
-  doMP = False
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+        'name': "run5786",
+        'title': "Run 5786: 3 GeV/c",
+        'caption': "Run 5786: 3 GeV/c",
+        'cuts': "*(BIPion3GeV)*"+cutGoodBeamline,
+      }],
+      "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
+      "Run 5786: 3 GeV/c & MCC11 SCE",
+      29.92072072072072,
+      "run5786_3GeV",
+    )
+  )
+
+
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
+        'name': "run5770",
+        'title': "Run 5770: 6 GeV/c",
+        'caption': "Run 5770: 6 GeV/c",
+        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline,
+      }],
+      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+      "Run 5770: 6 GeV/c & MCC11 SCE",
+      5.037104557640751,
+      "run5770_6GeV",
+    )
+  )
+
+  #stuff.append(
+  #  (
+  #    [{
+  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+  #      'name': "run5145",
+  #      'title': "Run 5145: 7 GeV/c",
+  #      'caption': "Run 5145: 7 GeV/c",
+  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
+  #    }],
+  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+  #    "Run 5145: 7 GeV/c & MCC11 SCE",
+  #    1.,
+  #    "run5145_7GeV",
+  #  )
+  #)
+
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
+        'name': "run5204",
+        'title': "Run 5204: 7 GeV/c",
+        'caption': "Run 5204: 7 GeV/c",
+        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
+      }],
+      "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
+      "Run 5204: 7 GeV/c & MCC11 SCE",
+      0.7531504287631133,
+      "run5204_7GeV",
+    )
+  )
+
+  doMP = True
   pool = None
   if doMP:
     pool = multiprocessing.Pool()
