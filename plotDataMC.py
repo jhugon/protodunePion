@@ -541,6 +541,30 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
       'cuts': weightStr+"*(PFBeamPrimEndAngleToBeamTrk > -100)",
     },
     {
+      'name': "PFBeamPrimTrkStartEndDirAngle",
+      'xtitle': "Angle Between PF Track Start & End [Deg]",
+      'ytitle': "Events / bin",
+      'binning': [80,0,40],
+      'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
+      'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimTrkStartEndDirAngle_wide",
+      'xtitle': "Angle Between PF Track Start & End [Deg]",
+      'ytitle': "Events / bin",
+      'binning': [180,0,180],
+      'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
+      'cuts': weightStr,
+    },
+    {
+      'name': "PFBeamPrimTrkStartEndDirCosAngle",
+      'xtitle': "|cos(#theta)| Primary PF Track Start & End",
+      'ytitle': "Events / bin",
+      'binning': [100,0,1],
+      'var': "fabs(cos(PFBeamPrimTrkStartEndDirAngle))",
+      'cuts': weightStr+"*(PFBeamPrimTrkStartEndDirAngle > -100)",
+    },
+    {
       'name': "PFBeamPrimBeamCosmicScore",
       'xtitle': "Pandora Beam / Cosmic BDT Score",
       'ytitle': "Events / bin",
@@ -1145,7 +1169,8 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   for i in reversed(range(len(histConfigs))):
-    if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
+    if (not ("Angle" in histConfigs[i]['name'])):
+    #if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
     #if (histConfigs[i]['name'] != "zWirePitch") and (histConfigs[i]['name'] != "zWirePitch_zoom") and (histConfigs[i]['name'] != "zWiredEdx_zoom"):
     #if (histConfigs[i]['name'] != "zWirePitch_zoom"):
     #if histConfigs[i]['name'] != "pWC":
@@ -1481,20 +1506,20 @@ if __name__ == "__main__":
   cutGoodBeamline = "(BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
   cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
 
-  deltaXTrackBICut = "*((isMC && ((PFBeamPrimXFrontTPC-xWC) > -10) && ((PFBeamPrimXFrontTPC-xWC) < 10)) || ((!isMC) && ((PFBeamPrimXFrontTPC-xWC) > 10) && ((PFBeamPrimXFrontTPC-xWC) < 30)))"
-  deltaYTrackBICut = "*((isMC && ((PFBeamPrimYFrontTPC-yWC) > -10) && ((PFBeamPrimYFrontTPC-yWC) < 10)) || ((!isMC) && ((PFBeamPrimYFrontTPC-yWC) > 7) && ((PFBeamPrimYFrontTPC-yWC) < 27)))"
+  deltaXTrackBICut = "*((isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20)))"
+  deltaYTrackBICut = "*((isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30)))"
   rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
   primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+rejectThroughgoingCut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-  weightStr = "1"+primaryTrackCuts+stoppingProtonCut
+  weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
 
   #nData = 224281.0
   logy = False
 
   #catConfigs=TRUECATEGORYFEWERCONFIGS
-  #catConfigs=TRUECATEGORYPOORMATCHCONFIGS
-  catConfigs=TRUECATEGORYPROTONCONFIGS
+  catConfigs=TRUECATEGORYPOORMATCHCONFIGS
+  #catConfigs=TRUECATEGORYPROTONCONFIGS
 
   NMAX=10000000000
   #NMAX=100
@@ -1507,18 +1532,18 @@ if __name__ == "__main__":
       'title': "Run 5387: 1 GeV/c",
       'caption': "Run 5387: 1 GeV/c ",
       'isData': True,
-      #'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-      'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      #'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     },
     {
       'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
       'name': "mcc11_sce_1GeV",
       'title': "MCC11 1 GeV/c SCE",
       'caption': "MCC11 1 GeV/c SCE",
-      #'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      #'scaleFactor': 0.39676616915422885, # for pions
-      'scaleFactor': 1, # for protons stopping cut
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 0.39676616915422885, # for pions
+      #'scaleFactor': 1, # for protons stopping cut
     }],
     "run5387_1GeV",
   ))
@@ -1543,6 +1568,27 @@ if __name__ == "__main__":
       #'scaleFactor': 1,
     }],
     "run5432_2GeV",
+  ))
+
+  sillies.append((
+    [{
+      'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+      'name': "run5786",
+      'title': "Run 5786: 3 GeV/c",
+      'caption': "Run 5786: 3 GeV/c",
+      'isData': True,
+      'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_3GeV",
+      'title': "MCC11 3 GeV/c SCE",
+      'caption': "MCC11 3 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      #'scaleFactor': 1,
+    }],
+    "run5786_3GeV",
   ))
 
   #sillies.append([

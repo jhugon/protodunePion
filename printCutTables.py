@@ -477,7 +477,7 @@ if __name__ == "__main__":
     {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
     {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20))"},
     {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30))"},
-    {"name": "PF Primary Doesn't End Last 4 Wires of APA","cut": "(zWireLastHitWire % 480) <= 485"},
+    #{"name": "PF Primary Doesn't End Last 4 Wires of APA","cut": "(zWireLastHitWire % 480) <= 485"},
   ]
 
   cutConfigsBeamPionOld = copy.deepcopy(cutConfigsBeamPionNew)
