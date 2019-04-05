@@ -72,6 +72,27 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
       'logy': logy,
     },
     {
+      'name': "xWCOld",
+      'xtitle': "X Position of Old BI track projection to TPC [cm]",
+      'ytitle': "Events / bin",
+      'binning': [125,-75,50],
+      'var': "beamTrackXFrontTPCOld[0]",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+      'printIntegral': True,
+    },
+    {
+      'name': "yWCOld",
+      'xtitle': "Y Position of Old BI track projection to TPC [cm]",
+      'ytitle': "Events / bin",
+      'binning': [75,375,450],
+      'var': "beamTrackYFrontTPCOld[0]",
+      'cuts': weightStr,
+      #'normalize': True,
+      'logy': logy,
+    },
+    {
       'name': "pWC",
       'xtitle': "Momentum from BI [GeV/c]",
       'ytitle': "Events / bin",
@@ -178,15 +199,15 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     #  #'normalize': True,
     #  'logy': logy,
     #},
-    #{
-    #  'name': "PFNBeamSlices",
-    #  'xtitle': "Number of Pandora Beam Slices",
-    #  'ytitle': "Events / bin",
-    #  'binning': [21,-0.5,20.5],
-    #  'var': "PFNBeamSlices",
-    #  'cuts': weightStr,
-    #  'printIntegral': True,
-    #},
+    {
+      'name': "PFNBeamSlices",
+      'xtitle': "Number of Pandora Beam Slices",
+      'ytitle': "Events / bin",
+      'binning': [21,-0.5,20.5],
+      'var': "PFNBeamSlices",
+      'cuts': weightStr,
+      'printIntegral': True,
+    },
     {
       'name': "PFBeamPrimNDaughters",
       'xtitle': "Number of Pandora Beam Secondaries",
@@ -476,22 +497,54 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
       'var': "PFBeamPrimStartPhi*180./pi",
       'cuts': weightStr,
     },
-    #{
-    #  'name': "DeltaPFBeamPrimEndXBeam",
-    #  'xtitle': "Pandora Beam Primary Start - Beam Track X [cm]",
-    #  'ytitle': "Events / bin",
-    #  'binning': [200,-50,50],
-    #  'var': "PFBeamPrimStartX - beamTrackXFrontTPC",
-    #  'cuts': weightStr,
-    #},
-    #{
-    #  'name': "DeltaPFBeamPrimEndYBeam",
-    #  'xtitle': "Pandora Beam Primary Start - Beam Track Y [cm]",
-    #  'ytitle': "Events / bin",
-    #  'binning': [120,-30,30],
-    #  'var': "PFBeamPrimStartY - beamTrackYFrontTPC",
-    #  'cuts': weightStr,
-    #},
+    {
+      'name': "DeltaXPFBeamPrimStartBI",
+      'xtitle': "Pandora Beam Primary Start - Beam Track X [cm]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "PFBeamPrimStartX - beamTrackXFrontTPC",
+      'cuts': weightStr,
+    },
+    {
+      'name': "DeltaYPFBeamPrimStartBI",
+      'xtitle': "Pandora Beam Primary Start - Beam Track Y [cm]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "PFBeamPrimStartY - beamTrackYFrontTPC",
+      'cuts': weightStr,
+    },
+    {
+      'name': "DeltaXPFBeamPrimStartBIOld",
+      'xtitle': "#Delta X PF Track Start & Old BI Track [cm]",
+      'ytitle': "Events / bin",
+      'binning': [150,-25,50],
+      'var': "PFBeamPrimStartX - (beamTrackXFrontTPCOld[0]*(!isMC)+isMC*xWC)",
+      'cuts': weightStr,
+    },
+    {
+      'name': "DeltaYPFBeamPrimStartBIOld",
+      'xtitle': "#Delta Y PF Track Start & Old BI Track [cm]",
+      'ytitle': "Events / bin",
+      'binning': [150,-25,50],
+      'var': "PFBeamPrimStartY - (beamTrackYFrontTPCOld[0]*(!isMC)+isMC*yWC)",
+      'cuts': weightStr,
+    },
+    {
+      'name': "DeltaXBINewOld",
+      'xtitle': "#Delta X New BI Track & Old BI Track [cm]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "xWC - beamTrackXFrontTPCOld[0]",
+      'cuts': weightStr,
+    },
+    {
+      'name': "DeltaYBINewOld",
+      'xtitle': "#Delta Y New BI Track & Old BI Track [cm]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "yWC - beamTrackYFrontTPCOld[0]",
+      'cuts': weightStr,
+    },
     {
       'name': "PFBeamPrimAngleToBeamTrk",
       'xtitle': "Angle Between BI & Primary PF Track Start [Deg]",
@@ -1259,9 +1312,13 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   for i in reversed(range(len(histConfigs))):
-    if (not ("XZ" in histConfigs[i]['name'])) and (not ("YZ" in histConfigs[i]['name'])):
+    if (not ("XZ" in histConfigs[i]['name'])) and (not ("YZ" in histConfigs[i]['name'])) \
+        and (not ("DeltaX" in histConfigs[i]['name'])) and (not ("DeltaY" in histConfigs[i]['name'])) \
+        and histConfigs[i]['name'] != "PFBeamPrimStartX" \
+        and histConfigs[i]['name'] != "PFBeamPrimStartY" \
+        and (not ("xWC" in histConfigs[i]['name'])) and (not ("yWC" in histConfigs[i]['name'])):
     #if (not ("Angle" in histConfigs[i]['name'])):
-    #if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
+    #if histConfigs[i]['name'] != "PFNBeamSlices":
     #if (histConfigs[i]['name'] != "zWirePitch") and (histConfigs[i]['name'] != "zWirePitch_zoom") and (histConfigs[i]['name'] != "zWiredEdx_zoom"):
     #if (histConfigs[i]['name'] != "zWirePitch_zoom"):
     #if histConfigs[i]['name'] != "pWC":
@@ -1308,13 +1365,13 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
                   outPrefix="DataMC_",outSuffix="_"+runSetName,nMax=NMAX,
                   catConfigs=catConfigs
                )
-    for histConfig in histConfigs:
-      histConfig['logy'] = True
-      histConfig['normalize'] = False
-    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
-                  outPrefix="DataMC_",outSuffix="_logy_"+runSetName,nMax=NMAX,
-                  catConfigs=catConfigs
-               )
+#    for histConfig in histConfigs:
+#      histConfig['logy'] = True
+#      histConfig['normalize'] = False
+#    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+#                  outPrefix="DataMC_",outSuffix="_logy_"+runSetName,nMax=NMAX,
+#                  catConfigs=catConfigs
+#               )
 
   #######################################
   ############ 2D Plots #################
@@ -1512,69 +1569,69 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
 #      #'normalize': True,
 #      #'logz': True,
 #    },
-    {
-      'name': "PFBeamPrimXsVPFBeamPrimZs",
-      'xtitle': "Primary Track Hit Z [cm]",
-      'ytitle': "Primary Track Hit X [cm]",
-      'binning': [100,0,200,100,-150,150],
-      'var': "PFBeamPrimXs:PFBeamPrimZs",
-      'cuts': weightStr,
-      #'normalize': True,
-      #'logz': True,
-    },
-    {
-      'name': "PFBeamPrimYsVPFBeamPrimZs",
-      'xtitle': "Primary Track Hit Z [cm]",
-      'ytitle': "Primary Track Hit Y [cm]",
-      'binning': [100,0,200,100,350,450],
-      'var': "PFBeamPrimYs:PFBeamPrimZs",
-      'cuts': weightStr,
-      #'normalize': True,
-      #'logz': True,
-    },
-    {
-      'name': "PFBeamPrimYsVPFBeamPrimXs",
-      'xtitle': "Primary Track Hit X [cm]",
-      'ytitle': "Primary Track Hit Y [cm]",
-      'binning': [100,-150,150,100,350,450],
-      'var': "PFBeamPrimYs:PFBeamPrimXs",
-      'cuts': weightStr,
-      #'normalize': True,
-      #'logz': True,
-    },
-    {
-      'name': "PFBeamPrimXsVPFBeamPrimZsKEProtonLt0",
-      'xtitle': "Primary Track Hit Z [cm]",
-      'ytitle': "Primary Track Hit X [cm]",
-      'binning': [100,0,200,100,-150,150],
-      'var': "PFBeamPrimXs:PFBeamPrimZs",
-      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
-      #'normalize': True,
-      #'logz': True,
-    },
-    {
-      'name': "PFBeamPrimYsVPFBeamPrimZsKEProtonLt0",
-      'xtitle': "Primary Track Hit Z [cm]",
-      'ytitle': "Primary Track Hit Y [cm]",
-      'binning': [100,0,200,100,350,450],
-      'var': "PFBeamPrimYs:PFBeamPrimZs",
-      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
-      #'normalize': True,
-      #'logz': True,
-    },
-    {
-      'name': "PFBeamPrimYsVPFBeamPrimXsKEProtonLt0",
-      'xtitle': "Primary Track Hit X [cm]",
-      'ytitle': "Primary Track Hit Y [cm]",
-      'binning': [100,-150,150,100,350,450],
-      'var': "PFBeamPrimYs:PFBeamPrimXs",
-      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
-      #'normalize': True,
-      #'logz': True,
-    },
+#    {
+#      'name': "PFBeamPrimXsVPFBeamPrimZs",
+#      'xtitle': "Primary Track Hit Z [cm]",
+#      'ytitle': "Primary Track Hit X [cm]",
+#      'binning': [100,0,200,100,-150,150],
+#      'var': "PFBeamPrimXs:PFBeamPrimZs",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      #'logz': True,
+#    },
+#    {
+#      'name': "PFBeamPrimYsVPFBeamPrimZs",
+#      'xtitle': "Primary Track Hit Z [cm]",
+#      'ytitle': "Primary Track Hit Y [cm]",
+#      'binning': [100,0,200,100,350,450],
+#      'var': "PFBeamPrimYs:PFBeamPrimZs",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      #'logz': True,
+#    },
+#    {
+#      'name': "PFBeamPrimYsVPFBeamPrimXs",
+#      'xtitle': "Primary Track Hit X [cm]",
+#      'ytitle': "Primary Track Hit Y [cm]",
+#      'binning': [100,-150,150,100,350,450],
+#      'var': "PFBeamPrimYs:PFBeamPrimXs",
+#      'cuts': weightStr,
+#      #'normalize': True,
+#      #'logz': True,
+#    },
+#    {
+#      'name': "PFBeamPrimXsVPFBeamPrimZsKEProtonLt0",
+#      'xtitle': "Primary Track Hit Z [cm]",
+#      'ytitle': "Primary Track Hit X [cm]",
+#      'binning': [100,0,200,100,-150,150],
+#      'var': "PFBeamPrimXs:PFBeamPrimZs",
+#      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
+#      #'normalize': True,
+#      #'logz': True,
+#    },
+#    {
+#      'name': "PFBeamPrimYsVPFBeamPrimZsKEProtonLt0",
+#      'xtitle': "Primary Track Hit Z [cm]",
+#      'ytitle': "Primary Track Hit Y [cm]",
+#      'binning': [100,0,200,100,350,450],
+#      'var': "PFBeamPrimYs:PFBeamPrimZs",
+#      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
+#      #'normalize': True,
+#      #'logz': True,
+#    },
+#    {
+#      'name': "PFBeamPrimYsVPFBeamPrimXsKEProtonLt0",
+#      'xtitle': "Primary Track Hit X [cm]",
+#      'ytitle': "Primary Track Hit Y [cm]",
+#      'binning': [100,-150,150,100,350,450],
+#      'var': "PFBeamPrimYs:PFBeamPrimXs",
+#      'cuts': "(zWireLastHitWire >= 0) && "+weightStr+"*(zWirePartKinProton_ajib[zWireLastHitWire] < 0.)",
+#      #'normalize': True,
+#      #'logz': True,
+#    },
   ]
 
-  #plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC_",outSuffix="_"+runSetName,nMax=NMAX)
+  plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="DataMC2D_",outSuffix="_"+runSetName,nMax=NMAX)
 
   del c
 
@@ -1594,13 +1651,14 @@ if __name__ == "__main__":
   ###
   ###
   #cutGoodBeamline = "(triggerIsBeam == 1 && BITrigger > 0 && BITriggerMatched > 0 && nBeamTracks > 0 && nBeamMom > 0)"
-  cutGoodBeamline = "(BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
+  cutGoodBeamline = "(triggerIsBeam == 1 && BITriggerMatched > 0 && nBeamTracks == 1 && nBeamMom == 1)"
   cutGoodFEMBs = "*(nGoodFEMBs[0]==20 && nGoodFEMBs[2]==20 && nGoodFEMBs[4]==20)"
 
   deltaXTrackBICut = "*((isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20)))"
   deltaYTrackBICut = "*((isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30)))"
   rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
-  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+rejectThroughgoingCut
+  #primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+rejectThroughgoingCut
+  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
   weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
@@ -1657,7 +1715,7 @@ if __name__ == "__main__":
       'caption': "MCC11 2 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 5.451612903225806,
+      'scaleFactor': 5.451612903225806*1.62515262515,
     }],
     "run5432_2GeV",
   ))

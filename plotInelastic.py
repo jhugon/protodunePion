@@ -9,7 +9,7 @@ import signal
 import multiprocessing
 
 def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
-  doNMinusOne = True
+  doNMinusOne = False
   doNoCuts = True
   doSCE = False
   doLogy = True
@@ -53,14 +53,14 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
     {
       'histConfigs':
         [
-          #{
-          #  'name': "PFNBeamSlices",
-          #  'xtitle': "Number of PF Beam Slices",
-          #  'ytitle': "Events / bin",
-          #  'binning': [9,-0.5,8.5],
-          #  'var': "PFNBeamSlices",
-          #  'printIntegral': True,
-          #},
+          {
+            'name': "PFNBeamSlices",
+            'xtitle': "Number of PF Beam Slices",
+            'ytitle': "Events / bin",
+            'binning': [9,-0.5,8.5],
+            'var': "PFNBeamSlices",
+            'printIntegral': True,
+          },
         ],
       'cut': "PFNBeamSlices == 1",
     },
@@ -199,6 +199,58 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
        ],
       'cut': "(isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30))",
     },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "DeltaXPFBeamPrimStartBIOld",
+#            'xtitle': "#Delta X PF Track Start & Old BI Track [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [150,-25,50],
+#            'var': "PFBeamPrimStartX - (beamTrackXFrontTPCOld[0]*(!isMC)+isMC*xWC)",
+#          },
+#       ],
+#       'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "DeltaYPFBeamPrimStartBIOld",
+#            'xtitle': "#Delta Y PF Track Start & Old BI Track [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [150,-25,50],
+#            'var': "PFBeamPrimStartY - (beamTrackYFrontTPCOld[0]*(!isMC)+isMC*yWC)",
+#          },
+#       ],
+#       'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "DeltaXBINewOld",
+#            'xtitle': "#Delta X PF Track Start & Old BI Track [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [50,-50,50],
+#            'var': "xWC - beamTrackXFrontTPCOld[0]",
+#          },
+#       ],
+#       'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "DeltaYPFBeamPrimStartBIOld",
+#            'xtitle': "#Delta Y PF Track Start & Old BI Track [cm]",
+#            'ytitle': "Events / bin",
+#            'binning': [50,-50,50],
+#            'var': "yWC - beamTrackYFrontTPCOld[0]",
+#          },
+#       ],
+#       'cut': "1",
+#    },
 #    {
 #      'histConfigs':
 #        [
@@ -1094,24 +1146,24 @@ if __name__ == "__main__":
 
   stuff = []
 
-  stuff.append(
-    (
-      [{
-        #'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
-        'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
-        'name': "run5387",
-        'title': "Run 5387: 1 GeV/c",
-        'caption': "Run 5387: 1 GeV/c",
-        'cuts': "*(BIPion1GeV)*"+cutGoodBeamline,
-      }],
-      #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
-      "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
-      "Run 5387: 1 GeV/c & MCC11 SCE",
-      1.185506241331484,
-      "run5387_1GeV",
-    )
-  )
-
+#  stuff.append(
+#    (
+#      [{
+#        #'fn': "piAbsSelector_run5387_v7_55712ad_local.root",
+#        'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
+#        'name': "run5387",
+#        'title': "Run 5387: 1 GeV/c",
+#        'caption': "Run 5387: 1 GeV/c",
+#        'cuts': "*(BIPion1GeV)*"+cutGoodBeamline,
+#      }],
+#      #"piAbsSelector_mcc11_sce_1p0GeV_v7.0_55712adf_local.root",
+#      "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
+#      "Run 5387: 1 GeV/c & MCC11 SCE",
+#      1.185506241331484,
+#      "run5387_1GeV",
+#    )
+#  )
+#
   stuff.append(
     (
       [{
@@ -1128,73 +1180,73 @@ if __name__ == "__main__":
       "run5432_2GeV",
     )
   )
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+#        'name': "run5786",
+#        'title': "Run 5786: 3 GeV/c",
+#        'caption': "Run 5786: 3 GeV/c",
+#        'cuts': "*(BIPion3GeV)*"+cutGoodBeamline,
+#      }],
+#      "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
+#      "Run 5786: 3 GeV/c & MCC11 SCE",
+#      29.92072072072072,
+#      "run5786_3GeV",
+#    )
+#  )
+#
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
+#        'name': "run5770",
+#        'title': "Run 5770: 6 GeV/c",
+#        'caption': "Run 5770: 6 GeV/c",
+#        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline,
+#      }],
+#      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+#      "Run 5770: 6 GeV/c & MCC11 SCE",
+#      5.037104557640751,
+#      "run5770_6GeV",
+#    )
+#  )
+#
+#  #stuff.append(
+#  #  (
+#  #    [{
+#  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+#  #      'name': "run5145",
+#  #      'title': "Run 5145: 7 GeV/c",
+#  #      'caption': "Run 5145: 7 GeV/c",
+#  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
+#  #    }],
+#  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+#  #    "Run 5145: 7 GeV/c & MCC11 SCE",
+#  #    1.,
+#  #    "run5145_7GeV",
+#  #  )
+#  #)
+#
+#  stuff.append(
+#    (
+#      [{
+#        'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
+#        'name': "run5204",
+#        'title': "Run 5204: 7 GeV/c",
+#        'caption': "Run 5204: 7 GeV/c",
+#        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
+#      }],
+#      "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
+#      "Run 5204: 7 GeV/c & MCC11 SCE",
+#      0.3204933416748592,
+#      "run5204_7GeV",
+#    )
+#  )
 
-  stuff.append(
-    (
-      [{
-        'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
-        'name': "run5786",
-        'title': "Run 5786: 3 GeV/c",
-        'caption': "Run 5786: 3 GeV/c",
-        'cuts': "*(BIPion3GeV)*"+cutGoodBeamline,
-      }],
-      "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
-      "Run 5786: 3 GeV/c & MCC11 SCE",
-      29.92072072072072,
-      "run5786_3GeV",
-    )
-  )
-
-
-  stuff.append(
-    (
-      [{
-        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
-        'name': "run5770",
-        'title': "Run 5770: 6 GeV/c",
-        'caption': "Run 5770: 6 GeV/c",
-        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline,
-      }],
-      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
-      "Run 5770: 6 GeV/c & MCC11 SCE",
-      5.037104557640751,
-      "run5770_6GeV",
-    )
-  )
-
-  #stuff.append(
-  #  (
-  #    [{
-  #      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-  #      'name': "run5145",
-  #      'title': "Run 5145: 7 GeV/c",
-  #      'caption': "Run 5145: 7 GeV/c",
-  #      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
-  #    }],
-  #    "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-  #    "Run 5145: 7 GeV/c & MCC11 SCE",
-  #    1.,
-  #    "run5145_7GeV",
-  #  )
-  #)
-
-  stuff.append(
-    (
-      [{
-        'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
-        'name': "run5204",
-        'title': "Run 5204: 7 GeV/c",
-        'caption': "Run 5204: 7 GeV/c",
-        'cuts': "*(BIPion7GeV)*"+cutGoodBeamline,
-      }],
-      "piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root",
-      "Run 5204: 7 GeV/c & MCC11 SCE",
-      0.3204933416748592,
-      "run5204_7GeV",
-    )
-  )
-
-  doMP = True
+  doMP = False
   pool = None
   if doMP:
     original_sigint_handler = signal.getsignal(signal.SIGINT)
