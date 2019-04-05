@@ -846,46 +846,46 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
 #       ],
 #      'cut': "1",
 #    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimTrkStartEndDirAngle",
-            'xtitle': "TPC Track Angle Between Start & End [deg]",
-            'ytitle': "Events / bin",
-            'binning': [30,0,30],
-            'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
-          },
-          {
-            'name': "PFBeamPrimTrkStartEndDirAngle_wide",
-            'xtitle': "TPC Track Angle Between Start & End [deg]",
-            'ytitle': "Events / bin",
-            'binning': [90,0,180],
-            'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
-          },
-       ],
-      'cut': "1",
-    },
-    {
-      'histConfigs':
-        [
-          {
-            'name': "PFBeamPrimTrkMaxKink",
-            'xtitle': "TPC Track Max Kink Angle [deg]",
-            'ytitle': "Events / bin",
-            'binning': [40,0,20],
-            'var': "PFBeamPrimTrkMaxKink*180/pi",
-          },
-          {
-            'name': "PFBeamPrimTrkMaxKink_wide",
-            'xtitle': "TPC Track Max Kink Angle [deg]",
-            'ytitle': "Events / bin",
-            'binning': [90,0,180],
-            'var': "PFBeamPrimTrkMaxKink*180/pi",
-          },
-       ],
-      'cut': "1",
-    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimTrkStartEndDirAngle",
+#            'xtitle': "TPC Track Angle Between Start & End [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [30,0,30],
+#            'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
+#          },
+#          {
+#            'name': "PFBeamPrimTrkStartEndDirAngle_wide",
+#            'xtitle': "TPC Track Angle Between Start & End [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [90,0,180],
+#            'var': "PFBeamPrimTrkStartEndDirAngle*180/pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
+#    {
+#      'histConfigs':
+#        [
+#          {
+#            'name': "PFBeamPrimTrkMaxKink",
+#            'xtitle': "TPC Track Max Kink Angle [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [40,0,20],
+#            'var': "PFBeamPrimTrkMaxKink*180/pi",
+#          },
+#          {
+#            'name': "PFBeamPrimTrkMaxKink_wide",
+#            'xtitle': "TPC Track Max Kink Angle [deg]",
+#            'ytitle': "Events / bin",
+#            'binning': [90,0,180],
+#            'var': "PFBeamPrimTrkMaxKink*180/pi",
+#          },
+#       ],
+#      'cut': "1",
+#    },
   ]
 
   fileConfigsMC = [

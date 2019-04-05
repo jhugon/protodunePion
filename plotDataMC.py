@@ -564,6 +564,96 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
       'var': "fabs(cos(PFBeamPrimTrkStartEndDirAngle))",
       'cuts': weightStr+"*(PFBeamPrimTrkStartEndDirAngle > -100)",
     },
+    ######################################
+    {
+      'name': "PFBeamPrimStartThetaXZ",
+      'xtitle': "TPC Track Start #theta_{xz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [50,-25,0],
+      #'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi",
+      'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimStartThetaYZ",
+      'xtitle': "TPC Track Start #theta_{yz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [80,-40,0],
+      #'var': "atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi",
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimEndThetaXZ",
+      'xtitle': "TPC Track End #theta_{xz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [50,-25,0],
+      #'var': "atan2(sin(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi",
+      'var': "atan(tan(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimEndTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimEndThetaYZ",
+      'xtitle': "TPC Track End #theta_{yz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [80,-40,0],
+      #'var': "atan2(sin(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi",
+      'var': "atan(tan(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimEndTheta > -100)",
+    },
+    {
+      'name': "thetaWCXZ",
+      'xtitle': "BI Track #theta_{xz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [50,-25,0],
+      #'var': "atan2(sin(thetaWC)*cos(phiWC),cos(thetaWC))*180/pi",
+      'var': "atan(tan(thetaWC)*cos(phiWC))*180/pi",
+      'cuts': weightStr+"*(thetaWC > -100)",
+    },
+    {
+      'name': "thetaWCYZ",
+      'xtitle': "BI Track #theta_{yz} [deg]",
+      'ytitle': "Events / bin",
+      'binning': [80,-40,0],
+      #'var': "atan2(sin(thetaWC)*sin(phiWC),cos(thetaWC))*180/pi",
+      'var': "atan(tan(thetaWC)*sin(phiWC))*180/pi",
+      'cuts': weightStr+"*(thetaWC > -100)",
+      'printIntegral': True,
+    },
+    ######################################
+    {
+      'name': "PFBeamPrimAngleStartEndXZ",
+      'xtitle': "TPC Track Start-End Angle in XZ-Plane [deg]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "atan2(sin(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi-atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimAngleStartEndYZ",
+      'xtitle': "TPC Track Start-End Angle in YZ-Plane [deg]",
+      'ytitle': "Events / bin",
+      'binning': [50,-50,50],
+      'var': "atan2(sin(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi-atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimAngleStartBIXZ",
+      'xtitle': "TPC Track Start-BI Angle in XZ-Plane [deg]",
+      'ytitle': "Events / bin",
+      'binning': [30,-30,30],
+      'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi-atan2(sin(thetaWC)*cos(phiWC),cos(thetaWC))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && thetaWC > -100)",
+    },
+    {
+      'name': "PFBeamPrimAngleStartBIYZ",
+      'xtitle': "TPC Track Start-BI Angle in YZ-Plane [deg]",
+      'ytitle': "Events / bin",
+      'binning': [30,-30,30],
+      'var': "atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi-atan2(sin(thetaWC)*sin(phiWC),cos(thetaWC))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && thetaWC > -100)",
+    },
+    ######################################
     {
       'name': "PFBeamPrimBeamCosmicScore",
       'xtitle': "Pandora Beam / Cosmic BDT Score",
@@ -1169,7 +1259,8 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
 
   for i in reversed(range(len(histConfigs))):
-    if (not ("Angle" in histConfigs[i]['name'])):
+    if (not ("XZ" in histConfigs[i]['name'])) and (not ("YZ" in histConfigs[i]['name'])):
+    #if (not ("Angle" in histConfigs[i]['name'])):
     #if histConfigs[i]['name'] != "PFBeamPrimTrkLen":
     #if (histConfigs[i]['name'] != "zWirePitch") and (histConfigs[i]['name'] != "zWirePitch_zoom") and (histConfigs[i]['name'] != "zWiredEdx_zoom"):
     #if (histConfigs[i]['name'] != "zWirePitch_zoom"):
@@ -1525,32 +1616,33 @@ if __name__ == "__main__":
   #NMAX=100
   sillies = []
 
-  sillies.append((
-    [{
-      'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
-      'name': "run5387",
-      'title': "Run 5387: 1 GeV/c",
-      'caption': "Run 5387: 1 GeV/c ",
-      'isData': True,
-      'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-      #'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
-      'name': "mcc11_sce_1GeV",
-      'title': "MCC11 1 GeV/c SCE",
-      'caption': "MCC11 1 GeV/c SCE",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 0.39676616915422885, # for pions
-      #'scaleFactor': 1, # for protons stopping cut
-    }],
-    "run5387_1GeV",
-  ))
+  #sillies.append((
+  #  [{
+  #    'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
+  #    'name': "run5387",
+  #    'title': "Run 5387: 1 GeV/c",
+  #    'caption': "Run 5387: 1 GeV/c ",
+  #    'isData': True,
+  #    'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #    #'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  #  {
+  #    'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
+  #    'name': "mcc11_sce_1GeV",
+  #    'title': "MCC11 1 GeV/c SCE",
+  #    'caption': "MCC11 1 GeV/c SCE",
+  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+  #    #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+  #    'scaleFactor': 0.39676616915422885, # for pions
+  #    #'scaleFactor': 1, # for protons stopping cut
+  #  }],
+  #  "run5387_1GeV",
+  #))
 
   sillies.append((
     [{
-      'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
+      #'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -1565,31 +1657,31 @@ if __name__ == "__main__":
       'caption': "MCC11 2 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      #'scaleFactor': 1,
+      'scaleFactor': 5.451612903225806,
     }],
     "run5432_2GeV",
   ))
 
-  sillies.append((
-    [{
-      'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
-      'name': "run5786",
-      'title': "Run 5786: 3 GeV/c",
-      'caption': "Run 5786: 3 GeV/c",
-      'isData': True,
-      'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
-      'name': "mcc11_sce_3GeV",
-      'title': "MCC11 3 GeV/c SCE",
-      'caption': "MCC11 3 GeV/c SCE",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      #'scaleFactor': 1,
-    }],
-    "run5786_3GeV",
-  ))
+  #sillies.append((
+  #  [{
+  #    'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+  #    'name': "run5786",
+  #    'title': "Run 5786: 3 GeV/c",
+  #    'caption': "Run 5786: 3 GeV/c",
+  #    'isData': True,
+  #    'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+  #  },
+  #  {
+  #    'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+  #    'name': "mcc11_sce_3GeV",
+  #    'title': "MCC11 3 GeV/c SCE",
+  #    'caption': "MCC11 3 GeV/c SCE",
+  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+  #    #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+  #    #'scaleFactor': 1,
+  #  }],
+  #  "run5786_3GeV",
+  #))
 
   #sillies.append([
   #])

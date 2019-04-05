@@ -1145,11 +1145,11 @@ TRUECATEGORYFEWERCONFIGS = [
      'cuts':"trueCategory==14",
      'color': root.kViolet+2,
    },
-   {
-     'title': "Unknown",
-     'cuts':"trueCategory==0 || trueCategory == 15",
-     'color': root.kGray+1,
-   },
+   #{
+   #  'title': "Unknown",
+   #  'cuts':"trueCategory==0 || trueCategory == 15",
+   #  'color': root.kGray+1,
+   #},
 ]
 
 for iCat in range(len(TRUECATEGORYFEWERCONFIGS)):
@@ -1180,10 +1180,10 @@ TRUECATEGORYPOORMATCHCONFIGS = [
      'title': "Non-#pi Primary",
      'cuts':"trueCategory>=11 && trueCategory<=14",
    },
-   {
-     'title': "Unknown",
-     'cuts':"trueCategory==0 || trueCategory == 15",
-   },
+   #{
+   #  'title': "Unknown",
+   #  'cuts':"trueCategory==0 || trueCategory == 15",
+   #},
 ]
 
 for iCat in range(len(TRUECATEGORYPOORMATCHCONFIGS)):
