@@ -22,12 +22,15 @@
   double ajibsceNormFact = 1.639;
   double ajibflfNormFact = 1.656;
 
+  makeFriendTree("PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+  makeFriendTree("PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+
   //makeFriendTree("piAbsSelector_run5145_v7_55712ad_local.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
   //makeFriendTree("piAbsSelector_run5432_v7_55712ad_local.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
   //makeFriendTree("piAbsSelector_run5387_v7_55712ad_local.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
 
-  makeFriendTree("piAbsSelector_data_run5432_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
-  makeFriendTree("piAbsSelector_data_run5786_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+//  makeFriendTree("piAbsSelector_data_run5432_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
+//  makeFriendTree("piAbsSelector_data_run5786_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
   //makeFriendTree("piAbsSelector_data_run5204_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
   //makeFriendTree("piAbsSelector_data_run5387_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
   //makeFriendTree("piAbsSelector_data_run5770_v7a2_faaca6ad.root","",caloCalibFn,sceCalibFn,sceCalibFnFLF,maxEvents);
@@ -51,7 +54,8 @@
   //makeFriendTree("piAbsSelector_mcc11_sce_1GeV_histats_part2_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
   //makeFriendTree("piAbsSelector_mcc11_sce_1GeV_histats_part3_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
   //makeFriendTree("piAbsSelector_mcc11_sce_1GeV_histats_part4_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
-  //makeFriendTree("piAbsSelector_mcc12_sce_2GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
+  //makeFriendTree("piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
+  //makeFriendTree("piAbsSelector_mcc11_3ms_2GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
   //makeFriendTree("piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
   //makeFriendTree("piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
   //makeFriendTree("piAbsSelector_mcc11_sce_7GeV_v7a1_55712adf.root","","",sceCalibFnMC,sceCalibFnMCFLF,maxEvents,ajibsceFn,ajibsceCalibConst,ajibsceNormFact);
