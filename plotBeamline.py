@@ -149,11 +149,69 @@ def getBeamlineCoords(tree,doOld,debug=False):
 
   return x1beam,y1beam,x2beam,y2beam
 
+def myway(x1,y1,x2,y2,debug=False):
+  FirstTrackingProfZ= 70755.5
+  SecondTrackingProfZ= 71612.4
+  NP04FrontZ= 71724.3
+  off1 = NP04FrontZ - FirstTrackingProfZ
+  off2 = NP04FrontZ - SecondTrackingProfZ
+  BeamX= -4.994
+  BeamY= 448.449
+  BeamZ= -129.804
+
+  theta = 15.676709377408265*math.pi/180.
+  phi = 227.18669653445150*math.pi/180.
+
+  v1 = root.TVector3(x1,y1,-off1)
+  v2 = root.TVector3(x2,y2,-off2)
+  if debug:
+    print "Beam Coords"
+    v1.Print()
+    v2.Print()
+
+  # forward rotation is around Z: 227 deg
+  # then around Y: 15.6 deg
+
+  # backward rotation would be around Y then Z
+
+  v1.RotateY(theta)
+  v2.RotateY(theta)
+  v1.RotateZ(phi)
+  v2.RotateZ(phi)
+
+  if debug:
+    print "After rotations: "
+    v1.Print()
+    v2.Print()
+
+  v1 += root.TVector3(BeamX,BeamY,BeamZ)
+  v2 += root.TVector3(BeamX,BeamY,BeamZ)
+
+  if debug:
+    print "After beam window shifts: "
+    v1.Print()
+    v2.Print()
+
+  return v1, v2
+
+def getFront(v1,v2):
+  xSlope = (v2.X()-v1.X())/(v2.Z()-v1.Z())
+  ySlope = (v2.Y()-v1.Y())/(v2.Z()-v1.Z())
+  xIntercept = v1.X()-xSlope*v1.Z()
+  yIntercept = v1.Y()-ySlope*v1.Z()
+  return xIntercept,yIntercept
+
 if __name__ == "__main__":
   c = root.TCanvas("c")
-  f = root.TFile("PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root")
-  #f = root.TFile("PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root")
-  tree = f.Get("PiAbsSelector/tree")
+  #f = root.TFile("PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root")
+  ##f = root.TFile("PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root")
+  #tree = f.Get("PiAbsSelector/tree")
+  tree = root.TChain("PiAbsSelector/tree")
+  for name in glob.glob("/cshare/vol2/users/jhugon/condor_output/piAbsSelector_data_oldCalo_v7.4_5a76d2fe/*.root")[:20]:
+    tree.AddFile(name)
+  histXOldVPF = root.TH2F("XOldVPF","",100,-50,0,100,-50,0)
+  histXNewVPF = root.TH2F("XNewVPF","",100,-50,0,100,-50,0)
+  histXMyVPF = root.TH2F("XMyVPF","",100,-50,0,100,-50,0)
   gNewXZ = root.TGraph()
   gOldXZ = root.TGraph()
   gNewYZ = root.TGraph()
@@ -178,6 +236,21 @@ if __name__ == "__main__":
       x1beamOld,y1beamOld,x2beamOld,y2beamOld = getBeamlineCoords(tree,True)
       print x1beamOld,y1beamOld
       print x2beamOld,y2beamOld
+      print "Mine: "
+      v1,v2 = myway(x1beamNew,y1beamNew,x2beamNew,y2beamNew)
+      myX, myY = getFront(v1,v2)
+      v1.Print()
+      v2.Print()
+      print myX, myY
+      print "My direction: "
+      mydirection = (v2-v1)
+      mydirection *= 1./mydirection.Mag()
+      mydirection.Print()
+      print "TPC Track: "
+      print tree.PFBeamPrimStartX, tree.PFBeamPrimStartY, tree.PFBeamPrimStartZ
+      histXMyVPF.Fill(tree.PFBeamPrimStartX,myX)
+      histXNewVPF.Fill(tree.PFBeamPrimStartX,tree.xWC)
+      histXOldVPF.Fill(tree.PFBeamPrimStartX,tree.beamTrackXFrontTPCOld[0])
       gNewXZ.SetPoint(iPoint,tree.zWC1Hit,tree.xWC1Hit)
       gOldXZ.SetPoint(iPoint,tree.zWC1Old,tree.xWC1Old)
       gNewYZ.SetPoint(iPoint,tree.zWC1Hit,tree.yWC1Hit)
@@ -262,8 +335,8 @@ if __name__ == "__main__":
       g1NewYZ.Draw("PL")
       leg = drawNormalLegend([duneYZ,g1NewYZ,g1OldYZ],["TPC Active Volume","New BI Hits", "Old BI Hits"],["f","p","p"],position=(0.2,0.15,0.8,0.30))
       c.SaveAs("beamline_Run{:04d}_Event{:05d}_YZ.png".format(tree.runNumber,tree.eventNumber))
-    #if iEvent > 1000:
-    #  break
+    if iEvent > 1000:
+      break
   gNewXZ.SetMarkerColor(COLORLIST[0])
   gOldXZ.SetMarkerColor(COLORLIST[2])
   gNewYZ.SetMarkerColor(COLORLIST[0])
@@ -295,3 +368,14 @@ if __name__ == "__main__":
   gNewYZ.Draw("PL")
   leg = drawNormalLegend([duneYZ,gNewYZ,gOldYZ],["TPC Active Volume","New BI Hits", "Old BI Hits"],["f","p","p"],position=(0.2,0.18,0.8,0.45))
   c.SaveAs("beamlineYZ.png")
+
+  setHistTitles(histXMyVPF,"TPC Track Start X [cm]", "My BI X at TPC Front [cm]")
+  setHistTitles(histXNewVPF,"TPC Track Start X [cm]", "New BI X at TPC Front [cm]")
+  setHistTitles(histXOldVPF,"TPC Track Start X [cm]", "Old BI X at TPC Front [cm]")
+  histXMyVPF.Draw("colz")
+  c.SaveAs("beamlineXMyVPF.png")
+  histXNewVPF.Draw("colz")
+  c.SaveAs("beamlineXNewVPF.png")
+  histXOldVPF.Draw("colz")
+  c.SaveAs("beamlineXOldVPF.png")
+  
