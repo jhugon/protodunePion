@@ -346,7 +346,7 @@ def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
       'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi-atan2(sin(beamTrackThetaOld[0])*cos(beamTrackPhiOld[0]),cos(beamTrackThetaOld[0]))*180/pi",
       'normalize': True,
       'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && nBeamTracksOld > 0 && beamTrackThetaOld[0] > -100)",
-    #},
+    },
     #{
     #  'name': "PFBeamPrimAngleStartEndXZ",
     #  'title': "TPC Track Start-End",
@@ -354,6 +354,14 @@ def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
     #  'var': "atan2(sin(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi-atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi",
     #  'normalize': True,
     #  'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+    #},
+    {
+      'name': "PFBeamPrimAngleStartBINewOldXZ",
+      'title': "New BI Track - Old BI Track",
+      'binning': [100,-50,50],
+      'var': "atan2(sin(thetaWC)*cos(phiWC),cos(thetaWC))*180/pi-atan2(sin(beamTrackThetaOld[0])*cos(beamTrackPhiOld[0]),cos(beamTrackThetaOld[0]))*180/pi",
+      'normalize': True,
+      'cuts': weightStr+"*(thetaWC > -100 && nBeamTracksOld > 0 && beamTrackThetaOld[0] > -100)",
     },
   ]
   for iHistConfig,histConfig in enumerate(histConfigs):
@@ -387,13 +395,78 @@ def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
     #  'normalize': True,
     #  'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
     #},
+    {
+      'name': "PFBeamPrimAngleStartBINewOldYZ",
+      'title': "New BI Track - Old BI Track",
+      'binning': [100,-50,50],
+      'var': "atan2(sin(thetaWC)*sin(phiWC),cos(thetaWC))*180/pi-atan2(sin(beamTrackThetaOld[0])*sin(beamTrackPhiOld[0]),cos(beamTrackThetaOld[0]))*180/pi",
+      'normalize': True,
+      'cuts': weightStr+"*(thetaWC > -100 && nBeamTracksOld > 0 && beamTrackThetaOld[0] > -100)",
+    },
   ]
   for iHistConfig,histConfig in enumerate(histConfigs):
     histConfig['color'] = COLORLIST[iHistConfig]
   plotManyHistsOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching_DeltaThetaYZ_",outSuffix="",nMax=NMAX)
 
-  del c
+  histConfigs = [
+    {
+      'name': "xWCNewVOld",
+      'xtitle': "Old BI Track X [cm]",
+      'ytitle': "New BI Track X [cm]",
+      'binning': [125,-75,50,125,-75,50],
+      'var': "xWC:beamTrackXFrontTPCOld[0]",
+      'cuts': weightStr,
+      'logz': False,
+    },
+    {
+      'name': "yWCNewVOld",
+      'xtitle': "Old BI Track Y [cm]",
+      'ytitle': "New BI Track Y [cm]",
+      'binning': [75,375,450,75,375,450],
+      'var': "yWC:beamTrackYFrontTPCOld[0]",
+      'cuts': weightStr,
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartXVxWCNew",
+      'xtitle': "New BI Track X [cm]",
+      'ytitle': "PF Track Start X [cm]",
+      'binning': [75,375,450,75,375,450],
+      'var': "PFBeamPrimStartX:xWC",
+      'cuts': weightStr,
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartXVxWCOld",
+      'xtitle': "Old BI Track X [cm]",
+      'ytitle': "PF Track Start X [cm]",
+      'binning': [75,375,450,75,375,450],
+      'var': "PFBeamPrimStartX:beamTrackXFrontTPCOld[0]",
+      'cuts': weightStr,
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartYVyWCNew",
+      'xtitle': "New BI Track Y [cm]",
+      'ytitle': "PF Track Start Y [cm]",
+      'binning': [75,375,450,75,375,450],
+      'var': "PFBeamPrimStartY:yWC",
+      'cuts': weightStr,
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartYVyWCOld",
+      'xtitle': "Old BI Track Y [cm]",
+      'ytitle': "PF Track Start Y [cm]",
+      'binning': [75,375,450,75,375,450],
+      'var': "PFBeamPrimStartY:beamTrackYFrontTPCOld[0]",
+      'cuts': weightStr,
+      'logz': False,
+    },
+  ]
+  plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching2D_",outSuffix="",nMax=NMAX)
 
+  del c
 
 if __name__ == "__main__":
 
@@ -465,6 +538,24 @@ if __name__ == "__main__":
       #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
     },
     {
+      'fn': "piAbsSelector_run5432_oldCalo_oldBIPos_v7.4_5a76d2fe.root",
+      'name': "run5432_oldBIPos",
+      'title': "Run 5432: 2 GeV/c Old BI Positions",
+      'caption': "Run 5432: 2 GeV/c Old BI Positions",
+      'isData': True,
+      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+      #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    },
+    {
+      'fn': "piAbsSelector_run5432_v8.0_64cf7360_local.root",
+      'name': "run5432_fix",
+      'title': "Run 5432: 2 GeV/c Jake's Fix",
+      'caption': "Run 5432: 2 GeV/c Jake's Fix",
+      'isData': True,
+      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+      #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    },
+    {
       'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
       'name': "mcc11_sce_2GeV",
       'title': "MCC11 2 GeV/c SCE",
@@ -523,6 +614,14 @@ if __name__ == "__main__":
       'name': "run5145_new",
       'title': "Run 5145: 7 GeV/c New Run",
       'caption': "Run 5145: 7 GeV/c New Run",
+      'isData': True,
+      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    },
+    {
+      'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
+      'name': "run5145_fix",
+      'title': "Run 5145: 7 GeV/c Jake's Fix",
+      'caption': "Run 5145: 7 GeV/c Jake's Fix",
       'isData': True,
       'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     },
