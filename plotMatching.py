@@ -791,34 +791,33 @@ if __name__ == "__main__":
   #NMAX=100
   sillies = []
 
-  #sillies.append((
-  #  [{
-  #    'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
-  #    'name': "run5387",
-  #    'title': "Run 5387: 1 GeV/c",
-  #    'caption': "Run 5387: 1 GeV/c ",
-  #    'isData': True,
-  #    'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #    #'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #  },
-  #  {
-  #    'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
-  #    'name': "mcc11_sce_1GeV",
-  #    'title': "MCC11 1 GeV/c SCE",
-  #    'caption': "MCC11 1 GeV/c SCE",
-  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-  #    #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-  #    'scaleFactor': 0.39676616915422885, # for pions
-  #    #'scaleFactor': 1, # for protons stopping cut
-  #  }],
-  #  "run5387_1GeV",
-  #))
+  sillies.append((
+    [{
+      'fn': "piAbsSelector_run5387_v8.1_da81b52a.root",
+      'name': "run5387",
+      'title': "Run 5387: 1 GeV/c",
+      'caption': "Run 5387: 1 GeV/c ",
+      'isData': True,
+      'cuts': "*(BIPion1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+      #'cuts': "*(BIProton1GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_1GeV_histats_partAll_v7a1_55712adf.root",
+      'name': "mcc11_sce_1GeV",
+      'title': "MCC11 1 GeV/c SCE",
+      'caption': "MCC11 1 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 0.39676616915422885, # for pions
+      #'scaleFactor': 1, # for protons stopping cut
+    }],
+    "run5387_1GeV",
+  ))
 
   sillies.append((
     [
     {
-      #'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
-      'fn': "piAbsSelector_run5432_v8.0_64cf7360_local.root",
+      'fn': "piAbsSelector_run5432_v8.1_da81b52a.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -866,64 +865,37 @@ if __name__ == "__main__":
     "run5432_2GeV",
   ))
 
-  #sillies.append((
-  #  [{
-  #    'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
-  #    'name': "run5786",
-  #    'title': "Run 5786: 3 GeV/c",
-  #    'caption': "Run 5786: 3 GeV/c",
-  #    'isData': True,
-  #    'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-  #  },
-  #  {
-  #    'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
-  #    'name': "mcc11_sce_3GeV",
-  #    'title': "MCC11 3 GeV/c SCE",
-  #    'caption': "MCC11 3 GeV/c SCE",
-  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
-  #    #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-  #    #'scaleFactor': 1,
-  #  }],
-  #  "run5786_3GeV",
-  #))
-
-  #sillies.append([
-  #])
+  sillies.append((
+    [{
+      'fn': "piAbsSelector_run5786_v8.1_da81b52a.root",
+      'name': "run5786",
+      'title': "Run 5786: 3 GeV/c",
+      'caption': "Run 5786: 3 GeV/c",
+      'isData': True,
+      'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_3GeV",
+      'title': "MCC11 3 GeV/c SCE",
+      'caption': "MCC11 3 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      #'scaleFactor': 1,
+    }],
+    "run5786_3GeV",
+  ))
 
   sillies.append((
    [
-   {
-      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-      'name': "run5145",
-      'title': "Run 5145: 7 GeV/c",
-      'caption': "Run 5145: 7 GeV/c",
+    {
+      'fn': "piAbsSelector_run5204_v8.1_da81b52a.root",
+      'name': "run5204",
+      'title': "Run 5204: 7 GeV/c",
+      'caption': "Run 5204: 7 GeV/c",
       'isData': True,
       'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
     },
-   # {
-   #   'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
-   #   'name': "run5145_new",
-   #   'title': "Run 5145: 7 GeV/c New Run",
-   #   'caption': "Run 5145: 7 GeV/c New Run",
-   #   'isData': True,
-   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-   # },
-   # {
-   #   'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
-   #   'name': "run5145_fix",
-   #   'title': "Run 5145: 7 GeV/c Jake's Fix",
-   #   'caption': "Run 5145: 7 GeV/c Jake's Fix",
-   #   'isData': True,
-   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-   # },
-   # {
-   #   'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
-   #   'name': "run5145_oldPos",
-   #   'title': "Run 5145: 7 GeV/c Old Pos",
-   #   'caption': "Run 5145: 7 GeV/c Old Pos",
-   #   'isData': True,
-   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-   # },
     {
       'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
       'name': "mcc11_sce_7GeV",
@@ -932,8 +904,53 @@ if __name__ == "__main__":
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
       'scaleFactor': 1,
     }],
-    "run5145_7GeV",
+    "run5204_7GeV",
   ))
+
+  #sillies.append((
+  # [
+  # {
+  #    'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+  #    'name': "run5145",
+  #    'title': "Run 5145: 7 GeV/c",
+  #    'caption': "Run 5145: 7 GeV/c",
+  #    'isData': True,
+  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  # # {
+  # #   'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
+  # #   'name': "run5145_new",
+  # #   'title': "Run 5145: 7 GeV/c New Run",
+  # #   'caption': "Run 5145: 7 GeV/c New Run",
+  # #   'isData': True,
+  # #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  # # },
+  # # {
+  # #   'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
+  # #   'name': "run5145_fix",
+  # #   'title': "Run 5145: 7 GeV/c Jake's Fix",
+  # #   'caption': "Run 5145: 7 GeV/c Jake's Fix",
+  # #   'isData': True,
+  # #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  # # },
+  # # {
+  # #   'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
+  # #   'name': "run5145_oldPos",
+  # #   'title': "Run 5145: 7 GeV/c Old Pos",
+  # #   'caption': "Run 5145: 7 GeV/c Old Pos",
+  # #   'isData': True,
+  # #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  # # },
+  #  {
+  #    'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+  #    'name': "mcc11_sce_7GeV",
+  #    'title': "MCC11 7 GeV/c SCE",
+  #    'caption': "MCC11 7 GeV/c SCE",
+  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
+  #    'scaleFactor': 1,
+  #  }],
+  #  "run5145_7GeV",
+  #))
 
   doMP = True
   pool = None
