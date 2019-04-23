@@ -6,10 +6,71 @@ root.gROOT.SetBatch(True)
 import multiprocessing
 import copy
 
-def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
+def compareTrackAngles(fileConfigs,weightStr,runSetName,NMAX):
+  fileConfigs = copy.deepcopy(fileConfigs)
+  for iFC, fc in enumerate(fileConfigs):
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+    fc["color"] = COLORLIST[iFC]
+
+  c = root.TCanvas()
+
+  histConfigs = [
+    {
+      'name': "PFBeamPrimAngleStartEndXZ",
+      'xtitle': "#Delta #theta_{xz} [deg]",
+      'ytitle': "Area Normalized",
+      'binning': [100,-50,50],
+      'var': "atan2(sin(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi-atan2(sin(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi",
+      'normalize': True,
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+    },
+    {
+      'name': "PFBeamPrimAngleStartEndYZ",
+      'xtitle': "#Delta #theta_{yz} [deg]",
+      'ytitle': "Area Normalized",
+      'binning': [100,-50,50],
+      'var': "atan2(sin(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi),cos(PFBeamPrimStartTheta))*180/pi-atan2(sin(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi),cos(PFBeamPrimEndTheta))*180/pi",
+      'normalize': True,
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+    },
+  ]
+  plotManyFilesOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching_CompareSCE_",outSuffix="_"+runSetName,nMax=NMAX)
+
+  del c
+
+def compareMomSpread(fileConfigs,weightStr,runSetName,NMAX):
   fileConfigs = copy.deepcopy(fileConfigs)
   for fc in fileConfigs:
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+  c = root.TCanvas()
+  allhists = []
+  alltitles = []
+  for fileConfig in fileConfigs:
+    match = re.search(r"\s+(\d+)\s+GeV",fileConfig['title'])
+    if match:
+      nomEnergy = match.group(1)
+      histConfigs = [{
+          'name': "Pspread",
+          'xtitle': "BI #Delta p / p",
+          'ytitle': "Area Normalized",
+          'binning': [100,0,2],
+          'var': "pWC/1000./{}".format(nomEnergy),
+          'normalize': True,
+          'cuts': weightStr+"*(pWC > -100)",
+      }]
+      hists = plotOneHistOnePlot([fileConfig],histConfigs,c,"PiAbsSelector/tree",nMax=NMAX,writeImages=False)
+      for histname in hists:
+        for samplename in hists[histname]:
+          allhists.append(hists[histname][samplename])
+      alltitles.append(fileConfig["title"])
+  plotHistsSimple(allhists,alltitles,"BI #Delta p / p","Area Normalized",c,"Matching_ComparePspread")
+  del c
+
+def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
+  fileConfigsAll = copy.deepcopy(fileConfigs)
+  for fc in fileConfigsAll:
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+  fileConfigs = [fileConfig for fileConfig in fileConfigsAll if not ("SCE" in fileConfig["title"])]
 
   c = root.TCanvas()
 
@@ -465,6 +526,170 @@ def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
     },
   ]
   plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching2D_",outSuffix="",nMax=NMAX)
+    ##########################
+    #### Tom Junk's Plots ####
+    ##########################
+  histConfigs = [
+    {
+      'name': "PFBeamPrimStartThetaYZVXZ",
+      'ytitle': "PF Track Start #theta_{yz} [deg]",
+      'xtitle': "PF Track Start #theta_{xz} [deg]",
+      'binning': [50,-25,0,80,-40,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi:atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimEndThetaYZVXZ",
+      'ytitle': "PF Track End #theta_{yz} [deg]",
+      'xtitle': "PF Track End #theta_{xz} [deg]",
+      'binning': [50,-25,0,80,-40,0],
+      'var': "atan(tan(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi))*180/pi:atan(tan(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimEndTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartVEndThetaXZ",
+      'ytitle': "PF Track Start #theta_{xz} [deg]",
+      'xtitle': "PF Track End #theta_{xz} [deg]",
+      'binning': [50,-25,0,50,-25,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi:atan(tan(PFBeamPrimEndTheta)*cos(PFBeamPrimEndPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartVEndThetaYZ",
+      'ytitle': "PF Track Start #theta_{yz} [deg]",
+      'xtitle': "PF Track End #theta_{yz} [deg]",
+      'binning': [80,-40,0,80,-40,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi:atan(tan(PFBeamPrimEndTheta)*sin(PFBeamPrimEndPhi))*180/pi",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100 && PFBeamPrimEndTheta > -100)",
+      'logz': False,
+    },
+    ############################
+    {
+      'name': "PFBeamPrimStartThetaXZVStartX",
+      'ytitle': "PF Track start #theta_{xz} [deg]",
+      'xtitle': "PF Track Start X [cm]",
+      'binning': [50,-75,25,50,-25,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartX",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartThetaYZVStartX",
+      'ytitle': "PF Track start #theta_{yz} [deg]",
+      'xtitle': "PF Track Start X [cm]",
+      'binning': [50,-75,25,80,-40,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartX",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartThetaXZVStartY",
+      'ytitle': "PF Track start #theta_{xz} [deg]",
+      'xtitle': "PF Track Start Y [cm]",
+      'binning': [75,375,450,50,-25,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartY",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartThetaYZVStartY",
+      'ytitle': "PF Track start #theta_{yz} [deg]",
+      'xtitle': "PF Track Start Y [cm]",
+      'binning': [75,375,450,80,-40,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartY",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartThetaXZVStartZ",
+      'ytitle': "PF Track start #theta_{xz} [deg]",
+      'xtitle': "PF Track Start Z [cm]",
+      'binning': [55,-5,105,50,-25,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartZ",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartThetaYZVStartZ",
+      'ytitle': "PF Track start #theta_{yz} [deg]",
+      'xtitle': "PF Track Start Z [cm]",
+      'binning': [55,-5,105,80,-40,0],
+      'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi:PFBeamPrimStartZ",
+      'cuts': weightStr+"*(PFBeamPrimStartTheta > -100)",
+      'logz': False,
+    },
+    ###########################################
+    {
+      'name': "thetaWCXZvP",
+      'ytitle': "BI #theta_{xz} [deg]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,20,-15,-5],
+      'var': "atan(tan(thetaWC)*cos(phiWC))*180/pi:pWC/1000.",
+      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "thetaWCYZvP",
+      'ytitle': "BI #theta_{yz} [deg]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,25,-20,-5],
+      'var': "atan(tan(thetaWC)*sin(phiWC))*180/pi:pWC/1000.",
+      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "xWCXZvP",
+      'ytitle': "BI X at TPC Front [cm]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,50,-50,0],
+      'var': "xWC:pWC/1000.",
+      'cuts': weightStr+"*(xWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "yWCXZvP",
+      'ytitle': "BI Y at TPC Front [cm]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,40,400,440],
+      'var': "yWC:pWC/1000.",
+      'cuts': weightStr+"*(yWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    ###########################################
+    ################ For Martin ###############
+    ###########################################
+    {
+      'name': "PFBeamPrimStartXVStartZ",
+      'ytitle': "PF Track Start X [cm]",
+      'xtitle': "PF Track Start Z [cm]",
+      'binning': [55,-5,105,50,-50,0],
+      'var': "PFBeamPrimStartX:PFBeamPrimStartZ",
+      'cuts': weightStr+"*(PFBeamPrimStartX > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartYVStartZ",
+      'ytitle': "PF Track Start Y [cm]",
+      'xtitle': "PF Track Start Z [cm]",
+      'binning': [55,-5,105,40,400,440],
+      'var': "PFBeamPrimStartY:PFBeamPrimStartZ",
+      'cuts': weightStr+"*(PFBeamPrimStartX > -100)",
+      'logz': False,
+    },
+    {
+      'name': "PFBeamPrimStartYVStartX",
+      'ytitle': "PF Track Start Y [cm]",
+      'xtitle': "PF Track Start X [cm]",
+      'binning': [50,-50,0,40,400,440],
+      'var': "PFBeamPrimStartY:PFBeamPrimStartX",
+      'cuts': weightStr+"*(PFBeamPrimStartX > -100)",
+      'logz': False,
+    },
+  ]
+  plotOneHistOnePlot(fileConfigsAll,histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching2D_",outSuffix="",nMax=NMAX)
 
   del c
 
@@ -527,9 +752,10 @@ if __name__ == "__main__":
   #))
 
   sillies.append((
-    [{
+    [
+    {
       #'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
-      'fn': "piAbsSelector_run5432_v7_55712ad_local.root",
+      'fn': "piAbsSelector_run5432_v8.0_64cf7360_local.root",
       'name': "run5432",
       'title': "Run 5432: 2 GeV/c",
       'caption': "Run 5432: 2 GeV/c",
@@ -537,24 +763,24 @@ if __name__ == "__main__":
       'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
       #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
     },
-    {
-      'fn': "piAbsSelector_run5432_oldCalo_oldBIPos_v7.4_5a76d2fe.root",
-      'name': "run5432_oldBIPos",
-      'title': "Run 5432: 2 GeV/c Old BI Positions",
-      'caption': "Run 5432: 2 GeV/c Old BI Positions",
-      'isData': True,
-      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-      #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
-    },
-    {
-      'fn': "piAbsSelector_run5432_v8.0_64cf7360_local.root",
-      'name': "run5432_fix",
-      'title': "Run 5432: 2 GeV/c Jake's Fix",
-      'caption': "Run 5432: 2 GeV/c Jake's Fix",
-      'isData': True,
-      'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
-      #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
-    },
+    #{
+    #  'fn': "piAbsSelector_run5432_oldCalo_oldBIPos_v7.4_5a76d2fe.root",
+    #  'name': "run5432_oldBIPos",
+    #  'title': "Run 5432: 2 GeV/c Old BI Positions",
+    #  'caption': "Run 5432: 2 GeV/c Old BI Positions",
+    #  'isData': True,
+    #  'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    #  #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    #},
+    #{
+    #  'fn': "piAbsSelector_run5432_v8.0_64cf7360_local.root",
+    #  'name': "run5432_fix",
+    #  'title': "Run 5432: 2 GeV/c Jake's Fix",
+    #  'caption': "Run 5432: 2 GeV/c Jake's Fix",
+    #  'isData': True,
+    #  'cuts': "*(BIPion2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    #  #'cuts': "*(BIProton2GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for protons
+    #},
     {
       'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
       'name': "mcc11_sce_2GeV",
@@ -572,7 +798,8 @@ if __name__ == "__main__":
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
       'scaleFactor': 1.,
-    }],
+    }
+    ],
     "run5432_2GeV",
   ))
 
@@ -600,59 +827,68 @@ if __name__ == "__main__":
   #sillies.append([
   #])
 
-  sillies.append((
-   [{
-      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-      'name': "run5145",
-      'title': "Run 5145: 7 GeV/c",
-      'caption': "Run 5145: 7 GeV/c",
-      'isData': True,
-      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-    {
-      'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
-      'name': "run5145_new",
-      'title': "Run 5145: 7 GeV/c New Run",
-      'caption': "Run 5145: 7 GeV/c New Run",
-      'isData': True,
-      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-    {
-      'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
-      'name': "run5145_fix",
-      'title': "Run 5145: 7 GeV/c Jake's Fix",
-      'caption': "Run 5145: 7 GeV/c Jake's Fix",
-      'isData': True,
-      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-    {
-      'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
-      'name': "run5145_oldPos",
-      'title': "Run 5145: 7 GeV/c Old Pos",
-      'caption': "Run 5145: 7 GeV/c Old Pos",
-      'isData': True,
-      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-    },
-    {
-      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-      'name': "mcc11_sce_7GeV",
-      'title': "MCC11 7 GeV/c SCE",
-      'caption': "MCC11 7 GeV/c SCE",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
-      'scaleFactor': 1,
-    }],
-    "run5145_7GeV",
-  ))
+  #sillies.append((
+  # [{
+  #    'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+  #    'name': "run5145",
+  #    'title': "Run 5145: 7 GeV/c",
+  #    'caption': "Run 5145: 7 GeV/c",
+  #    'isData': True,
+  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  #  {
+  #    'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
+  #    'name': "run5145_new",
+  #    'title': "Run 5145: 7 GeV/c New Run",
+  #    'caption': "Run 5145: 7 GeV/c New Run",
+  #    'isData': True,
+  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  #  {
+  #    'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
+  #    'name': "run5145_fix",
+  #    'title': "Run 5145: 7 GeV/c Jake's Fix",
+  #    'caption': "Run 5145: 7 GeV/c Jake's Fix",
+  #    'isData': True,
+  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  #  {
+  #    'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
+  #    'name': "run5145_oldPos",
+  #    'title': "Run 5145: 7 GeV/c Old Pos",
+  #    'caption': "Run 5145: 7 GeV/c Old Pos",
+  #    'isData': True,
+  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+  #  },
+  #  {
+  #    'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+  #    'name': "mcc11_sce_7GeV",
+  #    'title': "MCC11 7 GeV/c SCE",
+  #    'caption': "MCC11 7 GeV/c SCE",
+  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
+  #    'scaleFactor': 1,
+  #  }],
+  #  "run5145_7GeV",
+  #))
 
-  doMP = False
+  doMP = True
   pool = None
   if doMP:
     pool = multiprocessing.Pool()
   for silly in sillies:
     if doMP:
-      pool.apply_async(doDataMCPlots,(silly[0],weightStr,silly[1],NMAX))
+      pool.apply_async(doMatchingPlots,(silly[0],weightStr,silly[1],NMAX))
     else:
       doMatchingPlots(silly[0],weightStr,silly[1],NMAX)
+  for silly in sillies:
+    if doMP:
+      pool.apply_async(compareTrackAngles,(silly[0],weightStr,silly[1],NMAX))
+    else:
+      compareTrackAngles(silly[0],weightStr,silly[1],NMAX)
+  if doMP:
+    pool.apply_async(compareMomSpread,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
+  else:
+    compareMomSpread([fileConfig for silly in sillies for fileConfig in silly[0]],weightStr,None,NMAX)
   if doMP:
     pool.close()
     pool.join()
