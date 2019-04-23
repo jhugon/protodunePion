@@ -337,6 +337,7 @@ def plotOneHistOnePlot(fileConfigs,histConfigs,canvas,treename,outPrefix="",outS
             axisHist.GetYaxis().SetRangeUser(*ylim)
         if zlim:
             axisHist.GetYaxis().SetRangeUser(*zlim)
+        setHistTitles(hist,histConfig["xtitle"],histConfig["ytitle"])
         hist.Draw("colz")
         if doProfileXtoo:
             prof.Draw("Esame")

@@ -46,6 +46,8 @@ def compareMomSpread(fileConfigs,weightStr,runSetName,NMAX):
   allhists = []
   alltitles = []
   for fileConfig in fileConfigs:
+    if "3ms" in fileConfig["name"] or "flf" in fileConfig["name"]:
+      continue
     match = re.search(r"\s+(\d+)\s+GeV",fileConfig['title'])
     if match:
       nomEnergy = match.group(1)
@@ -63,8 +65,106 @@ def compareMomSpread(fileConfigs,weightStr,runSetName,NMAX):
         for samplename in hists[histname]:
           allhists.append(hists[histname][samplename])
       alltitles.append(fileConfig["title"])
+      histConfigs = [
+        {
+          'name': "thetaWCXZvPspread",
+          'ytitle': "BI #theta_{xz} [deg]",
+          'xtitle': "BI #Delta p / p",
+          'binning': [100,0,2,40,-12,-10],
+          'var': "atan(tan(thetaWC)*cos(phiWC))*180/pi:pWC/1000./{}".format(nomEnergy),
+          'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+          'logz': False,
+        },
+        {
+          'name': "thetaWCYZvPspread",
+          'ytitle': "BI #theta_{yz} [deg]",
+          'xtitle': "BI #Delta p / p",
+          'binning': [100,0,2,30,-13,-10],
+          'var': "atan(tan(thetaWC)*sin(phiWC))*180/pi:pWC/1000./{}".format(nomEnergy),
+          'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+          'logz': False,
+        },
+        {
+          'name': "xWCXZvPspread",
+          'ytitle': "BI X at TPC Front [cm]",
+          'xtitle': "BI #Delta p / p",
+          'binning': [100,0,2,50,-50,0],
+          'var': "xWC:pWC/1000./{}".format(nomEnergy),
+          'cuts': weightStr+"*(xWC > -100 && pWC > -100)",
+          'logz': False,
+        },
+        {
+          'name': "yWCXZvPspread",
+          'ytitle': "BI Y at TPC Front [cm]",
+          'xtitle': "BI #Delta p / p",
+          'binning': [100,0,2,40,400,440],
+          'var': "yWC:pWC/1000./{}".format(nomEnergy),
+          'cuts': weightStr+"*(yWC > -100 && pWC > -100)",
+          'logz': False,
+        },
+      ]
+      hists = plotOneHistOnePlot([fileConfig],histConfigs,c,"PiAbsSelector/tree",outPrefix="Matching2D_",outSuffix="",nMax=NMAX)
   plotHistsSimple(allhists,alltitles,"BI #Delta p / p","Area Normalized",c,"Matching_ComparePspread")
   del c
+
+def doPlotsVersusMomentum(fileConfigs,weightStr,runSetName,NMAX):
+  fileConfigsAll = copy.deepcopy(fileConfigs)
+  for fc in fileConfigsAll:
+    fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
+  fileConfigs = [fileConfig for fileConfig in fileConfigsAll if not ("SCE" in fileConfig["title"])]
+  c = root.TCanvas()
+
+  histConfigs = [
+    {
+      'name': "thetaWCXZvP",
+      'ytitle': "BI #theta_{xz} [deg]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,40,-12,-10],
+      'var': "atan(tan(thetaWC)*cos(phiWC))*180/pi:pWC/1000.",
+      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "thetaWCYZvP",
+      'ytitle': "BI #theta_{yz} [deg]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,30,-13,-10],
+      'var': "atan(tan(thetaWC)*sin(phiWC))*180/pi:pWC/1000.",
+      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "xWCXZvP",
+      'ytitle': "BI X at TPC Front [cm]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,50,-50,0],
+      'var': "xWC:pWC/1000.",
+      'cuts': weightStr+"*(xWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+    {
+      'name': "yWCXZvP",
+      'ytitle': "BI Y at TPC Front [cm]",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5,40,400,440],
+      'var': "yWC:pWC/1000.",
+      'cuts': weightStr+"*(yWC > -100 && pWC > -100)",
+      'logz': False,
+    },
+  ]
+  for histConfig in histConfigs:
+    histConfig["normalize"] = True
+  hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",nMax=NMAX,writeImages=False)
+  print hists
+  for histname in hists:
+    sumHist = None
+    for fn in hists[histname]:
+      hist = hists[histname][fn]
+      try:
+        sumHist.Add(hist)
+      except AttributeError:
+        sumHist = hist
+    plotHist2DSimple(sumHist,sumHist.GetXaxis().GetTitle(),sumHist.GetYaxis().GetTitle(),c,"Matching_"+histname)
 
 def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
   fileConfigsAll = copy.deepcopy(fileConfigs)
@@ -622,43 +722,6 @@ def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
       'logz': False,
     },
     ###########################################
-    {
-      'name': "thetaWCXZvP",
-      'ytitle': "BI #theta_{xz} [deg]",
-      'xtitle': "BI Momentum [GeV/c]",
-      'binning': [85,0,8.5,20,-15,-5],
-      'var': "atan(tan(thetaWC)*cos(phiWC))*180/pi:pWC/1000.",
-      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
-      'logz': False,
-    },
-    {
-      'name': "thetaWCYZvP",
-      'ytitle': "BI #theta_{yz} [deg]",
-      'xtitle': "BI Momentum [GeV/c]",
-      'binning': [85,0,8.5,25,-20,-5],
-      'var': "atan(tan(thetaWC)*sin(phiWC))*180/pi:pWC/1000.",
-      'cuts': weightStr+"*(thetaWC > -100 && pWC > -100)",
-      'logz': False,
-    },
-    {
-      'name': "xWCXZvP",
-      'ytitle': "BI X at TPC Front [cm]",
-      'xtitle': "BI Momentum [GeV/c]",
-      'binning': [85,0,8.5,50,-50,0],
-      'var': "xWC:pWC/1000.",
-      'cuts': weightStr+"*(xWC > -100 && pWC > -100)",
-      'logz': False,
-    },
-    {
-      'name': "yWCXZvP",
-      'ytitle': "BI Y at TPC Front [cm]",
-      'xtitle': "BI Momentum [GeV/c]",
-      'binning': [85,0,8.5,40,400,440],
-      'var': "yWC:pWC/1000.",
-      'cuts': weightStr+"*(yWC > -100 && pWC > -100)",
-      'logz': False,
-    },
-    ###########################################
     ################ For Martin ###############
     ###########################################
     {
@@ -827,49 +890,50 @@ if __name__ == "__main__":
   #sillies.append([
   #])
 
-  #sillies.append((
-  # [{
-  #    'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
-  #    'name': "run5145",
-  #    'title': "Run 5145: 7 GeV/c",
-  #    'caption': "Run 5145: 7 GeV/c",
-  #    'isData': True,
-  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #  },
-  #  {
-  #    'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
-  #    'name': "run5145_new",
-  #    'title': "Run 5145: 7 GeV/c New Run",
-  #    'caption': "Run 5145: 7 GeV/c New Run",
-  #    'isData': True,
-  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #  },
-  #  {
-  #    'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
-  #    'name': "run5145_fix",
-  #    'title': "Run 5145: 7 GeV/c Jake's Fix",
-  #    'caption': "Run 5145: 7 GeV/c Jake's Fix",
-  #    'isData': True,
-  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #  },
-  #  {
-  #    'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
-  #    'name': "run5145_oldPos",
-  #    'title': "Run 5145: 7 GeV/c Old Pos",
-  #    'caption': "Run 5145: 7 GeV/c Old Pos",
-  #    'isData': True,
-  #    'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
-  #  },
-  #  {
-  #    'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
-  #    'name': "mcc11_sce_7GeV",
-  #    'title': "MCC11 7 GeV/c SCE",
-  #    'caption': "MCC11 7 GeV/c SCE",
-  #    'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
-  #    'scaleFactor': 1,
-  #  }],
-  #  "run5145_7GeV",
-  #))
+  sillies.append((
+   [
+   {
+      'fn': "piAbsSelector_run5145_v7_55712ad_local.root",
+      'name': "run5145",
+      'title': "Run 5145: 7 GeV/c",
+      'caption': "Run 5145: 7 GeV/c",
+      'isData': True,
+      'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+    },
+   # {
+   #   'fn': "PiAbsSelector_run5145_50evt_v7.4_5a76d2fe.root",
+   #   'name': "run5145_new",
+   #   'title': "Run 5145: 7 GeV/c New Run",
+   #   'caption': "Run 5145: 7 GeV/c New Run",
+   #   'isData': True,
+   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+   # },
+   # {
+   #   'fn': "piAbs_noRedoCalo_run5145_n100_64cf7360.root",
+   #   'name': "run5145_fix",
+   #   'title': "Run 5145: 7 GeV/c Jake's Fix",
+   #   'caption': "Run 5145: 7 GeV/c Jake's Fix",
+   #   'isData': True,
+   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+   # },
+   # {
+   #   'fn': "PiAbsSelector_run5145_50evt_oldPos_v7.4_5a76d2fe.root",
+   #   'name': "run5145_oldPos",
+   #   'title': "Run 5145: 7 GeV/c Old Pos",
+   #   'caption': "Run 5145: 7 GeV/c Old Pos",
+   #   'isData': True,
+   #   'cuts': "*(BIPion7GeV)*"+cutGoodBeamline+cutGoodFEMBs,
+   # },
+    {
+      'fn': "piAbsSelector_mcc11_sce_7p0GeV_v7.0_55712adf_local.root",
+      'name': "mcc11_sce_7GeV",
+      'title': "MCC11 7 GeV/c SCE",
+      'caption': "MCC11 7 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
+      'scaleFactor': 1,
+    }],
+    "run5145_7GeV",
+  ))
 
   doMP = True
   pool = None
@@ -889,6 +953,10 @@ if __name__ == "__main__":
     pool.apply_async(compareMomSpread,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
   else:
     compareMomSpread([fileConfig for silly in sillies for fileConfig in silly[0]],weightStr,None,NMAX)
+  if doMP:
+    pool.apply_async(doPlotsVersusMomentum,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
+  else:
+    doPlotsVersusMomentum([fileConfig for silly in sillies for fileConfig in silly[0]],weightStr,None,NMAX)
   if doMP:
     pool.close()
     pool.join()
