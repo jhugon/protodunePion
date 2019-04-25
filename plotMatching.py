@@ -901,7 +901,7 @@ if __name__ == "__main__":
       'name': "mcc11_sce_7GeV",
       'title': "MCC11 7 GeV/c SCE",
       'caption': "MCC11 7 GeV/c SCE",
-      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13 || truePrimaryPDG == -11)",
       'scaleFactor': 1,
     }],
     "run5204_7GeV",
