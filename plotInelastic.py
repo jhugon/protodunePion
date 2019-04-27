@@ -166,7 +166,7 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'name': "DeltaXPFBeamPrimStartBI",
             'xtitle': "#Delta X PF Track Start & BI Track [cm]",
             'ytitle': "Events / bin",
-            'binning': [105,-10,25],
+            'binning': [100,-5,20],
             'var': "PFBeamPrimStartX - xWC",
             'cutSpans': [[None,8],[15,None]],
           },
@@ -188,7 +188,7 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'name': "DeltaYPFBeamPrimStartBI",
             'xtitle': "#Delta Y PF Track Start & BI Track [cm]",
             'ytitle': "Events / bin",
-            'binning': [90,-15,15],
+            'binning': [60,-5,10],
             'var': "PFBeamPrimStartY - yWC",
             'cutSpans': [[None,-2],[7,None]],
           },
@@ -929,12 +929,12 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'name': "PFBeamPrimAngleStartBIXZ",
             'xtitle': "TPC Track Start-BI Angle in XZ-Plane [deg]",
             'ytitle': "Events / bin",
-            'binning': [80,-40,40],
+            'binning': [60,-15,15],
             'var': "atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi",
             'cutSpans': [[None,-10],[0,None]],
           },
         ],
-      'cut': "(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -2) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > 8) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 15))",
+      'cut': "(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -5) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -10) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 0))",
     },
     {
       'histConfigs':
@@ -943,13 +943,13 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
             'name': "PFBeamPrimAngleStartBIYZ",
             'xtitle': "TPC Track Start-BI Angle in YZ-Plane [deg]",
             'ytitle': "Events / bin",
-            'binning': [80,-40,40],
+            'binning': [70,-25,10],
             'var': "atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi",
             'cutSpans': [[None,-20],[-5,None]],
           },
         ],
-    },
       'cut': "(isMC && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -8) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < 2)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -20) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < -5))",
+    },
 #    {
 #      'histConfigs':
 #        [
@@ -1227,21 +1227,21 @@ if __name__ == "__main__":
   )
 
 
-#  stuff.append(
-#    (
-#      [{
-#        'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
-#        'name': "run5770",
-#        'title': "Run 5770: 6 GeV/c",
-#        'caption': "Run 5770: 6 GeV/c",
-#        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline,
-#      }],
-#      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
-#      "Run 5770: 6 GeV/c & MCC11 SCE",
-#      5.037104557640751,
-#      "run5770_6GeV",
-#    )
-#  )
+  stuff.append(
+    (
+      [{
+        'fn': "piAbsSelector_run5770_v8.1_da81b52a.root",
+        'name': "run5770",
+        'title': "Run 5770: 6 GeV/c",
+        'caption': "Run 5770: 6 GeV/c",
+        'cuts': "*(BIPion6GeV)*"+cutGoodBeamline,
+      }],
+      "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+      "Run 5770: 6 GeV/c & MCC11 SCE",
+      5.008471849865952,
+      "run5770_6GeV",
+    )
+  )
 
   #stuff.append(
   #  (

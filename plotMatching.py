@@ -112,6 +112,7 @@ def doPlotsVersusMomentum(fileConfigs,weightStr,runSetName,NMAX):
   for fc in fileConfigsAll:
     fc["addFriend"] = ["friend","friendTree_"+fc["fn"]]
   fileConfigs = [fileConfig for fileConfig in fileConfigsAll if not ("SCE" in fileConfig["title"])]
+  fileConfigsMC = [fileConfig for fileConfig in fileConfigsAll if ("SCE" in fileConfig["title"])]
   c = root.TCanvas()
 
   histConfigs = [
@@ -155,7 +156,6 @@ def doPlotsVersusMomentum(fileConfigs,weightStr,runSetName,NMAX):
   for histConfig in histConfigs:
     histConfig["normalize"] = True
   hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",nMax=NMAX,writeImages=False)
-  print hists
   for histname in hists:
     sumHist = None
     for fn in hists[histname]:
@@ -165,6 +165,43 @@ def doPlotsVersusMomentum(fileConfigs,weightStr,runSetName,NMAX):
       except AttributeError:
         sumHist = hist
     plotHist2DSimple(sumHist,sumHist.GetXaxis().GetTitle(),sumHist.GetYaxis().GetTitle(),c,"Matching_"+histname)
+  histConfigs = [
+    {
+      'name': "pWC",
+      'ytitle': "Events / Bin",
+      'xtitle': "BI Momentum [GeV/c]",
+      'binning': [85,0,8.5],
+      'var': "pWC/1000.",
+      'cuts': weightStr+"*(pWC > -100)",
+    },
+  ]
+  hists = plotOneHistOnePlot(fileConfigs,histConfigs,c,"PiAbsSelector/tree",nMax=NMAX,writeImages=False)
+  histsMC = plotOneHistOnePlot(fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",nMax=NMAX,writeImages=False)
+  print hists
+  print histsMC
+  for histname in hists:
+    sumHist = None
+    for fn in hists[histname]:
+      hist = hists[histname][fn]
+      try:
+        sumHist.Add(hist)
+      except AttributeError:
+        sumHist = hist
+    sumHistMC = None
+    for fn in histsMC[histname]:
+      hist = histsMC[histname][fn]
+      try:
+        sumHistMC.Add(hist)
+      except AttributeError:
+        sumHistMC = hist
+    sumHist.SetLineColor(root.kBlack)
+    sumHist.SetMarkerColor(root.kBlack)
+    sumHistMC.SetLineColor(COLORLIST[0])
+    sumHistMC.SetMarkerColor(COLORLIST[0])
+    sumHistMC.SetFillColor(COLORLIST[0])
+    print sumHist, sumHistMC
+    plotHistsSimple([sumHist,sumHistMC],["ProtoDUNE-SP Data","MCC11"],sumHist.GetXaxis().GetTitle(),sumHist.GetYaxis().GetTitle(),c,"Matching_all_"+histname,drawOptions=["PEZ","HISTL"])
+    plotHistsSimple([sumHist,sumHistMC],["ProtoDUNE-SP Data","MCC11"],sumHist.GetXaxis().GetTitle(),sumHist.GetYaxis().GetTitle(),c,"Matching_all_"+histname+"_logy",drawOptions=["PEZ","HISTL"],logy=True)
 
 def doMatchingPlots(fileConfigs,weightStr,runSetName,NMAX):
   fileConfigsAll = copy.deepcopy(fileConfigs)
@@ -782,7 +819,7 @@ if __name__ == "__main__":
   primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
-  weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
+  weightStr = "1"+primaryTrackCuts+rejectThroughgoingCut
 
   #nData = 224281.0
   logy = False
@@ -887,6 +924,27 @@ if __name__ == "__main__":
   ))
 
   sillies.append((
+    [{
+      'fn': "piAbsSelector_run5770_v8.1_da81b52a.root",
+      'name': "run5770",
+      'title': "Run 5770: 6 GeV/c",
+      'caption': "Run 5770: 6 GeV/c",
+      'isData': True,
+      'cuts': "*(BIPion6GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_6GeV",
+      'title': "MCC11 6 GeV/c SCE",
+      'caption': "MCC11 6 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13 || truePrimaryPDG == -11)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 1,
+    }],
+    "run5770_6GeV",
+  ))
+
+  sillies.append((
    [
     {
       'fn': "piAbsSelector_run5204_v8.1_da81b52a.root",
@@ -952,24 +1010,24 @@ if __name__ == "__main__":
   #  "run5145_7GeV",
   #))
 
-  doMP = True
+  doMP = False
   pool = None
   if doMP:
     pool = multiprocessing.Pool()
-  for silly in sillies:
-    if doMP:
-      pool.apply_async(doMatchingPlots,(silly[0],weightStr,silly[1],NMAX))
-    else:
-      doMatchingPlots(silly[0],weightStr,silly[1],NMAX)
-  for silly in sillies:
-    if doMP:
-      pool.apply_async(compareTrackAngles,(silly[0],weightStr,silly[1],NMAX))
-    else:
-      compareTrackAngles(silly[0],weightStr,silly[1],NMAX)
-  if doMP:
-    pool.apply_async(compareMomSpread,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
-  else:
-    compareMomSpread([fileConfig for silly in sillies for fileConfig in silly[0]],weightStr,None,NMAX)
+  #for silly in sillies:
+  #  if doMP:
+  #    pool.apply_async(doMatchingPlots,(silly[0],weightStr,silly[1],NMAX))
+  #  else:
+  #    doMatchingPlots(silly[0],weightStr,silly[1],NMAX)
+  #for silly in sillies:
+  #  if doMP:
+  #    pool.apply_async(compareTrackAngles,(silly[0],weightStr,silly[1],NMAX))
+  #  else:
+  #    compareTrackAngles(silly[0],weightStr,silly[1],NMAX)
+  #if doMP:
+  #  pool.apply_async(compareMomSpread,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
+  #else:
+  #  compareMomSpread([fileConfig for silly in sillies for fileConfig in silly[0]],weightStr,None,NMAX)
   if doMP:
     pool.apply_async(doPlotsVersusMomentum,([fileConfig for silly in sillies  for fileConfig in silly[0]],weightStr,None,NMAX))
   else:

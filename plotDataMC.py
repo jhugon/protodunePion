@@ -1666,9 +1666,11 @@ if __name__ == "__main__":
 
   deltaXTrackBICut = "*((isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20)))"
   deltaYTrackBICut = "*((isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30)))"
+
+  deltaThetaXZTrackBICut = "*(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -5) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -10) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 0))"
+  deltaThetaYZTrackBICut = "*(isMC && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -8) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < 2)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -20) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < -5))"
   rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
-  #primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+rejectThroughgoingCut
-  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"
+  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+deltaThetaXZTrackBICut+deltaThetaYZTrackBICut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
   weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
@@ -1701,8 +1703,7 @@ if __name__ == "__main__":
       'caption': "MCC11 1 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 0.9914158305462654, # for pions
-      #'scaleFactor': 1, # for protons stopping cut
+      'scaleFactor': 0.18142931664058426, # for pions
     }],
     "run5387_1GeV",
   ))
@@ -1724,7 +1725,7 @@ if __name__ == "__main__":
       'caption': "MCC11 2 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 19.059920106524633,
+      'scaleFactor': 12.180555555555555,
     }],
     "run5432_2GeV",
   ))
@@ -1739,19 +1740,37 @@ if __name__ == "__main__":
       'cuts': "*(BIPion3GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
     },
     {
-      'fn': "piAbsSelector_mcc11_sce_2GeV_v7a1_55712adf.root",
+      'fn': "piAbsSelector_mcc11_sce_3GeV_v7a1_55712adf.root",
       'name': "mcc11_sce_3GeV",
       'title': "MCC11 3 GeV/c SCE",
       'caption': "MCC11 3 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13)", # for pions
       #'cuts': "*(truePrimaryPDG == 2212)", # for protons
-      'scaleFactor': 50.647137150466044,
+      'scaleFactor': 30.827235772357724,
     }],
     "run5786_3GeV",
   ))
 
-  #sillies.append([
-  #])
+  sillies.append((
+    [{
+      'fn': "piAbsSelector_run5770_v8.1_da81b52a.root",
+      'name': "run5770",
+      'title': "Run 5770: 6 GeV/c",
+      'caption': "Run 5770: 6 GeV/c",
+      'isData': True,
+      'cuts': "*(BIPion6GeV)*"+cutGoodBeamline+cutGoodFEMBs, # for pions
+    },
+    {
+      'fn': "piAbsSelector_mcc11_sce_6GeV_v7a1_55712adf.root",
+      'name': "mcc11_sce_6GeV",
+      'title': "MCC11 6 GeV/c SCE",
+      'caption': "MCC11 6 GeV/c SCE",
+      'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13 || truePrimaryPDG == -11)", # for pions
+      #'cuts': "*(truePrimaryPDG == 2212)", # for protons
+      'scaleFactor': 12.046087888531618,
+    }],
+    "run5770_6GeV",
+  ))
 
   #sillies.append((
   # [{
@@ -1789,12 +1808,12 @@ if __name__ == "__main__":
       'title': "MCC11 7 GeV/c SCE",
       'caption': "MCC11 7 GeV/c SCE",
       'cuts': "*(truePrimaryPDG == 211 || truePrimaryPDG == -13 || truePrimaryPDG == -11)",
-      'scaleFactor': 16.46064814814815,
+      'scaleFactor': 37.68827160493827,
     }],
     "run5204_7GeV",
   ))
 
-  doMP = True
+  doMP = False
   pool = None
   if doMP:
     pool = multiprocessing.Pool()

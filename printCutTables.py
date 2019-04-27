@@ -16,7 +16,7 @@ if __name__ == "__main__":
   c = root.TCanvas()
 
   NMAX=10000000000
-  #NMAX=10
+  #NMAX=100
 
   cutConfigsGoodBeamline = [
     #{"name": "All","cut": "1"},
@@ -88,27 +88,27 @@ if __name__ == "__main__":
 
   fileConfigsData = [
     {
-      'fn': "piAbsSelector_data_run5387_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5387_v8.1_da81b52a.root",
       'name': "run5387",
       'title': "Run 5387 1 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5432_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5432_v8.1_da81b52a.root",
       'name': "run5432",
       'title': "Run 5432 2 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5786_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5786_v8.1_da81b52a.root",
       'name': "run5786",
       'title': "Run 5786 3 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5770_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5770_v8.1_da81b52a.root",
       'name': "run5770",
       'title': "Run 5770 6 GeV/c",
     },
     {
-      'fn': "piAbsSelector_data_run5204_v7a2_faaca6ad.root",
+      'fn': "piAbsSelector_run5204_v8.1_da81b52a.root",
       'name': "run5204",
       'title': "Run 5204 7 GeV/c",
     },
@@ -474,9 +474,11 @@ if __name__ == "__main__":
     {"name": "1 Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
     {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
     {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
-    {"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
-    {"name": "Delta X PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -5) && ((PFBeamPrimStartX-xWC) < 5)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 0) && ((PFBeamPrimStartX-xWC) < 20))"},
-    {"name": "Delta Y PF Track & BI Track TPC Front","cut": "(isMC && ((PFBeamPrimStartY-yWC) > 0) && ((PFBeamPrimStartY-yWC) < 10)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > 10) && ((PFBeamPrimStartY-yWC) < 30))"},
+    #{"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
+    {"name": "Delta X PF Track & BI Track","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -2) && ((PFBeamPrimStartX-xWC) < 3)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 8) && ((PFBeamPrimStartX-xWC) < 15))"},
+    {"name": "Delta Y PF Track & BI Track","cut": "(isMC && ((PFBeamPrimStartY-yWC) > -3) && ((PFBeamPrimStartY-yWC) < 3)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > -2) && ((PFBeamPrimStartY-yWC) < 7))"},
+    {"name": "Delta Theta XZ PF Track & BI Track",'cut': "(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -5) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -10) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 0))"},
+    {"name": "Delta Theta YZ PF Track & BI Track","cut": "(isMC && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -8) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < 2)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -20) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < -5))"},
     #{"name": "PF Primary Doesn't End Last 4 Wires of APA","cut": "(zWireLastHitWire % 480) <= 485"},
   ]
 
