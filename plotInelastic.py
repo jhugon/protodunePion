@@ -10,7 +10,7 @@ import multiprocessing
 
 def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
   doNMinusOne = True
-  doNoCuts = True
+  doNoCuts = False
   doSCE = False
   doLogy = False
 
@@ -1141,10 +1141,17 @@ def doPlots(NMAX,mcfn,caption,scaleFactor,fileConfigsData,sillystr):
   except IndexError:
     pass
 
+  for cutConfig in cutConfigs:
+    if "histConfigs" in cutConfig:
+      for histConfig in cutConfig["histConfigs"]:
+        histConfig["binning"][0] *= 10
+    else: 
+      histConfig["binning"][0] *= 10
+
   c = root.TCanvas()
 
   if doNMinusOne:
-    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_"+sillystr,nMax=NMAX,table=True)
+    dataMCStackNMinusOne(fileConfigsData,fileConfigsMC,cutConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_NM1_"+sillystr,nMax=NMAX,table=True,saveHistsRootName="Inelastic_{}.root".format(sillystr))
   if doNoCuts:
     dataMCStack(fileConfigsData,fileConfigsMC,histConfigs,c,"PiAbsSelector/tree",outPrefix="Inelastic_",outSuffix="_"+sillystr,nMax=NMAX)
   if doSCE:

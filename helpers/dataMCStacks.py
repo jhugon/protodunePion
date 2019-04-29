@@ -1,7 +1,7 @@
 from misc import *
 from tables import printTable
 
-def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint):
+def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,saveHistsRootName=None):
     """
     fileConfigDatas is a list of dictionaries configuring the data
     fileConfigMCs is a list of dictionaries configuring the MC files
@@ -45,7 +45,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       loadTree(fileConfig,treename)    
     for fileConfig in fileConfigMCs:
       loadTree(fileConfig,treename)
-
+    allHists = {}
     for histConfig in histConfigs:
       #print(" hist: {}, {}".format(histConfig["var"],histConfig["cuts"]))
       # setup
@@ -76,6 +76,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
         dataHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        allHists["{}_{}".format(histConfig['name'],fileConfig['name'])] = hist
       mcHists = []
       for fileConfig in fileConfigMCs:
         hist = loadHist(histConfig,fileConfig,binning,var,cuts,nMax,False,isStack=True)
@@ -86,6 +87,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
         mcHists.append(hist)
         if printIntegral:
           print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+        allHists["{}_{}".format(histConfig['name'],fileConfig['name'])] = hist
       mcSumHist = None
       mcStack = root.THStack()
       if len(mcHists) > 0 :
@@ -98,6 +100,7 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
         for mcHist in reversed(mcHists):
           mcSumHist.Add(mcHist)
           mcStack.Add(mcHist)
+        allHists["{}_{}".format(histConfig['name'],"mcSumHist")] = mcSumHist
       if printIntegral and not (mcStack is None):
         print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,"MC Sum",mcSumHist.Integral()))
       fitFuncs = fitAndDrawHists([mcSumHist]+dataHists,histConfig)
@@ -122,8 +125,18 @@ def dataMCStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPre
       canvas.SaveAs(saveNameBase+".pdf")
       canvas.SetLogy(False)
       canvas.SetLogx(False)
+    if saveHistsRootName:
+      outfile = root.TFile(saveHistsRootName,"recreate")
+      outfile.cd()
+      for name in sorted(allHists):
+        hist = allHists[name]
+        oldname = hist.GetName()
+        hist.SetName(name)
+        hist.Write()
+        hist.SetName(oldname)
+      outfile.Close()
 
-def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False):
+def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,weight="1",table=False,saveHistsRootName=None):
     """
     Similar usage to dataMCStack, just cut instead of cuts
 
@@ -142,6 +155,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
     for fileConfig in fileConfigMCs:
       loadTree(fileConfig,treename)
     nMinusCutEventCounts = []
+    allHists = {}
     for i in range(len(cutConfigs)):
       nMinusCutEventCounts.append([])
       for j in range(len(fileConfigDatas)+1+len(fileConfigMCs)):
@@ -190,6 +204,22 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
             nMinusCutEventCounts[iCut][iFile] = "{:.0f}".format(getIntegralAll(hist))
           if printIntegral:
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+          try:
+            hist.GetXaxis().SetTitle(histConfig["xtitle"])
+          except KeyError:
+            pass
+          try:
+            hist.GetYaxis().SetTitle(histConfig["ytitle"])
+          except KeyError:
+            pass
+          try:
+            hist.SetTitle(fileConfig["title"])
+          except KeyError:
+            try:
+              hist.SetTitle(fileConfig["title"])
+            except KeyError:
+              pass
+          allHists["{}_{}".format(histConfig['name'],fileConfig['name'])] = hist
         mcHists = []
         for iFile, fileConfig in enumerate(fileConfigMCs):
           hist = loadHist(histConfig,fileConfig,binning,var,cutStr,nMax,False,isStack=True)
@@ -202,6 +232,22 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
             nMinusCutEventCounts[iCut][len(fileConfigDatas)+1+iFile] = "{:.1f}".format(getIntegralAll(hist))
           if printIntegral:
             print("{} {} Integral: {}".format(outPrefix+histConfig['name']+outSuffix,fileConfig['title'],hist.Integral()))
+          try:
+            hist.GetXaxis().SetTitle(histConfig["xtitle"])
+          except KeyError:
+            pass
+          try:
+            hist.GetYaxis().SetTitle(histConfig["ytitle"])
+          except KeyError:
+            pass
+          try:
+            hist.SetTitle(fileConfig["title"])
+          except KeyError:
+            try:
+              hist.SetTitle(fileConfig["title"])
+            except KeyError:
+              pass
+          allHists["{}_{}".format(histConfig['name'],fileConfig['name'])] = hist
         mcSumHist = None
         mcStack = root.THStack()
         if len(mcHists) > 0 :
@@ -214,6 +260,7 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
           for mcHist in reversed(mcHists):
             mcSumHist.Add(mcHist)
             mcStack.Add(mcHist)
+          allHists["{}_{}".format(histConfig['name'],"mcSumHist")] = mcSumHist
         if table and iHistConfig == 0:
           nMinusCutEventCounts[iCut][len(fileConfigDatas)] = "{:.1f}".format(getIntegralAll(mcSumHist))
         if printIntegral and not (mcStack is None):
@@ -250,6 +297,16 @@ def dataMCStackNMinusOne(fileConfigDatas,fileConfigMCs,cutConfigs,canvas,treenam
       rowTitles = [x['cut'] for x in cutConfigs]
       columnTitles = [x['name'] for x in fileConfigDatas]+["MC Sum"]+[x['name'] for x in fileConfigMCs]
       printTable(nMinusCutEventCounts,rowTitles=rowTitles,columnTitles=columnTitles)
+    if saveHistsRootName:
+      outfile = root.TFile(saveHistsRootName,"recreate")
+      outfile.cd()
+      for name in sorted(allHists):
+        hist = allHists[name]
+        oldname = hist.GetName()
+        hist.SetName(name)
+        hist.Write()
+        hist.SetName(oldname)
+      outfile.Close()
 
 def dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,canvas,treename,outPrefix="",outSuffix="Hist",nMax=sys.maxint,catConfigs=[]):
     """
