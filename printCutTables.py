@@ -46,8 +46,8 @@ if __name__ == "__main__":
     #{"name": "All","cut": "1"},
     {"name": "Timing Beam Trigger","cut": "isMC || triggerIsBeam == 1"},
     {"name": "Matched Beam Trigger to Timing Trigger","cut": "isMC || BITriggerMatched > 0"}, # CTB event matched to BI event, TOF and fibers tracker info saved
-    {"name": "> 0 Beam Tracks","cut": "isMC || nBeamTracks > 0"},
-    {"name": "> 0 Beam Momenta","cut": "isMC || nBeamMom > 0"},
+    {"name": "$> 0$ Beam Tracks","cut": "isMC || nBeamTracks > 0"},
+    {"name": "$> 0$ Beam Momenta","cut": "isMC || nBeamMom > 0"},
     {"name": "Exactly 1 Beam Tracks","cut": "isMC || nBeamTracks == 1"},
     {"name": "Exactly 1 Beam Momenta","cut": "isMC || nBeamMom == 1"},
   ]
@@ -473,8 +473,8 @@ if __name__ == "__main__":
     {"name": "MC Truth Pion or Muon (or Electron)","cut": "(!isMC || abs(truePrimaryPDG) == 13 || abs(truePrimaryPDG) == 211 || (abs(truePrimaryPDG)==11 && trueStartMom > 4.5))"},
     {"name": "1 Pandora Beam Slice","cut": "PFNBeamSlices == 1"},
     {"name": "PF Primary is Tracklike","cut": "PFBeamPrimIsTracklike"},
-    {"name": "PF Primary Start Z < 50 cm","cut": "PFBeamPrimStartZ < 50."},
-    #{"name": "PF Primary End Z < 650 cm","cut": "PFBeamPrimEndZ < 650."},
+    {"name": "PF Primary Start Z \SI{<50}{cm}","cut": "PFBeamPrimStartZ < 50."},
+    {"name": "PF Primary End Z \SI{<650}{cm}","cut": "PFBeamPrimEndZ < 650."},
     {"name": "Delta X PF Track & BI Track","cut": "(isMC && ((PFBeamPrimStartX-xWC) > -2) && ((PFBeamPrimStartX-xWC) < 3)) || ((!isMC) && ((PFBeamPrimStartX-xWC) > 8) && ((PFBeamPrimStartX-xWC) < 15))"},
     {"name": "Delta Y PF Track & BI Track","cut": "(isMC && ((PFBeamPrimStartY-yWC) > -3) && ((PFBeamPrimStartY-yWC) < 3)) || ((!isMC) && ((PFBeamPrimStartY-yWC) > -2) && ((PFBeamPrimStartY-yWC) < 7))"},
     {"name": "Delta Theta XZ PF Track & BI Track",'cut': "(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -5) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -10) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 0))"},
@@ -497,4 +497,4 @@ if __name__ == "__main__":
 
   print "\n\n"
   print "Pion Selection (New BI):"
-  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionNew,"PiAbsSelector/tree",nMax=NMAX)
+  PrintCutTable(fileConfigsData+fileConfigsMC,cutConfigsBeamPionNew,"PiAbsSelector/tree",nMax=NMAX,latex=True)

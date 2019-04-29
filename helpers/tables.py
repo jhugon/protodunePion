@@ -1,6 +1,6 @@
 from misc import *
 
-def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
+def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False,latex=False):
   """
   Prints out a nicely formatted table of data.
 
@@ -83,37 +83,81 @@ def printTable(data,columnTitles=None,rowTitles=None,splitColumnTitles=False):
       rowTitleLength = max(len(rowTitle),rowTitleLength)
     rowCharLength += rowTitleLength + 1
 
-  print "="*rowCharLength
-  if columnTitles:
-    for iColumnTitleRow in range(nColumnTitleRows):
+  if latex:
+    outStr = r"\begin{tabu}{"
+    if rowTitles:
+      outStr += "l"
+    outStr += r"S"*nCols
+    outStr += r"} \toprule"
+    print outStr
+    if columnTitles:
+      for iColumnTitleRow in range(nColumnTitleRows):
+        outStr = ""
+        if rowTitles:
+          outStr += " "*(rowTitleLength + 1) + '&'
+        for iCol in range(nCols):
+          if iCol != 0:
+            outStr += " "
+          if splitColumnTitles:
+            if len(columnTitles[iCol]) > iColumnTitleRow:
+              outStr += '{'+("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol][iColumnTitleRow]).replace(r'&',r"\&")+'}'
+            else:
+              outStr += " "*colLengths[iCol]
+          else:
+            outStr += '{'+("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol]).replace(r'&',r"\&")+'}'
+          if iCol != nCols-1:
+            outStr += "&"
+        outStr += r" \\"
+        if iColumnTitleRow == nColumnTitleRows-1:
+          outStr += r" \midrule"
+        print outStr
+    for iRow in range(len(data)):
+      row = data[iRow]
       outStr = ""
       if rowTitles:
-        outStr += " "*(rowTitleLength + 1)
+        outStr += ("{:"+str(rowTitleLength)+"}").format(rowTitles[iRow]).replace(r'&',r"\&")+" &"
       for iCol in range(nCols):
         if iCol != 0:
           outStr += " "
-        if splitColumnTitles:
-          if len(columnTitles[iCol]) > iColumnTitleRow:
-            outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol][iColumnTitleRow])
-          else:
-            outStr += " "*colLengths[iCol]
-        else:
-          outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol])
+        outStr += ("{:>"+str(colLengths[iCol])+"}").format(row[iCol])
+        if iCol != nCols-1:
+          outStr += "&"
+      outStr += r" \\"
       print outStr
-    print "-"*rowCharLength
-  for iRow in range(len(data)):
-    row = data[iRow]
-    outStr = ""
-    if rowTitles:
-      outStr += ("{:"+str(rowTitleLength)+"} ").format(rowTitles[iRow])
-    for iCol in range(nCols):
-      if iCol != 0:
-        outStr += " "
-      outStr += ("{:>"+str(colLengths[iCol])+"}").format(row[iCol])
-    print outStr
-  print "="*rowCharLength
+    print r"\bottomrule"
+    print r"\end{tabu}"
+  else:
+    print "="*rowCharLength
+    if columnTitles:
+      for iColumnTitleRow in range(nColumnTitleRows):
+        outStr = ""
+        if rowTitles:
+          outStr += " "*(rowTitleLength + 1)
+        for iCol in range(nCols):
+          if iCol != 0:
+            outStr += " "
+          if splitColumnTitles:
+            if len(columnTitles[iCol]) > iColumnTitleRow:
+              outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol][iColumnTitleRow])
+            else:
+              outStr += " "*colLengths[iCol]
+          else:
+            outStr += ("{:"+str(colLengths[iCol])+"}").format(columnTitles[iCol])
+        print outStr
+      print "-"*rowCharLength
+    for iRow in range(len(data)):
+      row = data[iRow]
+      outStr = ""
+      if rowTitles:
+        outStr += ("{:"+str(rowTitleLength)+"} ").format(rowTitles[iRow])
+      for iCol in range(nCols):
+        if iCol != 0:
+          outStr += " "
+        outStr += ("{:>"+str(colLengths[iCol])+"}").format(row[iCol])
+      print outStr
+    print "="*rowCharLength
 
-def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=False,nMax=100,friendTreeName=None,friendTreeFileName=None):
+def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=False,printFileBasename=False,nMax=100,friendTreeName=None,friendTreeFileName=None,latex=False):
   tree = root.TChain(treename)
   try:
     if type(infilename) is str:
@@ -210,16 +254,17 @@ def printEvents(infilename,treename,variableNames,cuts={},printFullFilename=Fals
   columnTitles = ["Event"]+variableNames
   if printFileBasename or printFullFilename:
     columnTitles.append("File")
-  printTable(allVals,columnTitles=columnTitles)
+  printTable(allVals,columnTitles=columnTitles,latex=latex)
 
 class PrintCutTable:
 
-  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint):
+  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint,latex=False,wholeNum=True):
     """
     similar to plotters, but cutConfigs is a list of dicts with key 
     'cut' as a cut string and 'name' or 'title' for the cut.
     """
 
+    self.wholeNum = wholeNum
     fileNames = self.getFileNames(fileConfigs)
     cutNames = self.getCutNames(cutConfigs)
     for fileConfig in fileConfigs:
@@ -230,15 +275,15 @@ class PrintCutTable:
     countsCumuPerTop = self.getPercOfTopRow(countsCumu,errors=errors,asymerrors=asymerrors,interval=interval)
     countsCumuPerPrev = self.getPercOfPrevRow(countsCumu,errors=errors,asymerrors=asymerrors,interval=interval)
     #print "Individual Cuts"
-    #printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    #printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
     print "Cumulative Cuts"
-    printTable(countsCumu,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    printTable(countsCumu,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
     #print "Individual Cuts Percentage of Top Row"
-    #printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    #printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
     print "Cumulative Cuts Percentage of Top Row"
-    printTable(countsCumuPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    printTable(countsCumuPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
     print "Cumulative Cuts Percentage of Previous Row"
-    printTable(countsCumuPerPrev,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    printTable(countsCumuPerPrev,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
 
   def getCutNames(self,cutConfigs):
     cutNames = []
@@ -289,7 +334,10 @@ class PrintCutTable:
       for iFile in range(len(fileConfigs)):
         fileConfig = fileConfigs[iFile]
         hist = loadHist(histConfig,fileConfig,binning,var,thisCut,nMax,False)
-        counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
+        if self.wholeNum:
+          counts[iCut][iFile] = "{:.0f}".format(hist.Integral())
+        else:
+          counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
 
   def getCountsCumulativeCut(self,fileConfigs,cutConfigs,nMax):
@@ -304,7 +352,10 @@ class PrintCutTable:
       for iFile in range(len(fileConfigs)):
         fileConfig = fileConfigs[iFile]
         hist = loadHist(histConfig,fileConfig,binning,var,cutString+")",nMax,False)
-        counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
+        if self.wholeNum:
+          counts[iCut][iFile] = "{:.0f}".format(hist.Integral())
+        else:
+          counts[iCut][iFile] = "{:.1f}".format(hist.Integral())
     return counts
 
   def getPercOfTopRow(self,counts,errors=False,asymerrors=False,interval=False):
@@ -364,12 +415,13 @@ class PrintCutTable:
 
 class PrintPercentTable(PrintCutTable):
 
-  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint):
+  def __init__(self,fileConfigs,cutConfigs,treename,errors=False,asymerrors=False,interval=False,nMax=sys.maxint,latex=False,wholeNum=False):
     """
     similar to PrintCutTable, but just prints the percentages of the whole (first cutConfig) that each category 
     (remaining cut configs) is
     """
 
+    self.wholeNum = wholeNum
     fileNames = self.getFileNames(fileConfigs)
     cutNames = self.getCutNames(cutConfigs)
     for fileConfig in fileConfigs:
@@ -377,7 +429,7 @@ class PrintPercentTable(PrintCutTable):
     countsIndiv = self.getCountsIndividualCut(fileConfigs,cutConfigs,nMax)
     countsIndivPerTop = self.getPercOfTopRow(countsIndiv)
     print "Individual Cuts"
-    printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    printTable(countsIndiv,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
     print "Individual Cuts Percentage of Top Row"
-    printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True)
+    printTable(countsIndivPerTop,columnTitles=fileNames,rowTitles=cutNames,splitColumnTitles=True,latex=latex)
 

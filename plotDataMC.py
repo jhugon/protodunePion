@@ -1338,13 +1338,17 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
     if (not ("Ratio" in histConfigs[i]['name'])) \
         and (histConfigs[i]['name'] != "pWC") \
         and (not ("kinWC" in histConfigs[i]['name'])) \
-        and (histConfigs[i]['name'] != "zWirePartKinInteract_ajib") \
         and (not ("EnergySum" in histConfigs[i]['name'])) \
         and (not ("AngleToBeamTrk" in histConfigs[i]['name'])) \
         and (histConfigs[i]['name'] != "PFBeamPrimTrkLen") \
         and histConfigs[i]['name'] != "zWiredEdx_ajib" \
+        and histConfigs[i]['name'] != "zWiredEdx" \
+        and histConfigs[i]['name'] != "zWiredEdx_ajib_zoom" \
+        and histConfigs[i]['name'] != "zWiredEdx_zoom" \
         and histConfigs[i]['name'] != "zWirePartKinInteract_ajib" \
-        and histConfigs[i]['name'] != "zWirePartKin_ajib":
+        and histConfigs[i]['name'] != "zWirePartKinInteract" \
+        and histConfigs[i]['name'] != "zWirePartKin_ajib" \
+        and histConfigs[i]['name'] != "zWirePartKin":
         #and histConfigs[i]['name'] != "zWirePartKinInteract"
         #and histConfigs[i]['name'] != "zWirePartKinInteract_corr"
         #and (histConfigs[i]['name'] != "PFBeamPrimXs") \
@@ -1375,13 +1379,13 @@ def doDataMCPlots(fileConfigs,catConfigs,weightStr,runSetName,NMAX):
                   outPrefix="DataMC_",outSuffix="_"+runSetName,nMax=NMAX,
                   catConfigs=catConfigs
                )
-#    for histConfig in histConfigs:
-#      histConfig['logy'] = True
-#      histConfig['normalize'] = False
-#    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
-#                  outPrefix="DataMC_",outSuffix="_logy_"+runSetName,nMax=NMAX,
-#                  catConfigs=catConfigs
-#               )
+    for histConfig in histConfigs:
+      histConfig['logy'] = True
+      histConfig['normalize'] = False
+    dataMCCategoryStack(fileConfigDatas,fileConfigMCs,histConfigs,c,"PiAbsSelector/tree",
+                  outPrefix="DataMC_",outSuffix="_logy_"+runSetName,nMax=NMAX,
+                  catConfigs=catConfigs
+               )
 
   #######################################
   ############ 2D Plots #################
@@ -1670,7 +1674,7 @@ if __name__ == "__main__":
   deltaThetaXZTrackBICut = "*(isMC && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -5) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 3)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) > -10) && ((atan(tan(PFBeamPrimStartTheta)*cos(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*cos(phiWC))*180/pi) < 0))"
   deltaThetaYZTrackBICut = "*(isMC && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -8) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < 2)) || ((!isMC) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) > -20) && ((atan(tan(PFBeamPrimStartTheta)*sin(PFBeamPrimStartPhi))*180/pi-atan(tan(thetaWC)*sin(phiWC))*180/pi) < -5))"
   rejectThroughgoingCut = "*(PFBeamPrimEndZ < 650.)"
-  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+deltaThetaXZTrackBICut+deltaThetaYZTrackBICut
+  primaryTrackCuts = "*(PFNBeamSlices == 1 && PFBeamPrimIsTracklike && PFBeamPrimStartZ < 50.)"+deltaXTrackBICut+deltaYTrackBICut+deltaThetaXZTrackBICut+deltaThetaYZTrackBICut+rejectThroughgoingCut
   stoppingProtonCut = "*(PFBeamPrimEnergySumCSDAProton/kinWCProton > 0.8 && PFBeamPrimEnergySumCSDAProton/kinWCProton < 1.)"
   stoppingMuonCut = "*(PFBeamPrimEnergySumCSDAMu/kinWC > 0.8 && PFBeamPrimEnergySumCSDAMu/kinWC < 1.)"
   weightStr = "1"+primaryTrackCuts#+stoppingProtonCut
