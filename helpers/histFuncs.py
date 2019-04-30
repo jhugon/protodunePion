@@ -132,7 +132,7 @@ def getHistMedian(hist):
     count += n
     iLast = i
     if count > half:
-        pass
+        break
   return iLast
 
 def getHistMode(hist):
