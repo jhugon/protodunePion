@@ -15,6 +15,43 @@ def getNDecPlacesStr(parError):
   sfs = abs(math.ceil(sfs))
   return "{:.0f}".format(sfs)
 
+def makeFRDict(fitresult):
+  frDict = {}
+  frDict["chi2"] = "{:.2f}".format(fitresult.Chi2()/fitresult.Ndf())
+  nDigits = getNDecPlacesStr(fitresult.ParError(1))
+  frDict["mu"] = ("{:."+nDigits+"f}").format(fitresult.Value(1))
+  frDict["muErr"] = ("{:."+nDigits+"f}").format(fitresult.ParError(1))
+  nDigits = getNDecPlacesStr(fitresult.ParError(2))
+  frDict["sigma"] = ("{:."+nDigits+"f}").format(fitresult.Value(2))
+  frDict["sigmaErr"] = ("{:."+nDigits+"f}").format(fitresult.ParError(2))
+  return frDict
+
+def getAvgMuSigma(frs):
+  n = len(frs)
+  mus = [fr.Value(1) for fr in frs]
+  muErrs = [fr.ParError(1) for fr in frs]
+  sigs = [fr.Value(2) for fr in frs]
+  sigErrs = [fr.ParError(2) for fr in frs]
+  muVars = [x**2 for x in muErrs]
+  sigVars = [x**2 for x in sigErrs]
+  muWeights = [1./x for x in muVars]
+  sigWeights = [1./x for x in sigVars]
+  muSumWeights = sum(muWeights)
+  sigSumWeights = sum(sigWeights)
+  muMean = sum([mus[i]*muWeights[i] for i in range(n)])/muSumWeights
+  sigMean = sum([sigs[i]*sigWeights[i] for i in range(n)])/sigSumWeights
+  muMeanError = (muSumWeights)**(-0.5)
+  sigMeanError = (sigSumWeights)**(-0.5)
+  muDigits = getNDecPlacesStr(muMeanError)
+  sigDigits = getNDecPlacesStr(sigMeanError)
+  muMean = ("{:."+muDigits+"f}").format(muMean)
+  sigMean = ("{:."+sigDigits+"f}").format(sigMean)
+  muMeanError = ("{:."+muDigits+"f}").format(muMeanError)
+  sigMeanError = ("{:."+sigDigits+"f}").format(sigMeanError)
+
+  return muMean, muMeanError, sigMean, sigMeanError
+        
+
 def drawGausFitCaptions(*args,**kargs):
   """
   call as drawGausFitCaptions(canvas, topCaption, fitresultPointer, ... args to drawStandardCaptions)
@@ -132,17 +169,7 @@ if __name__ == "__main__":
       results.append((histName,sampleName,subSampleName,fr))
   resultsDict = {}
   for result in results:
-    fitresult = result[3]
-    frDict = {}
-    frDict["chi2"] = "{:.2f}".format(fitresult.Chi2()/fitresult.Ndf())
-    nDigits = getNDecPlacesStr(fitresult.ParError(1))
-    frDict["mu"] = ("{:."+nDigits+"f}").format(fitresult.Value(1))
-    frDict["muErr"] = ("{:."+nDigits+"f}").format(fitresult.ParError(1))
-    nDigits = getNDecPlacesStr(fitresult.ParError(2))
-    frDict["sigma"] = ("{:."+nDigits+"f}").format(fitresult.Value(2))
-    frDict["sigmaErr"] = ("{:."+nDigits+"f}").format(fitresult.ParError(2))
-    outStr = "{} {} {} {} {} {}".format(result[0],result[1],result[2],frDict["mu"],frDict["muErr"],frDict["sigma"],frDict["sigmaErr"],frDict["chi2"])
-    print outStr
+    
     histName = histTitles[result[0]]
     sampleName = sampleTitles[result[1]]
     if not (histName in resultsDict):
@@ -152,10 +179,26 @@ if __name__ == "__main__":
     subName = "Data"
     if ("mc" in result[2]):
       subName = "MC"
-    resultsDict[histName][sampleName][subName] = frDict
+    resultsDict[histName][sampleName][subName] = result[3]
+  print "          &        "+5*r" & {Data}"+ 5*" & {MC}"+r" \\"
+  print " Variable & Sample "+2*r" & {$\mu$} & {$\mu$ Error} & {$\sigma$} & {$\sigma$ Error} &{$\chi^2$/NDF}"+r" \\ \toprule"
   for iHistName, histName in enumerate(sorted(resultsDict)):
     for iSampleName, sampleName in enumerate(sorted(resultsDict[histName])):
-      for iSubName, subName in enumerate(sorted(resultsDict[histName][sampleName])):
-        frDict =  resultsDict[histName][sampleName][subName]
-        outStr = r"{} & {} & {} & {} & {} & {} & {} & {}\\".format(histName,sampleName,subName,frDict["mu"],frDict["muErr"],frDict["sigma"],frDict["sigmaErr"],frDict["chi2"])
-        print outStr
+      frDictData = makeFRDict(resultsDict[histName][sampleName]["Data"])
+      frDictMC =  makeFRDict(resultsDict[histName][sampleName]["MC"])
+      outStr = r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histName,sampleName,
+                                frDictData["mu"],frDictData["muErr"],frDictData["sigma"],frDictData["sigmaErr"],frDictData["chi2"],
+                                frDictMC["mu"],frDictMC["muErr"],frDictMC["sigma"],frDictMC["sigmaErr"],frDictMC["chi2"]
+                        )
+      print outStr
+    muMeanData, muMeanErrData, sigMeanData, sigMeanErrData = getAvgMuSigma([resultsDict[histName][sampleName]["Data"] for sampleName in resultsDict[histName]])
+    muMeanMC, muMeanErrMC, sigMeanMC, sigMeanErrMC = getAvgMuSigma([resultsDict[histName][sampleName]["MC"] for sampleName in resultsDict[histName]])
+
+    print r"\midrule"
+    print r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histName,"Weighted Mean",
+                                 muMeanData,muMeanErrData,sigMeanData,sigMeanErrData,"",
+                                 muMeanMC,muMeanErrMC,sigMeanMC,sigMeanErrMC,""
+                         )
+    print r"\midrule"
+    
+
