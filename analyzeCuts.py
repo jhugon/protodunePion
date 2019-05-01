@@ -263,6 +263,8 @@ if __name__ == "__main__":
         nBins = hist.GetNbinsX()
         #print muMean, iBinMean, binMeanCenter, nBins, hist.GetXaxis().GetBinLowEdge(1), hist.GetXaxis().GetBinUpEdge(nBins)
         nSteps = max(nBins-iBinMean,iBinMean-1)
+        nSigmasMax = 20.
+        nSteps = int(math.ceil(min(nSteps,nSigmasMax*sigMean/binMeanWidth)))
         histBinning = [nSteps,0,nSteps*binMeanWidth]
         histSigBinning = [nSteps,0,nSteps*binMeanWidth/sigMean]
         intHist = Hist(*histBinning)
@@ -273,8 +275,8 @@ if __name__ == "__main__":
           width = hist.GetXaxis().GetBinUpEdge(highBin)-hist.GetXaxis().GetBinLowEdge(lowBin)
           count = hist.Integral(lowBin,highBin)
           widthSigmas = width/sigMean
-          intHist.SetBinContent(iStep+1,count)
-          intHist.SetBinError(iStep+1,count**0.5)
+          intHist.SetBinContent(iStep+2,count)
+          intHist.SetBinError(iStep+2,count**0.5)
           intSigHist.SetBinContent(iStep+2,count)
           intSigHist.SetBinError(iStep+2,count**0.5)
           #if iStep == 0:
@@ -347,15 +349,22 @@ if __name__ == "__main__":
         hists.append(hist)
         histsSig.append(histSig)
         labels.append(subSampleConfig['title'])
+      nBins = sumHist.GetNbinsX()
       for i in range(len(labels)):
         hists[i].SetFillColor(COLORLIST[i])
         hists[i].SetLineColor(COLORLIST[i])
         histsSig[i].SetFillColor(COLORLIST[i])
         histsSig[i].SetLineColor(COLORLIST[i])
+        nBins = hists[i].GetNbinsX()
+        for iBin in range(1,nBins+1):
+          if sumHist.GetBinContent(iBin) > 0:
+            hists[i].SetBinContent(iBin,hists[i].GetBinContent(iBin)/sumHist.GetBinContent(iBin))
+          if sumHistSig.GetBinContent(iBin) > 0:
+            histsSig[i].SetBinContent(iBin,histsSig[i].GetBinContent(iBin)/sumHistSig.GetBinContent(iBin))
       for i in reversed(range(len(labels))):
         stack.Add(hists[i])
         stackSig.Add(histsSig[i])
-      axisHist = makeStdAxisHist([sumHist],xlim=[])
+      axisHist = makeStdAxisHist([sumHist],xlim=[],ylim=[0,2])
       setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events")
       axisHist.Draw()
       stack.Draw("histsame")
@@ -364,7 +373,7 @@ if __name__ == "__main__":
       drawStandardCaptions(c,sampleTitlesRoot[sampleName])
       c.SaveAs("AnalyzeCuts_width_comb_{}_{}.png".format(histName,sampleName))
       c.SaveAs("AnalyzeCuts_width_comb_{}_{}.pdf".format(histName,sampleName))
-      axisHistSig = makeStdAxisHist([sumHistSig],xlim=[])
+      axisHistSig = makeStdAxisHist([sumHistSig],xlim=[],ylim=[0,2])
       setHistTitles(axisHistSig,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events")
       axisHistSig.Draw()
       stackSig.Draw("histsame")
