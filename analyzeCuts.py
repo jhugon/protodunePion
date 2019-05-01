@@ -297,6 +297,11 @@ if __name__ == "__main__":
         allCurvesSig[histName][sampleName][subSampleName] = intSigHist
   for iHistName, histName in enumerate(sorted(allCurves)):
 
+    sampleTitles = []
+    sampleGoodTrackMatchHists = []
+    sampleGoodTrackMatchHistsSig = []
+    sampleGoodTrackMatchPurityHists = []
+    sampleGoodTrackMatchPurityHistsSig = []
     for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
 
       fileConfigsMC = [
@@ -390,6 +395,15 @@ if __name__ == "__main__":
       #plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
       #plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
 
+      goodTrackMatchHist = hists[0].Clone(hists[0].GetName()+"_goodTrackMatch")
+      goodTrackMatchHist.Add(hists[1])
+      goodTrackMatchHistSig = histsSig[0].Clone(histsSig[0].GetName()+"_goodTrackMatch")
+      goodTrackMatchHistSig.Add(histsSig[1])
+      goodTrackMatchHist.Scale(1./goodTrackMatchHist.GetBinContent(goodTrackMatchHist.GetNbinsX()+1))
+      goodTrackMatchHistSig.Scale(1./goodTrackMatchHistSig.GetBinContent(goodTrackMatchHistSig.GetNbinsX()+1))
+      sampleGoodTrackMatchHists.append(goodTrackMatchHist)
+      sampleGoodTrackMatchHistsSig.append(goodTrackMatchHistSig)
+
       stack = root.THStack("histStack_{}_{}_noSig_comp".format(histName,sampleName),"")
       stackSig = root.THStack("histStack_{}_{}_sigig_comp".format(histName,sampleName),"")
       for i in range(len(labels)):
@@ -404,7 +418,7 @@ if __name__ == "__main__":
         stackSig.Add(histsSig[i])
       xMax = sumHist.GetXaxis().GetBinUpEdge(sumHist.GetNbinsX())*0.25
       axisHist = makeStdAxisHist([sumHist],xlim=[0,xMax],ylim=[0,2])
-      setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events")
+      setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Fraction")
       axisHist.Draw()
       stack.Draw("histsame")
       leg = drawNormalLegend(hists,labels,option='f',wide=True)
@@ -413,7 +427,7 @@ if __name__ == "__main__":
       c.SaveAs("AnalyzeCuts_width_comp_{}_{}.png".format(histName,sampleName))
       c.SaveAs("AnalyzeCuts_width_comp_{}_{}.pdf".format(histName,sampleName))
       axisHistSig = makeStdAxisHist([sumHistSig],xlim=[0,5],ylim=[0,2])
-      setHistTitles(axisHistSig,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events")
+      setHistTitles(axisHistSig,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Fraction")
       axisHistSig.Draw()
       stackSig.Draw("histsame")
       legSig = drawNormalLegend(histsSig,labels,option='f',wide=True)
@@ -421,3 +435,33 @@ if __name__ == "__main__":
       c.RedrawAxis()
       c.SaveAs("AnalyzeCuts_widthSig_comp_{}_{}.png".format(histName,sampleName))
       c.SaveAs("AnalyzeCuts_widthSig_comp_{}_{}.pdf".format(histName,sampleName))
+
+      goodTrackMatchPurityHist = hists[0].Clone(hists[0].GetName()+"_goodTrackMatchPurity")
+      goodTrackMatchPurityHist.Add(hists[1])
+      goodTrackMatchPurityHistSig = histsSig[0].Clone(histsSig[0].GetName()+"_goodTrackMatchPurity")
+      goodTrackMatchPurityHistSig.Add(histsSig[1])
+      sampleTitles.append(sampleTitlesRoot[sampleName])
+      sampleGoodTrackMatchPurityHists.append(goodTrackMatchPurityHist)
+      sampleGoodTrackMatchPurityHistsSig.append(goodTrackMatchPurityHistSig)
+
+    muMeanData,sigMeanData,muMeanMC,sigMeanMC = gausParams[histName]
+    plotHistsSimple(sampleGoodTrackMatchHists,sampleTitles,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Efficiency",c,"AnalyzeCuts_width_all_{}".format(histName),xlim=[0,sigMeanMC*10])
+    plotHistsSimple(sampleGoodTrackMatchHistsSig,sampleTitles,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Efficiency",c,"AnalyzeCuts_widthSig_all_{}".format(histName),xlim=[0,10])
+
+    plotHistsSimple(sampleGoodTrackMatchPurityHists,sampleTitles,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Purity",c,"AnalyzeCuts_width_all_purity_{}".format(histName),xlim=[0,sigMeanMC*5])
+    plotHistsSimple(sampleGoodTrackMatchPurityHistsSig,sampleTitles,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Purity",c,"AnalyzeCuts_widthSig_all_purity_{}".format(histName),xlim=[0,5])
+
+    gs = [root.TGraph() for i in sampleGoodTrackMatchHists]
+    for i, g in enumerate(gs):
+        g.SetLineColor(COLORLIST[i])
+    nBins = sampleGoodTrackMatchHists[0].GetNbinsX()
+    for iBin in range(nBins+1):
+      for effHist, purHist, g in zip(sampleGoodTrackMatchHists,sampleGoodTrackMatchPurityHists,gs):
+        g.SetPoint(iBin,effHist.GetBinContent(iBin),purHist.GetBinContent(iBin))
+    axisHist = drawGraphs(c,gs,"Efficiency","Purity",drawOptions="L",xlims=[0,1],ylims=[0.6,1.2])
+    leg = drawNormalLegend(gs,sampleTitles,option='l',wide=True)
+    drawStandardCaptions(c,"Cut Width: "+histTitlesRoot[histName])
+    c.SaveAs("AnalyzeCuts_width_purVeff_{}.png".format(histName))
+    c.SaveAs("AnalyzeCuts_width_purVeff_{}.pdf".format(histName))
+      
+
