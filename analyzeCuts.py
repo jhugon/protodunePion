@@ -247,16 +247,17 @@ if __name__ == "__main__":
         subSampleName = matchMCC11.group(2)
       elif matchRun:
         histName = matchRun.group(1)
-        subSampleName = matchRun.group(2)
-        continue
+        subSampleName = sampleName
       if histName in gausParams:
         hist = key.ReadObj()
         muMeanData,sigMeanData,muMeanMC,sigMeanMC = gausParams[histName]
-        muMean = muMeanData
-        sigMean = sigMeanData
-        if not matchRun:
-          muMean = muMeanMC
-          sigMean = sigMeanMC
+        #muMean = muMeanData
+        #sigMean = sigMeanData
+        #if not matchRun:
+        #  muMean = muMeanMC
+        #  sigMean = sigMeanMC
+        muMean = muMeanMC
+        sigMean = sigMeanMC
         iBinMean = hist.FindBin(muMean)
         binMeanCenter = hist.GetXaxis().GetBinCenter(iBinMean)
         binMeanWidth = hist.GetXaxis().GetBinWidth(iBinMean)
@@ -337,6 +338,8 @@ if __name__ == "__main__":
       stackSig = root.THStack("histStack_{}_{}_sigig".format(histName,sampleName),"")
       sumHist = allCurves[histName][sampleName]["mcSumHist"]
       sumHistSig = allCurvesSig[histName][sampleName]["mcSumHist"]
+      dataHist = allCurves[histName][sampleName][sampleName]
+      dataHistSig = allCurvesSig[histName][sampleName][sampleName]
       #for iSubSampleName, subSampleName in enumerate(sorted(allCurves[histName][sampleName])):
       for iSubSampleName, subSampleConfig in enumerate(fileConfigsMC):
         subSampleName = subSampleConfig['name']
@@ -349,12 +352,47 @@ if __name__ == "__main__":
         hists.append(hist)
         histsSig.append(histSig)
         labels.append(subSampleConfig['title'])
-      nBins = sumHist.GetNbinsX()
       for i in range(len(labels)):
         hists[i].SetFillColor(COLORLIST[i])
         hists[i].SetLineColor(COLORLIST[i])
         histsSig[i].SetFillColor(COLORLIST[i])
         histsSig[i].SetLineColor(COLORLIST[i])
+        #nBins = hists[i].GetNbinsX()
+        #for iBin in range(1,nBins+1):
+        #  if sumHist.GetBinContent(iBin) > 0:
+        #    hists[i].SetBinContent(iBin,hists[i].GetBinContent(iBin)/sumHist.GetBinContent(iBin))
+        #  if sumHistSig.GetBinContent(iBin) > 0:
+        #    histsSig[i].SetBinContent(iBin,histsSig[i].GetBinContent(iBin)/sumHistSig.GetBinContent(iBin))
+      for i in reversed(range(len(labels))):
+        stack.Add(hists[i])
+        stackSig.Add(histsSig[i])
+      axisHist = makeStdAxisHist([sumHist])
+      setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events")
+      axisHist.Draw()
+      stack.Draw("histsame")
+      #dataHist.Draw("same")
+      leg = drawNormalLegend(hists,labels,option='f',wide=True)
+      c.RedrawAxis()
+      drawStandardCaptions(c,sampleTitlesRoot[sampleName])
+      c.SaveAs("AnalyzeCuts_width_comb_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_width_comb_{}_{}.pdf".format(histName,sampleName))
+      axisHistSig = makeStdAxisHist([sumHistSig],xlim=[0,5])
+      setHistTitles(axisHistSig,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events")
+      axisHistSig.Draw()
+      stackSig.Draw("histsame")
+      #dataHistSig.Draw("same")
+      legSig = drawNormalLegend(histsSig,labels,option='f',wide=True)
+      drawStandardCaptions(c,sampleTitlesRoot[sampleName])
+      c.RedrawAxis()
+      c.SaveAs("AnalyzeCuts_widthSig_comb_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_widthSig_comb_{}_{}.pdf".format(histName,sampleName))
+
+      #plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
+      #plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
+
+      stack = root.THStack("histStack_{}_{}_noSig_comp".format(histName,sampleName),"")
+      stackSig = root.THStack("histStack_{}_{}_sigig_comp".format(histName,sampleName),"")
+      for i in range(len(labels)):
         nBins = hists[i].GetNbinsX()
         for iBin in range(1,nBins+1):
           if sumHist.GetBinContent(iBin) > 0:
@@ -364,23 +402,22 @@ if __name__ == "__main__":
       for i in reversed(range(len(labels))):
         stack.Add(hists[i])
         stackSig.Add(histsSig[i])
-      axisHist = makeStdAxisHist([sumHist],xlim=[],ylim=[0,2])
+      xMax = sumHist.GetXaxis().GetBinUpEdge(sumHist.GetNbinsX())*0.25
+      axisHist = makeStdAxisHist([sumHist],xlim=[0,xMax],ylim=[0,2])
       setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events")
       axisHist.Draw()
       stack.Draw("histsame")
       leg = drawNormalLegend(hists,labels,option='f',wide=True)
       c.RedrawAxis()
       drawStandardCaptions(c,sampleTitlesRoot[sampleName])
-      c.SaveAs("AnalyzeCuts_width_comb_{}_{}.png".format(histName,sampleName))
-      c.SaveAs("AnalyzeCuts_width_comb_{}_{}.pdf".format(histName,sampleName))
-      axisHistSig = makeStdAxisHist([sumHistSig],xlim=[],ylim=[0,2])
+      c.SaveAs("AnalyzeCuts_width_comp_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_width_comp_{}_{}.pdf".format(histName,sampleName))
+      axisHistSig = makeStdAxisHist([sumHistSig],xlim=[0,5],ylim=[0,2])
       setHistTitles(axisHistSig,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events")
       axisHistSig.Draw()
       stackSig.Draw("histsame")
       legSig = drawNormalLegend(histsSig,labels,option='f',wide=True)
       drawStandardCaptions(c,sampleTitlesRoot[sampleName])
       c.RedrawAxis()
-      c.SaveAs("AnalyzeCuts_widthSig_comb_{}_{}.png".format(histName,sampleName))
-      c.SaveAs("AnalyzeCuts_widthSig_comb_{}_{}.pdf".format(histName,sampleName))
-      #plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
-      #plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
+      c.SaveAs("AnalyzeCuts_widthSig_comp_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_widthSig_comp_{}_{}.pdf".format(histName,sampleName))
