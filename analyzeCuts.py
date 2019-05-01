@@ -223,8 +223,10 @@ if __name__ == "__main__":
   print gausParams
   allCurves = {}
   allCurvesSig = {}
+  rootFiles = []
   for fn in sorted(fns):
     f = root.TFile(fn)
+    rootFiles.append(f)
     sampleMatch = re.match(r"Inelastic_(.+).root",fn)
     if not sampleMatch:
         raise Exception("Couldn't parse filename: ",fn)
@@ -255,28 +257,31 @@ if __name__ == "__main__":
           sigMean = sigMeanMC
         iBinMean = hist.FindBin(muMean)
         binMeanCenter = hist.GetXaxis().GetBinCenter(iBinMean)
+        binMeanWidth = hist.GetXaxis().GetBinWidth(iBinMean)
         nBins = hist.GetNbinsX()
         #print muMean, iBinMean, binMeanCenter, nBins, hist.GetXaxis().GetBinLowEdge(1), hist.GetXaxis().GetBinUpEdge(nBins)
         nSteps = max(nBins-iBinMean,iBinMean-1)
-        graph = root.TGraph()
-        graphSig = root.TGraph()
+        histBinning = [nSteps,0,nSteps*binMeanWidth]
+        histSigBinning = [nSteps,0,nSteps*binMeanWidth/sigMean]
+        intHist = Hist(*histBinning)
+        intSigHist = Hist(*histSigBinning)
         for iStep in range(nSteps):
           lowBin = max(iBinMean-iStep,1)
           highBin = min(iBinMean+iStep,nBins)
           width = hist.GetXaxis().GetBinUpEdge(highBin)-hist.GetXaxis().GetBinLowEdge(lowBin)
           count = hist.Integral(lowBin,highBin)
           widthSigmas = width/sigMean
-          #print iStep, lowBin, highBin, width, widthSigmas, count
-          graph.SetPoint(iStep,width,count)
-          graphSig.SetPoint(iStep,widthSigmas,count)
-        axisHist = drawGraphs(c,[graph],"Cut Width: "+hist.GetXaxis().GetTitle(),"Events",drawOptions="L")
-        subTitle = "MCC11"
-        if matchRun:
-          subTitle = "Data"
-        titleString = "{} {}".format(sampleTitlesRoot[sampleName],subTitle)
-        print titleString
-        drawStandardCaptions(c,titleString)
-        c.SaveAs("AnalyzeCuts_width_{}_{}_{}.png".format(histName,sampleName,subSampleName))
+          intHist.SetBinContent(iStep+1,count)
+          intHist.SetBinError(iStep+1,count**0.5)
+          intSigHist.SetBinContent(iStep+2,count)
+          intSigHist.SetBinError(iStep+2,count**0.5)
+          if iStep == 0:
+            print iStep, lowBin, highBin, width, widthSigmas, count
+            print intHist.GetXaxis().GetBinLowEdge(iStep+2), intHist.GetXaxis().GetBinUpEdge(iStep+2)
+            print intSigHist.GetXaxis().GetBinLowEdge(iStep+2), intSigHist.GetXaxis().GetBinUpEdge(iStep+2)
+        intAll = hist.Integral(0,hist.GetNbinsX()+1) # include under/overflow
+        intHist.SetBinContent(nSteps+1,intAll)
+        intSigHist.SetBinContent(nSteps+1,intAll)
         if not (histName in allCurves):
           allCurves[histName] = {}
           allCurvesSig[histName] = {}
@@ -286,14 +291,22 @@ if __name__ == "__main__":
         subName = "MC"
         if matchRun:
           subName = "Data"
-        allCurves[histName][sampleName][subName] = graph
-        allCurvesSig[histName][sampleName][subName] = graphSig
+        allCurves[histName][sampleName][subName] = intHist
+        allCurvesSig[histName][sampleName][subName] = intSigHist
   for iHistName, histName in enumerate(sorted(allCurves)):
     histTitle = histTitles[histName]
-    graphs = []
-    graphsSig = []
+    hists = []
+    histsSig = []
+    labels = []
     for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
-      graphs.append(allCurves[histName][sampleName]["Data"])
-      graphsSig.append(allCurves[histName][sampleName]["Data"])
-    axisHist = drawGraphs(c,graphs,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",drawOptions="L")
-    c.SaveAs("AnalyzeCuts_width_comb_{}.png".format(histName))
+      hist = allCurves[histName][sampleName]["Data"]
+      hist = hist.Clone(hist.GetName()+"_norm")
+      hist.Scale(1./hist.GetBinContent(hist.GetNbinsX()+1))
+      hists.append(hist)
+      histSig = allCurvesSig[histName][sampleName]["Data"]
+      histSig = histSig.Clone(histSig.GetName()+"_norm")
+      histSig.Scale(1./histSig.GetBinContent(histSig.GetNbinsX()+1))
+      histsSig.append(histSig)
+      labels.append(sampleTitlesRoot[sampleName])
+    plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}".format(histName))
+    plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}".format(histName))
