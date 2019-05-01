@@ -7,6 +7,7 @@ import copy
 import sys
 import signal
 import multiprocessing
+import time
 
 def getNDecPlacesStr(parError):
   if parError >= 10:
@@ -86,8 +87,8 @@ def fitGauss(hist,histName,sampleName):
       hist.Draw("")
       hist.GetXaxis().SetRangeUser(mean-5*rms,mean+5*rms)
       drawStandardCaptions(c,"",captionright1="fit range: {:.2f} to  {:.2f}".format(mean-rms,mean+rms),captionright2="NDF: {}".format(fitResult.Ndf()),captionleft3="mean: {:.2f}".format(hist.GetMean()),captionleft2="RMS = {:.2f}".format(hist.GetRMS()),captionleft1="bin width: {}".format(binWidth))
-      c.SaveAs("AnalyzeCuts_Test_"+histName+'_'+sampleName+".png")
-      c.SaveAs("AnalyzeCuts_Test_"+histName+'_'+sampleName+".pdf")
+      c.SaveAs("AnalyzeCuts_widthTest_"+histName+'_'+sampleName+".png")
+      c.SaveAs("AnalyzeCuts_widthTest_"+histName+'_'+sampleName+".pdf")
       return fitResult
     normChi2 = fitResult.Chi2()/fitResult.Ndf()
     if normChi2 < 3:
@@ -106,8 +107,8 @@ def fitGauss(hist,histName,sampleName):
   hist.Draw("")
   #drawGausFitCaptions(c,"",fitResult,captionleft3="mean: {:.2f}".format(hist.GetMean()),captionleft2="RMS = {:.2f}".format(hist.GetRMS()),captionleft1="median = {:.1f}".format(median))
   drawGausFitCaptions(c,"",fitResult)
-  c.SaveAs("AnalyzeCuts_Test_"+histName+'_'+sampleName+".png")
-  c.SaveAs("AnalyzeCuts_Test_"+histName+'_'+sampleName+".pdf")
+  c.SaveAs("AnalyzeCuts_widthTest_"+histName+'_'+sampleName+".png")
+  c.SaveAs("AnalyzeCuts_widthTest_"+histName+'_'+sampleName+".pdf")
   return fitResult
 
 def getMeansSigmas(c,fns,histTitles,sampleTitles):
@@ -422,6 +423,168 @@ def getEffPurOfGausCuts(c,fns,histTitlesRoot,sampleTitlesRoot,gausParams):
     c.SaveAs("AnalyzeCuts_width_purVeff_{}.png".format(histName))
     c.SaveAs("AnalyzeCuts_width_purVeff_{}.pdf".format(histName))
 
+
+
+def doOneSideOptimization(c,fns,histTitlesRoot,sampleTitlesRoot):
+  allCurves = {}
+  fs = []
+  for fn in sorted(fns):
+    f = root.TFile(fn)
+    fs.append(f)
+    sampleMatch = re.match(r"Inelastic_(.+).root",fn)
+    if not sampleMatch:
+        raise Exception("Couldn't parse filename: ",fn)
+    sampleName = sampleMatch.group(1)
+    for key in sorted(f.GetListOfKeys()):
+      name = key.GetName()
+      #print name
+      matchMCSum = re.match(r"(.+)_mcSumHist",name)
+      matchMCC11 = re.match(r"(.+)_(mcc11.*)",name)
+      matchRun = re.match(r"(.+)_run(.+)",name)
+      histName = None
+      subSampleName = None
+      if matchMCSum:
+        histName = matchMCSum.group(1)
+        subSampleName = "mcSumHist"
+      elif matchMCC11:
+        histName = matchMCC11.group(1)
+        subSampleName = matchMCC11.group(2)
+      elif matchRun:
+        histName = matchRun.group(1)
+        subSampleName = sampleName
+      if ("Delta" in histName) or ("PFBeamPrimAngleStartBI" in histName) or "PFBeamPrimEndZ_start"==histName:
+        continue
+      if not ("PFBeamPrimEndZ" in histName) and not ("PFBeamPrimStartZ" in histName):
+        continue
+      #if "wide" in histName:
+      #  continue
+      hist = key.ReadObj()
+      startTime = time.time()
+      hist.Rebin(10)
+      cutHist = getIntegralHist(hist,setErrors=True,reverse=True)
+      endTime = time.time()
+      print "{:45} {:25} {:40} {:10.2f}".format(histName,sampleName,subSampleName,endTime-startTime)
+      #cutHist.Draw("PE")
+      #c.SaveAs("AnalyzeCuts_oneSideTest_{}_{}_{}.png".format(histName,sampleName,subSampleName))
+      if not (histName in allCurves):
+        allCurves[histName] = {}
+      if not (sampleName in allCurves[histName]):
+        allCurves[histName][sampleName] = {}
+      allCurves[histName][sampleName][subSampleName] = cutHist
+  for iHistName, histName in enumerate(sorted(allCurves)):
+    sampleTitles = []
+    sampleGoodTrackMatchEffHists = []
+    sampleGoodTrackMatchPurityHists = []
+    for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
+
+      fileConfigsMC = [
+        {
+          'name': "mcc11_piInel_good",
+          'title': "MCC11 #pi Inelastic--Good Reco",
+        },
+        {
+          'name': "mcc11_piInel_badIntMatch",
+          'title': "MCC11 #pi Inelastic--Bad Reco/True Interaction Match",
+        },
+        {
+          'name': "mcc11_piInel_badTrkMatch",
+          'title': "MCC11 #pi Inelastic--Bad Track/True Primary Match",
+        },
+        {
+          'name': "mcc11_piDecay",
+          'title': "MCC11 #pi Decay",
+        },
+        {
+          'name': "mcc11_piOutsideTPC",
+          'title': "MCC11 #pi Interacted Outside TPC",
+        },
+        {
+          'name': "mcc11_mu",
+          'title': "MCC11 Primary Muon",
+        },
+      ]
+      if ('6GeV' in sampleName) or ('7GeV' in sampleName):
+        fileConfigsMC.append({
+          'name': "mcc11_e",
+          'title': "MCC11 Primary Electron",
+        })
+
+      hists = []
+      histsFrac = []
+      labels = []
+      stack = root.THStack("histStack_{}_{}_oneSide".format(histName,sampleName),"")
+      stackFrac = root.THStack("histStack_{}_{}_oneSide_frac".format(histName,sampleName),"")
+      sumHist = allCurves[histName][sampleName]["mcSumHist"]
+      dataHist = allCurves[histName][sampleName][sampleName]
+      for iSubSampleName, subSampleConfig in enumerate(fileConfigsMC):
+        subSampleName = subSampleConfig['name']
+        hist = allCurves[histName][sampleName][subSampleName]
+        hists.append(hist)
+        labels.append(subSampleConfig['title'])
+        histFrac = hist.Clone(hist.GetName()+"oneSide_FracHist")
+        histFrac.Divide(sumHist)
+        histsFrac.append(histFrac)
+      for i in range(len(labels)):
+        hists[i].SetFillColor(COLORLIST[i])
+        hists[i].SetLineColor(COLORLIST[i])
+        histsFrac[i].SetFillColor(COLORLIST[i])
+        histsFrac[i].SetLineColor(COLORLIST[i])
+      for i in reversed(range(len(labels))):
+        stack.Add(hists[i])
+        stackFrac.Add(histsFrac[i])
+      axisHist = makeStdAxisHist([sumHist])
+      setHistTitles(axisHist,sumHist.GetXaxis().GetTitle(),"Events < X")
+      axisHist.Draw()
+      stack.Draw("histsame")
+      dataHist.Draw("same")
+      leg = drawNormalLegend(hists,labels,option='f',wide=True)
+      c.RedrawAxis()
+      drawStandardCaptions(c,sampleTitlesRoot[sampleName])
+      c.SaveAs("AnalyzeCuts_oneSide_comb_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_oneSide_comb_{}_{}.pdf".format(histName,sampleName))
+
+      axisHist = makeStdAxisHist([sumHist],ylim=[0,2])
+      setHistTitles(axisHist,sumHist.GetXaxis().GetTitle(),"Fraction < X")
+      axisHist.Draw()
+      stackFrac.Draw("histsame")
+      leg = drawNormalLegend(histsFrac,labels,option='f',wide=True)
+      c.RedrawAxis()
+      drawStandardCaptions(c,sampleTitlesRoot[sampleName])
+      c.SaveAs("AnalyzeCuts_oneSide_comp_{}_{}.png".format(histName,sampleName))
+      c.SaveAs("AnalyzeCuts_oneSide_comp_{}_{}.pdf".format(histName,sampleName))
+
+      goodTrackMatchEffHist = hists[0].Clone(hists[0].GetName()+"_goodTrackMatchEfficiency")
+      goodTrackMatchEffHist.Add(hists[1])
+      totalNorm = goodTrackMatchEffHist.GetBinContent(goodTrackMatchEffHist.GetNbinsX()+1)
+      if totalNorm != 0.:
+        goodTrackMatchEffHist.Scale(1./totalNorm)
+      goodTrackMatchPurityHist = histsFrac[0].Clone(histsFrac[0].GetName()+"_goodTrackMatchPurity")
+      goodTrackMatchPurityHist.Add(histsFrac[1])
+      sampleTitles.append(sampleTitlesRoot[sampleName])
+      sampleGoodTrackMatchPurityHists.append(goodTrackMatchPurityHist)
+      sampleGoodTrackMatchEffHists.append(goodTrackMatchEffHist)
+
+    plotHistsSimple(sampleGoodTrackMatchEffHists,sampleTitles,sampleGoodTrackMatchEffHists[0].GetXaxis().GetTitle(),"Efficiency",c,"AnalyzeCuts_oneSide_eff_{}".format(histName))
+    plotHistsSimple(sampleGoodTrackMatchPurityHists,sampleTitles,sampleGoodTrackMatchEffHists[0].GetXaxis().GetTitle(),"Purity",c,"AnalyzeCuts_oneSide_purity_{}".format(histName))
+
+    gs = [root.TGraph() for i in sampleGoodTrackMatchEffHists]
+    for i, g in enumerate(gs):
+        g.SetLineColor(COLORLIST[i])
+    nBins = sampleGoodTrackMatchEffHists[0].GetNbinsX()
+    for iBin in range(nBins+1):
+      for effHist, purHist, g in zip(sampleGoodTrackMatchEffHists,sampleGoodTrackMatchPurityHists,gs):
+        g.SetPoint(iBin,effHist.GetBinContent(iBin),purHist.GetBinContent(iBin))
+    xlims = [0,1]
+    ylims = [0.6,1.2]
+    if histName == "PFBeamPrimEndZ_end":
+      xlims = [0.98,1.]
+    axisHist = drawGraphs(c,gs,"Efficiency","Purity",drawOptions="L",xlims=xlims,ylims=ylims)
+    leg = drawNormalLegend(gs,sampleTitles,option='l',wide=True)
+    drawStandardCaptions(c,sampleGoodTrackMatchEffHists[0].GetXaxis().GetTitle())
+    c.SaveAs("AnalyzeCuts_oneSide_purVeff_{}.png".format(histName))
+    c.SaveAs("AnalyzeCuts_oneSide_purVeff_{}.pdf".format(histName))
+
+
 if __name__ == "__main__":
 
   fns = [
@@ -460,5 +623,7 @@ if __name__ == "__main__":
   }
 
   c = root.TCanvas('c1')
-  gausParams = getMeansSigmas(c,fns,histTitles,sampleTitles)
-  getEffPurOfGausCuts(c,fns,histTitlesRoot,sampleTitlesRoot,gausParams)
+  if False:
+    gausParams = getMeansSigmas(c,fns,histTitles,sampleTitles)
+    getEffPurOfGausCuts(c,fns,histTitlesRoot,sampleTitlesRoot,gausParams)
+  doOneSideOptimization(c,fns,histTitlesRoot,sampleTitlesRoot)

@@ -413,7 +413,7 @@ def getIntegralHist(hist,setErrors=True,reverse=False):
             result.SetBinError(iX,iY,sumw2**0.5)
   else:
     nBins = result.GetNbinsX()
-    iRange = range(nBins+1)
+    iRange = range(nBins+2)
     if reverse:
         iRange.reverse()
     for i in iRange:
