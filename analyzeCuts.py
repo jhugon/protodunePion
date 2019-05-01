@@ -243,10 +243,12 @@ if __name__ == "__main__":
         histName = matchMCSum.group(1)
         subSampleName = "mcSumHist"
       elif matchMCC11:
-        continue
+        histName = matchMCC11.group(1)
+        subSampleName = matchMCC11.group(2)
       elif matchRun:
         histName = matchRun.group(1)
         subSampleName = matchRun.group(2)
+        continue
       if histName in gausParams:
         hist = key.ReadObj()
         muMeanData,sigMeanData,muMeanMC,sigMeanMC = gausParams[histName]
@@ -275,10 +277,10 @@ if __name__ == "__main__":
           intHist.SetBinError(iStep+1,count**0.5)
           intSigHist.SetBinContent(iStep+2,count)
           intSigHist.SetBinError(iStep+2,count**0.5)
-          if iStep == 0:
-            print iStep, lowBin, highBin, width, widthSigmas, count
-            print intHist.GetXaxis().GetBinLowEdge(iStep+2), intHist.GetXaxis().GetBinUpEdge(iStep+2)
-            print intSigHist.GetXaxis().GetBinLowEdge(iStep+2), intSigHist.GetXaxis().GetBinUpEdge(iStep+2)
+          #if iStep == 0:
+          #  print iStep, lowBin, highBin, width, widthSigmas, count
+          #  print intHist.GetXaxis().GetBinLowEdge(iStep+2), intHist.GetXaxis().GetBinUpEdge(iStep+2)
+          #  print intSigHist.GetXaxis().GetBinLowEdge(iStep+2), intSigHist.GetXaxis().GetBinUpEdge(iStep+2)
         intAll = hist.Integral(0,hist.GetNbinsX()+1) # include under/overflow
         intHist.SetBinContent(nSteps+1,intAll)
         intSigHist.SetBinContent(nSteps+1,intAll)
@@ -288,25 +290,22 @@ if __name__ == "__main__":
         if not (sampleName in allCurves[histName]):
           allCurves[histName][sampleName] = {}
           allCurvesSig[histName][sampleName] = {}
-        subName = "MC"
-        if matchRun:
-          subName = "Data"
-        allCurves[histName][sampleName][subName] = intHist
-        allCurvesSig[histName][sampleName][subName] = intSigHist
+        allCurves[histName][sampleName][subSampleName] = intHist
+        allCurvesSig[histName][sampleName][subSampleName] = intSigHist
   for iHistName, histName in enumerate(sorted(allCurves)):
-    histTitle = histTitles[histName]
-    hists = []
-    histsSig = []
-    labels = []
     for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
-      hist = allCurves[histName][sampleName]["Data"]
-      hist = hist.Clone(hist.GetName()+"_norm")
-      hist.Scale(1./hist.GetBinContent(hist.GetNbinsX()+1))
-      hists.append(hist)
-      histSig = allCurvesSig[histName][sampleName]["Data"]
-      histSig = histSig.Clone(histSig.GetName()+"_norm")
-      histSig.Scale(1./histSig.GetBinContent(histSig.GetNbinsX()+1))
-      histsSig.append(histSig)
-      labels.append(sampleTitlesRoot[sampleName])
-    plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}".format(histName))
-    plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}".format(histName))
+      hists = []
+      histsSig = []
+      labels = []
+      for iSubSampleName, subSampleName in enumerate(sorted(allCurves[histName][sampleName])):
+        hist = allCurves[histName][sampleName][subSampleName]
+        hist = hist.Clone(hist.GetName()+"_norm")
+        #hist.Scale(1./hist.GetBinContent(hist.GetNbinsX()+1))
+        hists.append(hist)
+        histSig = allCurvesSig[histName][sampleName][subSampleName]
+        histSig = histSig.Clone(histSig.GetName()+"_norm")
+        #histSig.Scale(1./histSig.GetBinContent(histSig.GetNbinsX()+1))
+        histsSig.append(histSig)
+        labels.append(subSampleName)
+      plotHistsSimple(hists,labels,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",c,"AnalyzeCuts_width_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
+      plotHistsSimple(histsSig,labels,"Cut Width: "+histTitlesRoot[histName]+" [#sigma]","Events",c,"AnalyzeCuts_widthSig_comb_{}_{}".format(histName,sampleName),captionArgs=[sampleTitlesRoot[sampleName]])
