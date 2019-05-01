@@ -178,49 +178,7 @@ def getMeansSigmas(c,fns,histTitles,sampleTitles):
     print r"\midrule"
   return finalResult
     
-
-
-if __name__ == "__main__":
-
-  fns = [
-          "Inelastic_run5387_1GeV.root",
-          "Inelastic_run5432_2GeV.root",
-          "Inelastic_run5786_3GeV.root",
-          "Inelastic_run5770_6GeV.root",
-          "Inelastic_run5204_7GeV.root",
-        ]
-
-  histTitles = {
-    "DeltaXPFBeamPrimStartBI": r"$\Delta X$ PF-BI",
-    "DeltaYPFBeamPrimStartBI": r"$\Delta Y$ PF-BI",
-    "PFBeamPrimAngleStartBIXZ": r"$\Delta \theta_{xz}$",
-    "PFBeamPrimAngleStartBIYZ": r"$\Delta \theta_{yz}$",
-  }
-  histTitlesRoot = {
-    "DeltaXPFBeamPrimStartBI": r"#Delta X PF-BI",
-    "DeltaYPFBeamPrimStartBI": r"#Delta Y PF-BI",
-    "PFBeamPrimAngleStartBIXZ": r"#Delta #theta_{xz}",
-    "PFBeamPrimAngleStartBIYZ": r"#Delta #theta_{yz}",
-  }
-  sampleTitles = {
-    "run5387_1GeV": r"Run 5387 \SI{1}{\GeVc{}}",
-    "run5432_2GeV": r"Run 5432 \SI{2}{\GeVc{}}",
-    "run5786_3GeV": r"Run 5786 \SI{3}{\GeVc{}}",
-    "run5770_6GeV": r"Run 5770 \SI{6}{\GeVc{}}",
-    "run5204_7GeV": r"Run 5204 \SI{7}{\GeVc{}}",
-  }
-  sampleTitlesRoot = {
-    "run5387_1GeV": r"Run 5387 1 GeV/c",
-    "run5432_2GeV": r"Run 5432 2 GeV/c",
-    "run5786_3GeV": r"Run 5786 3 GeV/c",
-    "run5770_6GeV": r"Run 5770 6 GeV/c",
-    "run5204_7GeV": r"Run 5204 7 GeV/c",
-  }
-
-  c = root.TCanvas('c1')
-
-  gausParams = getMeansSigmas(c,fns,histTitles,sampleTitles)
-  print gausParams
+def getEffPurOfGausCuts(c,fns,histTitlesRoot,sampleTitlesRoot,gausParams):
   allCurves = {}
   allCurvesSig = {}
   rootFiles = []
@@ -463,5 +421,44 @@ if __name__ == "__main__":
     drawStandardCaptions(c,"Cut Width: "+histTitlesRoot[histName])
     c.SaveAs("AnalyzeCuts_width_purVeff_{}.png".format(histName))
     c.SaveAs("AnalyzeCuts_width_purVeff_{}.pdf".format(histName))
-      
 
+if __name__ == "__main__":
+
+  fns = [
+          "Inelastic_run5387_1GeV.root",
+          "Inelastic_run5432_2GeV.root",
+          "Inelastic_run5786_3GeV.root",
+          "Inelastic_run5770_6GeV.root",
+          "Inelastic_run5204_7GeV.root",
+        ]
+
+  histTitles = {
+    "DeltaXPFBeamPrimStartBI": r"$\Delta X$ PF-BI",
+    "DeltaYPFBeamPrimStartBI": r"$\Delta Y$ PF-BI",
+    "PFBeamPrimAngleStartBIXZ": r"$\Delta \theta_{xz}$",
+    "PFBeamPrimAngleStartBIYZ": r"$\Delta \theta_{yz}$",
+  }
+  histTitlesRoot = {
+    "DeltaXPFBeamPrimStartBI": r"#Delta X PF-BI",
+    "DeltaYPFBeamPrimStartBI": r"#Delta Y PF-BI",
+    "PFBeamPrimAngleStartBIXZ": r"#Delta #theta_{xz}",
+    "PFBeamPrimAngleStartBIYZ": r"#Delta #theta_{yz}",
+  }
+  sampleTitles = {
+    "run5387_1GeV": r"Run 5387 \SI{1}{\GeVc{}}",
+    "run5432_2GeV": r"Run 5432 \SI{2}{\GeVc{}}",
+    "run5786_3GeV": r"Run 5786 \SI{3}{\GeVc{}}",
+    "run5770_6GeV": r"Run 5770 \SI{6}{\GeVc{}}",
+    "run5204_7GeV": r"Run 5204 \SI{7}{\GeVc{}}",
+  }
+  sampleTitlesRoot = {
+    "run5387_1GeV": r"Run 5387 1 GeV/c",
+    "run5432_2GeV": r"Run 5432 2 GeV/c",
+    "run5786_3GeV": r"Run 5786 3 GeV/c",
+    "run5770_6GeV": r"Run 5770 6 GeV/c",
+    "run5204_7GeV": r"Run 5204 7 GeV/c",
+  }
+
+  c = root.TCanvas('c1')
+  gausParams = getMeansSigmas(c,fns,histTitles,sampleTitles)
+  getEffPurOfGausCuts(c,fns,histTitlesRoot,sampleTitlesRoot,gausParams)
