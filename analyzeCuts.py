@@ -293,35 +293,68 @@ if __name__ == "__main__":
         allCurves[histName][sampleName][subSampleName] = intHist
         allCurvesSig[histName][sampleName][subSampleName] = intSigHist
   for iHistName, histName in enumerate(sorted(allCurves)):
+
     for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
+
+      fileConfigsMC = [
+        {
+          'name': "mcc11_piInel_good",
+          'title': "MCC11 #pi Inelastic--Good Reco",
+        },
+        {
+          'name': "mcc11_piInel_badIntMatch",
+          'title': "MCC11 #pi Inelastic--Bad Reco/True Interaction Match",
+        },
+        {
+          'name': "mcc11_piInel_badTrkMatch",
+          'title': "MCC11 #pi Inelastic--Bad Track/True Primary Match",
+        },
+        {
+          'name': "mcc11_piDecay",
+          'title': "MCC11 #pi Decay",
+        },
+        {
+          'name': "mcc11_piOutsideTPC",
+          'title': "MCC11 #pi Interacted Outside TPC",
+        },
+        {
+          'name': "mcc11_mu",
+          'title': "MCC11 Primary Muon",
+        },
+      ]
+      if ('6GeV' in sampleName) or ('7GeV' in sampleName):
+        fileConfigsMC.append({
+          'name': "mcc11_e",
+          'title': "MCC11 Primary Electron",
+        })
+
       hists = []
       histsSig = []
       labels = []
-      stack = root.THStack("histStack_{}_noSig".format(histName),"")
-      stackSig = root.THStack("histStack_{}_sigig".format(histName),"")
-      sumHist = None
-      sumHistSig = None
-      for iSubSampleName, subSampleName in enumerate(sorted(allCurves[histName][sampleName])):
+      stack = root.THStack("histStack_{}_{}_noSig".format(histName,sampleName),"")
+      stackSig = root.THStack("histStack_{}_{}_sigig".format(histName,sampleName),"")
+      sumHist = allCurves[histName][sampleName]["mcSumHist"]
+      sumHistSig = allCurvesSig[histName][sampleName]["mcSumHist"]
+      #for iSubSampleName, subSampleName in enumerate(sorted(allCurves[histName][sampleName])):
+      for iSubSampleName, subSampleConfig in enumerate(fileConfigsMC):
+        subSampleName = subSampleConfig['name']
         hist = allCurves[histName][sampleName][subSampleName]
-        hist = hist.Clone(hist.GetName()+"_norm")
+        #hist = hist.Clone(hist.GetName()+"_norm")
         #hist.Scale(1./hist.GetBinContent(hist.GetNbinsX()+1))
         histSig = allCurvesSig[histName][sampleName][subSampleName]
-        histSig = histSig.Clone(histSig.GetName()+"_norm")
+        #histSig = histSig.Clone(histSig.GetName()+"_norm")
         #histSig.Scale(1./histSig.GetBinContent(histSig.GetNbinsX()+1))
-        if subSampleName != "mcSumHist":
-          hists.append(hist)
-          histsSig.append(histSig)
-          stack.Add(hist)
-          stackSig.Add(histSig)
-          labels.append(subSampleName)
-        else:
-          sumHist = hist
-          sumHistSig = histSig
+        hists.append(hist)
+        histsSig.append(histSig)
+        labels.append(subSampleConfig['title'])
       for i in range(len(labels)):
         hists[i].SetFillColor(COLORLIST[i])
         hists[i].SetLineColor(COLORLIST[i])
         histsSig[i].SetFillColor(COLORLIST[i])
         histsSig[i].SetLineColor(COLORLIST[i])
+      for i in reversed(range(len(labels))):
+        stack.Add(hists[i])
+        stackSig.Add(histsSig[i])
       axisHist = makeStdAxisHist([sumHist],xlim=[])
       setHistTitles(axisHist,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events")
       axisHist.Draw()
