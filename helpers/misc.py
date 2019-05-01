@@ -897,6 +897,7 @@ def drawGraphs(canvas,graphs,xTitle,yTitle,yStartZero=True,xlims=None,ylims=None
     rangeOfGraphs.reverse()
   for iGraph in rangeOfGraphs:
     graphs[iGraph].Draw(drawOptionsList[iGraph])
+  canvas.RedrawAxis()
   return axisHist
 
 def mplDrawErrorRegion(ax,xs,ys,dxs,dys,**kargs):

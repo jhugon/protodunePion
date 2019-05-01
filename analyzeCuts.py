@@ -110,32 +110,7 @@ def fitGauss(hist,histName,sampleName):
   c.SaveAs("AnalyzeCuts_Test_"+histName+'_'+sampleName+".pdf")
   return fitResult
 
-if __name__ == "__main__":
-
-  fns = [
-          "Inelastic_run5387_1GeV.root",
-          "Inelastic_run5432_2GeV.root",
-          "Inelastic_run5786_3GeV.root",
-          "Inelastic_run5770_6GeV.root",
-          "Inelastic_run5204_7GeV.root",
-        ]
-
-  histTitles = {
-    "DeltaXPFBeamPrimStartBI": r"$\Delta X$ PF-BI",
-    "DeltaYPFBeamPrimStartBI": r"$\Delta Y$ PF-BI",
-    "PFBeamPrimAngleStartBIXZ": r"$\Delta \theta_{xz}$",
-    "PFBeamPrimAngleStartBIYZ": r"$\Delta \theta_{yz}$",
-  }
-  sampleTitles = {
-    "run5387_1GeV": r"Run 5387 \SI{1}{\GeVc{}}",
-    "run5432_2GeV": r"Run 5432 \SI{2}{\GeVc{}}",
-    "run5786_3GeV": r"Run 5786 \SI{3}{\GeVc{}}",
-    "run5770_6GeV": r"Run 5770 \SI{6}{\GeVc{}}",
-    "run5204_7GeV": r"Run 5204 \SI{7}{\GeVc{}}",
-  }
-
-
-  c = root.TCanvas('c1')
+def getMeansSigmas(c,fns,histTitles,sampleTitles):
   results = []
   for fn in sorted(fns):
     f = root.TFile(fn)
@@ -169,8 +144,7 @@ if __name__ == "__main__":
       results.append((histName,sampleName,subSampleName,fr))
   resultsDict = {}
   for result in results:
-    
-    histName = histTitles[result[0]]
+    histName = result[0]
     sampleName = sampleTitles[result[1]]
     if not (histName in resultsDict):
       resultsDict[histName] = {}
@@ -182,23 +156,144 @@ if __name__ == "__main__":
     resultsDict[histName][sampleName][subName] = result[3]
   print "          &        "+5*r" & {Data}"+ 5*" & {MC}"+r" \\"
   print " Variable & Sample "+2*r" & {$\mu$} & {$\mu$ Error} & {$\sigma$} & {$\sigma$ Error} &{$\chi^2$/NDF}"+r" \\ \toprule"
+  finalResult = {}
   for iHistName, histName in enumerate(sorted(resultsDict)):
+    histTitle = histTitles[histName]
     for iSampleName, sampleName in enumerate(sorted(resultsDict[histName])):
       frDictData = makeFRDict(resultsDict[histName][sampleName]["Data"])
       frDictMC =  makeFRDict(resultsDict[histName][sampleName]["MC"])
-      outStr = r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histName,sampleName,
+      outStr = r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histTitle,sampleName,
                                 frDictData["mu"],frDictData["muErr"],frDictData["sigma"],frDictData["sigmaErr"],frDictData["chi2"],
                                 frDictMC["mu"],frDictMC["muErr"],frDictMC["sigma"],frDictMC["sigmaErr"],frDictMC["chi2"]
                         )
       print outStr
     muMeanData, muMeanErrData, sigMeanData, sigMeanErrData = getAvgMuSigma([resultsDict[histName][sampleName]["Data"] for sampleName in resultsDict[histName]])
     muMeanMC, muMeanErrMC, sigMeanMC, sigMeanErrMC = getAvgMuSigma([resultsDict[histName][sampleName]["MC"] for sampleName in resultsDict[histName]])
-
+    finalResult[histName] = (float(muMeanData),float(sigMeanData),float(muMeanMC),float(sigMeanMC))
     print r"\midrule"
-    print r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histName,"Weighted Mean",
+    print r"{} & {} & {}& {} & {} & {} & {} & {} & {} & {} & {} & {} \\".format(histTitle,"Weighted Mean",
                                  muMeanData,muMeanErrData,sigMeanData,sigMeanErrData,"",
                                  muMeanMC,muMeanErrMC,sigMeanMC,sigMeanErrMC,""
                          )
     print r"\midrule"
+  return finalResult
     
 
+
+if __name__ == "__main__":
+
+  fns = [
+          "Inelastic_run5387_1GeV.root",
+          "Inelastic_run5432_2GeV.root",
+          "Inelastic_run5786_3GeV.root",
+          "Inelastic_run5770_6GeV.root",
+          "Inelastic_run5204_7GeV.root",
+        ]
+
+  histTitles = {
+    "DeltaXPFBeamPrimStartBI": r"$\Delta X$ PF-BI",
+    "DeltaYPFBeamPrimStartBI": r"$\Delta Y$ PF-BI",
+    "PFBeamPrimAngleStartBIXZ": r"$\Delta \theta_{xz}$",
+    "PFBeamPrimAngleStartBIYZ": r"$\Delta \theta_{yz}$",
+  }
+  histTitlesRoot = {
+    "DeltaXPFBeamPrimStartBI": r"#Delta X PF-BI",
+    "DeltaYPFBeamPrimStartBI": r"#Delta Y PF-BI",
+    "PFBeamPrimAngleStartBIXZ": r"#Delta #theta_{xz}",
+    "PFBeamPrimAngleStartBIYZ": r"#Delta #theta_{yz}",
+  }
+  sampleTitles = {
+    "run5387_1GeV": r"Run 5387 \SI{1}{\GeVc{}}",
+    "run5432_2GeV": r"Run 5432 \SI{2}{\GeVc{}}",
+    "run5786_3GeV": r"Run 5786 \SI{3}{\GeVc{}}",
+    "run5770_6GeV": r"Run 5770 \SI{6}{\GeVc{}}",
+    "run5204_7GeV": r"Run 5204 \SI{7}{\GeVc{}}",
+  }
+  sampleTitlesRoot = {
+    "run5387_1GeV": r"Run 5387 1 GeV/c",
+    "run5432_2GeV": r"Run 5432 2 GeV/c",
+    "run5786_3GeV": r"Run 5786 3 GeV/c",
+    "run5770_6GeV": r"Run 5770 6 GeV/c",
+    "run5204_7GeV": r"Run 5204 7 GeV/c",
+  }
+
+  c = root.TCanvas('c1')
+
+  gausParams = getMeansSigmas(c,fns,histTitles,sampleTitles)
+  print gausParams
+  allCurves = {}
+  allCurvesSig = {}
+  for fn in sorted(fns):
+    f = root.TFile(fn)
+    sampleMatch = re.match(r"Inelastic_(.+).root",fn)
+    if not sampleMatch:
+        raise Exception("Couldn't parse filename: ",fn)
+    sampleName = sampleMatch.group(1)
+    for key in sorted(f.GetListOfKeys()):
+      name = key.GetName()
+      #print name
+      matchMCSum = re.match(r"(.+)_mcSumHist",name)
+      matchMCC11 = re.match(r"(.+)_(mcc11.*)",name)
+      matchRun = re.match(r"(.+)_run(.+)",name)
+      histName = None
+      subSampleName = None
+      if matchMCSum:
+        histName = matchMCSum.group(1)
+        subSampleName = "mcSumHist"
+      elif matchMCC11:
+        continue
+      elif matchRun:
+        histName = matchRun.group(1)
+        subSampleName = matchRun.group(2)
+      if histName in gausParams:
+        hist = key.ReadObj()
+        muMeanData,sigMeanData,muMeanMC,sigMeanMC = gausParams[histName]
+        muMean = muMeanData
+        sigMean = sigMeanData
+        if not matchRun:
+          muMean = muMeanMC
+          sigMean = sigMeanMC
+        iBinMean = hist.FindBin(muMean)
+        binMeanCenter = hist.GetXaxis().GetBinCenter(iBinMean)
+        nBins = hist.GetNbinsX()
+        #print muMean, iBinMean, binMeanCenter, nBins, hist.GetXaxis().GetBinLowEdge(1), hist.GetXaxis().GetBinUpEdge(nBins)
+        nSteps = max(nBins-iBinMean,iBinMean-1)
+        graph = root.TGraph()
+        graphSig = root.TGraph()
+        for iStep in range(nSteps):
+          lowBin = max(iBinMean-iStep,1)
+          highBin = min(iBinMean+iStep,nBins)
+          width = hist.GetXaxis().GetBinUpEdge(highBin)-hist.GetXaxis().GetBinLowEdge(lowBin)
+          count = hist.Integral(lowBin,highBin)
+          widthSigmas = width/sigMean
+          #print iStep, lowBin, highBin, width, widthSigmas, count
+          graph.SetPoint(iStep,width,count)
+          graphSig.SetPoint(iStep,widthSigmas,count)
+        axisHist = drawGraphs(c,[graph],"Cut Width: "+hist.GetXaxis().GetTitle(),"Events",drawOptions="L")
+        subTitle = "MCC11"
+        if matchRun:
+          subTitle = "Data"
+        titleString = "{} {}".format(sampleTitlesRoot[sampleName],subTitle)
+        print titleString
+        drawStandardCaptions(c,titleString)
+        c.SaveAs("AnalyzeCuts_width_{}_{}_{}.png".format(histName,sampleName,subSampleName))
+        if not (histName in allCurves):
+          allCurves[histName] = {}
+          allCurvesSig[histName] = {}
+        if not (sampleName in allCurves[histName]):
+          allCurves[histName][sampleName] = {}
+          allCurvesSig[histName][sampleName] = {}
+        subName = "MC"
+        if matchRun:
+          subName = "Data"
+        allCurves[histName][sampleName][subName] = graph
+        allCurvesSig[histName][sampleName][subName] = graphSig
+  for iHistName, histName in enumerate(sorted(allCurves)):
+    histTitle = histTitles[histName]
+    graphs = []
+    graphsSig = []
+    for iSampleName, sampleName in enumerate(sorted(allCurves[histName])):
+      graphs.append(allCurves[histName][sampleName]["Data"])
+      graphsSig.append(allCurves[histName][sampleName]["Data"])
+    axisHist = drawGraphs(c,graphs,"Cut Width: "+histTitlesRoot[histName]+" [cm]","Events",drawOptions="L")
+    c.SaveAs("AnalyzeCuts_width_comb_{}.png".format(histName))
